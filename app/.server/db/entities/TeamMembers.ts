@@ -4,11 +4,15 @@ import {
   Entity,
   Index,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
+import { AccountPermissions } from "./AccountPermissions";
 import { BankAccounts } from "./BankAccounts";
 import { CreditCard } from "./CreditCard";
 import { IntegrationGoogleWorkspaceMembers } from "./IntegrationGoogleWorkspaceMembers";
@@ -16,9 +20,11 @@ import { IntegrationSlackMembers } from "./IntegrationSlackMembers";
 import { InvoiceAccounts } from "./InvoiceAccounts";
 import { ReviewResponses } from "./ReviewResponses";
 import { SignedHistories } from "./SignedHistories";
+import { SubscriptionSeats } from "./SubscriptionSeats";
 import { Subscriptions } from "./Subscriptions";
 import { Organizations } from "./Organizations";
 import { Memberships } from "./Memberships";
+import { Teams } from "./Teams";
 import { WorkspaceMembers } from "./WorkspaceMembers";
 
 @Index("IDX_8e731297376b885543803be556", ["membershipId"], { unique: true })
@@ -66,6 +72,12 @@ export class TeamMembers extends BaseEntity {
   @Column("int", { name: "subscription_count", default: () => "'0'" })
   subscriptionCount: number;
 
+  @OneToMany(
+    () => AccountPermissions,
+    (accountPermissions) => accountPermissions.teamMember
+  )
+  accountPermissions: AccountPermissions[];
+
   @OneToMany(() => BankAccounts, (bankAccounts) => bankAccounts.holdingMember)
   bankAccounts: BankAccounts[];
 
@@ -103,6 +115,12 @@ export class TeamMembers extends BaseEntity {
   )
   signedHistories: SignedHistories[];
 
+  @OneToMany(
+    () => SubscriptionSeats,
+    (subscriptionSeats) => subscriptionSeats.teamMember
+  )
+  subscriptionSeats: SubscriptionSeats[];
+
   @OneToMany(() => Subscriptions, (subscriptions) => subscriptions.master)
   subscriptions: Subscriptions[];
 
@@ -121,9 +139,24 @@ export class TeamMembers extends BaseEntity {
   @JoinColumn([{ name: "membership_id", referencedColumnName: "id" }])
   membership: Memberships;
 
+  @ManyToMany(() => Teams, (teams) => teams.teamMembers)
+  @JoinTable({
+    name: "team_memberships",
+    joinColumns: [{ name: "team_member_id", referencedColumnName: "id" }],
+    inverseJoinColumns: [{ name: "team_id", referencedColumnName: "id" }],
+    schema: "payplo_staging",
+  })
+  teams: Teams[];
+
   @OneToMany(
     () => WorkspaceMembers,
     (workspaceMembers) => workspaceMembers.teamMember
   )
   workspaceMembers: WorkspaceMembers[];
+
+  @RelationId((teamMembers: TeamMembers) => teamMembers.organization)
+  organizationId: number;
+
+  @RelationId((teamMembers: TeamMembers) => teamMembers.membership)
+  membershipId2: number | null;
 }

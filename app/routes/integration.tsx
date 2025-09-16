@@ -1,17 +1,40 @@
 import { IntegrationAppCard } from "~/models/integration/components/IntegrationAppCard";
-import { SearchIntegrationAppCommand } from "~/models/integration/components/SearchIntegrationAppCommand";
+import type { Route } from "../+types/root";
+const { initializeDatabase } = await import("~/.server/db");
+const { Products } = await import("~/.server/db/entities/Products");
 
-const apps = [
-    {
-        appKoreanName: "옵스나우",
-        appEnglishName: "Opsnow",
-        appDescription: "안전한 클라우드 관리를 위한 자동화된 통합 플랫폼 OpsNow360 어떻게 달라졌을까요?? 조금더 자세히 알아보고 싶으시다면 연결해주세요",
-        appLogo: "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
-        category: "Engineering"
-    }
-]
+const searchTextDev = "slack"
 
-export default function Integration() {
+export interface IntegrationApp {
+    nameKo: string;
+    nameEn: string;
+    tagline: string | null;
+    image: string;
+    productTags: Array<{
+      tag: {
+        name: string;
+      };
+    }>;
+  }
+
+export async function loader(): Promise<{ apps: IntegrationApp[] }> {
+    await initializeDatabase()
+    const apps = await Products.createQueryBuilder('product')
+        .leftJoinAndSelect('product.productTags', 'productTag')  // 1차 조인
+        .leftJoinAndSelect('productTag.tag', 'tag')              // 2차 조인
+        .where('product.searchText LIKE :search', { 
+            search: `%${searchTextDev}%` 
+        })
+        .getMany()
+        
+    return { apps }
+}
+
+export default function Integration(
+    { loaderData }: Route.ComponentProps
+) {
+    const { apps } = loaderData || { apps: [] as IntegrationApp[] }
+
     return (
         <div className="h-full w-full p-8">
             <div className="max-w-6xl mx-auto">
@@ -21,14 +44,14 @@ export default function Integration() {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {apps.map((app, index) => (
+                    {apps.map((app, index: number) => (
                         <IntegrationAppCard
                             key={index}
-                            appKoreanName={app.appKoreanName}
-                            appEnglishName={app.appEnglishName}
-                            appDescription={app.appDescription}
-                            appLogo={app.appLogo}
-                            category={app.category}
+                            appKoreanName={app.nameKo}
+                            appEnglishName={app.nameEn}
+                            appDescription={app.tagline || "No description"}
+                            appLogo={app.image}
+                            category={app.productTags.map((tag) => tag.tag.name).join(", ") || ""}
                         />
                     ))}
                 </div>

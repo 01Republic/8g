@@ -6,9 +6,11 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { ProductBillingCycles } from "./ProductBillingCycles";
 import { Products } from "./Products";
+import { Subscriptions } from "./Subscriptions";
 
 @Entity("product_payment_plans")
 export class ProductPaymentPlans extends BaseEntity {
@@ -36,10 +38,36 @@ export class ProductPaymentPlans extends BaseEntity {
   )
   productBillingCycles: ProductBillingCycles[];
 
+  @OneToMany(
+    () => ProductBillingCycles,
+    (productBillingCycles) => productBillingCycles.paymentPlan_2
+  )
+  productBillingCycles2: ProductBillingCycles[];
+
   @ManyToOne(() => Products, (products) => products.productPaymentPlans, {
     onDelete: "CASCADE",
     onUpdate: "NO ACTION",
   })
   @JoinColumn([{ name: "product_id", referencedColumnName: "id" }])
   product: Products;
+
+  @ManyToOne(() => Products, (products) => products.productPaymentPlans2, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "product_id", referencedColumnName: "id" }])
+  product_2: Products;
+
+  @OneToMany(() => Subscriptions, (subscriptions) => subscriptions.paymentPlan)
+  subscriptions: Subscriptions[];
+
+  @RelationId(
+    (productPaymentPlans: ProductPaymentPlans) => productPaymentPlans.product
+  )
+  productId: number;
+
+  @RelationId(
+    (productPaymentPlans: ProductPaymentPlans) => productPaymentPlans.product_2
+  )
+  productId2: number;
 }

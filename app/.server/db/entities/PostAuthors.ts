@@ -3,8 +3,11 @@ import {
   Column,
   Entity,
   Index,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Posts } from "./Posts";
 
 @Index("IDX_c8fe6246961bc8b0c06eea02fd", ["name"], {})
 @Entity("post_authors")
@@ -32,4 +35,13 @@ export class PostAuthors extends BaseEntity {
 
   @Column("text", { name: "introduce" })
   introduce: string;
+
+  @ManyToMany(() => Posts, (posts) => posts.postAuthors)
+  @JoinTable({
+    name: "posts_authors_post_authors",
+    joinColumns: [{ name: "postAuthorsId", referencedColumnName: "id" }],
+    inverseJoinColumns: [{ name: "postsId", referencedColumnName: "id" }],
+    schema: "payplo_staging",
+  })
+  posts: Posts[];
 }

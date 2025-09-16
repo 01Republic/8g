@@ -7,9 +7,13 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
+import { Subscriptions } from "./Subscriptions";
 import { WorkspaceMembers } from "./WorkspaceMembers";
+import { WorkspaceRoles } from "./WorkspaceRoles";
 import { Accounts } from "./Accounts";
+import { Products } from "./Products";
 import { Organizations } from "./Organizations";
 
 @Index("FK_80ed15ab825eceaf60ae94c4821", ["productId"], {})
@@ -61,11 +65,17 @@ export class Workspaces extends BaseEntity {
   @Column("text", { name: "description", nullable: true })
   description: string | null;
 
+  @OneToMany(() => Subscriptions, (subscriptions) => subscriptions.workspace)
+  subscriptions: Subscriptions[];
+
   @OneToMany(
     () => WorkspaceMembers,
     (workspaceMembers) => workspaceMembers.workspace
   )
   workspaceMembers: WorkspaceMembers[];
+
+  @OneToMany(() => WorkspaceRoles, (workspaceRoles) => workspaceRoles.workspace)
+  workspaceRoles: WorkspaceRoles[];
 
   @ManyToOne(() => Accounts, (accounts) => accounts.workspaces, {
     onDelete: "SET NULL",
@@ -74,10 +84,26 @@ export class Workspaces extends BaseEntity {
   @JoinColumn([{ name: "sync_account_id", referencedColumnName: "id" }])
   syncAccount: Accounts;
 
+  @ManyToOne(() => Products, (products) => products.workspaces, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "product_id", referencedColumnName: "id" }])
+  product: Products;
+
   @ManyToOne(() => Organizations, (organizations) => organizations.workspaces, {
     onDelete: "CASCADE",
     onUpdate: "NO ACTION",
   })
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
+
+  @RelationId((workspaces: Workspaces) => workspaces.syncAccount)
+  syncAccountId: number | null;
+
+  @RelationId((workspaces: Workspaces) => workspaces.product)
+  productId2: number;
+
+  @RelationId((workspaces: Workspaces) => workspaces.organization)
+  organizationId: number;
 }

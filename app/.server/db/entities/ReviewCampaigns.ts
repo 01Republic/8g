@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { ReviewCampaignSubscriptions } from "./ReviewCampaignSubscriptions";
 import { Memberships } from "./Memberships";
@@ -79,4 +80,12 @@ export class ReviewCampaigns extends BaseEntity {
     (reviewResponses) => reviewResponses.campaign
   )
   reviewResponses: ReviewResponses[];
+
+  @RelationId((reviewCampaigns: ReviewCampaigns) => reviewCampaigns.author)
+  authorId: number | null;
+
+  @RelationId(
+    (reviewCampaigns: ReviewCampaigns) => reviewCampaigns.organization
+  )
+  organizationId: number;
 }

@@ -7,14 +7,15 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { BillingHistories } from "./BillingHistories";
 import { GmailItemBillingInfo } from "./GmailItemBillingInfo";
 import { Organizations } from "./Organizations";
 import { InvoiceAccounts } from "./InvoiceAccounts";
 
-@Index("gmail_item_identity", ["invoiceAccountId", "mailId"], {})
 @Index("IDX_842c4d662a979a73a55ed67449", ["mailId"], {})
+@Index("gmail_item_identity", ["invoiceAccountId", "mailId"], {})
 @Entity("gmail_items")
 export class GmailItems extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -113,4 +114,16 @@ export class GmailItems extends BaseEntity {
   )
   @JoinColumn([{ name: "invoice_account_id", referencedColumnName: "id" }])
   invoiceAccount: InvoiceAccounts;
+
+  @RelationId((gmailItems: GmailItems) => gmailItems.billingHistory)
+  billingHistoryId2: number | null;
+
+  @RelationId((gmailItems: GmailItems) => gmailItems.billingInfo)
+  billingInfoId: number | null;
+
+  @RelationId((gmailItems: GmailItems) => gmailItems.organization)
+  organizationId: number;
+
+  @RelationId((gmailItems: GmailItems) => gmailItems.invoiceAccount)
+  invoiceAccountId2: number;
 }

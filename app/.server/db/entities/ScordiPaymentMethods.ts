@@ -6,14 +6,15 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { Organizations } from "./Organizations";
 
-@Index("IDX_039b785c00a749d94585a0f20b", ["deletedAt"], {})
 @Index("IDX_06520b6f02f50141cb3b3a33c2", ["authKey"], { unique: true })
-@Index("IDX_2c583834ef7f36582ac7141b6a", ["expiredAt"], {})
-@Index("IDX_2c897ac376f1b7437f0e130de2", ["isMajor"], {})
 @Index("IDX_555ff44f59f62a21439865a985", ["isActive"], {})
+@Index("IDX_2c897ac376f1b7437f0e130de2", ["isMajor"], {})
+@Index("IDX_2c583834ef7f36582ac7141b6a", ["expiredAt"], {})
+@Index("IDX_039b785c00a749d94585a0f20b", ["deletedAt"], {})
 @Entity("scordi_payment_methods")
 export class ScordiPaymentMethods extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -81,4 +82,10 @@ export class ScordiPaymentMethods extends BaseEntity {
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
+
+  @RelationId(
+    (scordiPaymentMethods: ScordiPaymentMethods) =>
+      scordiPaymentMethods.organization
+  )
+  organizationId: number | null;
 }

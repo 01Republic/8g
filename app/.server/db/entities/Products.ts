@@ -10,12 +10,19 @@ import { Accounts } from "./Accounts";
 import { CodefBankAccountParsers } from "./CodefBankAccountParsers";
 import { CodefCardParsers } from "./CodefCardParsers";
 import { EmailParsers } from "./EmailParsers";
+import { InvoiceApps } from "./InvoiceApps";
 import { Posts } from "./Posts";
 import { ProductAddedAlerts } from "./ProductAddedAlerts";
 import { ProductBillingCycles } from "./ProductBillingCycles";
 import { ProductPaymentPlans } from "./ProductPaymentPlans";
 import { ProductSimilarNames } from "./ProductSimilarNames";
+import { ProductTags } from "./ProductTags";
+import { Subscriptions } from "./Subscriptions";
+import { Workspaces } from "./Workspaces";
 
+@Index("IDX_e711ae1eb3998a72d6a2374ac3", ["nameKo"], { unique: true })
+@Index("IDX_89fa0ea49c19b518e9ad84ba3e", ["nameEn"], { unique: true })
+@Index("IDX_7c0ee139fe15ba037a5cc83737", ["searchText"], {})
 @Index("IDX_8abf41fccf9611ed99fceff19d", ["saasCollectionExposePriority"], {})
 @Entity("products")
 export class Products extends BaseEntity {
@@ -34,7 +41,7 @@ export class Products extends BaseEntity {
   })
   updatedAt: Date;
 
-  @Column("varchar", { name: "name_ko", length: 255 })
+  @Column("varchar", { name: "name_ko", unique: true, length: 255 })
   nameKo: string;
 
   @Column("varchar", { name: "searchText", length: 255 })
@@ -92,7 +99,7 @@ export class Products extends BaseEntity {
   @Column("text", { name: "ogImageUrl", nullable: true })
   ogImageUrl: string | null;
 
-  @Column("varchar", { name: "name_en", length: 255 })
+  @Column("varchar", { name: "name_en", unique: true, length: 255 })
   nameEn: string;
 
   @Column("int", { name: "saasCollectionExposePriority", default: () => "'0'" })
@@ -100,6 +107,9 @@ export class Products extends BaseEntity {
 
   @OneToMany(() => Accounts, (accounts) => accounts.product)
   accounts: Accounts[];
+
+  @OneToMany(() => Accounts, (accounts) => accounts.product_2)
+  accounts2: Accounts[];
 
   @OneToMany(
     () => CodefBankAccountParsers,
@@ -116,8 +126,14 @@ export class Products extends BaseEntity {
   @OneToMany(() => EmailParsers, (emailParsers) => emailParsers.product)
   emailParsers: EmailParsers[];
 
+  @OneToMany(() => InvoiceApps, (invoiceApps) => invoiceApps.product)
+  invoiceApps: InvoiceApps[];
+
   @OneToMany(() => Posts, (posts) => posts.product)
   posts: Posts[];
+
+  @OneToMany(() => Posts, (posts) => posts.product_2)
+  posts2: Posts[];
 
   @OneToMany(
     () => ProductAddedAlerts,
@@ -126,10 +142,22 @@ export class Products extends BaseEntity {
   productAddedAlerts: ProductAddedAlerts[];
 
   @OneToMany(
+    () => ProductAddedAlerts,
+    (productAddedAlerts) => productAddedAlerts.product_2
+  )
+  productAddedAlerts2: ProductAddedAlerts[];
+
+  @OneToMany(
     () => ProductBillingCycles,
     (productBillingCycles) => productBillingCycles.product
   )
   productBillingCycles: ProductBillingCycles[];
+
+  @OneToMany(
+    () => ProductBillingCycles,
+    (productBillingCycles) => productBillingCycles.product_2
+  )
+  productBillingCycles2: ProductBillingCycles[];
 
   @OneToMany(
     () => ProductPaymentPlans,
@@ -138,8 +166,26 @@ export class Products extends BaseEntity {
   productPaymentPlans: ProductPaymentPlans[];
 
   @OneToMany(
+    () => ProductPaymentPlans,
+    (productPaymentPlans) => productPaymentPlans.product_2
+  )
+  productPaymentPlans2: ProductPaymentPlans[];
+
+  @OneToMany(
     () => ProductSimilarNames,
     (productSimilarNames) => productSimilarNames.product
   )
   productSimilarNames: ProductSimilarNames[];
+
+  @OneToMany(() => ProductTags, (productTags) => productTags.product)
+  productTags: ProductTags[];
+
+  @OneToMany(() => ProductTags, (productTags) => productTags.product_2)
+  productTags2: ProductTags[];
+
+  @OneToMany(() => Subscriptions, (subscriptions) => subscriptions.product)
+  subscriptions: Subscriptions[];
+
+  @OneToMany(() => Workspaces, (workspaces) => workspaces.product)
+  workspaces: Workspaces[];
 }

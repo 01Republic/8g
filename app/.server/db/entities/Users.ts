@@ -6,6 +6,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Memberships } from "./Memberships";
 import { ProductAddedAlerts } from "./ProductAddedAlerts";
 import { SignedHistories } from "./SignedHistories";
 import { SyncHistories } from "./SyncHistories";
@@ -101,11 +102,20 @@ export class Users extends BaseEntity {
   @Column("varchar", { name: "job", nullable: true, length: 255 })
   job: string | null;
 
+  @OneToMany(() => Memberships, (memberships) => memberships.user)
+  memberships: Memberships[];
+
   @OneToMany(
     () => ProductAddedAlerts,
     (productAddedAlerts) => productAddedAlerts.user
   )
   productAddedAlerts: ProductAddedAlerts[];
+
+  @OneToMany(
+    () => ProductAddedAlerts,
+    (productAddedAlerts) => productAddedAlerts.user_2
+  )
+  productAddedAlerts2: ProductAddedAlerts[];
 
   @OneToMany(() => SignedHistories, (signedHistories) => signedHistories.user)
   signedHistories: SignedHistories[];

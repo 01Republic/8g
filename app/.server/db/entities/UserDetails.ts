@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { Users } from "./Users";
 
@@ -37,4 +38,7 @@ export class UserDetails extends BaseEntity {
   })
   @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
   user: Users;
+
+  @RelationId((userDetails: UserDetails) => userDetails.user)
+  userId: number;
 }

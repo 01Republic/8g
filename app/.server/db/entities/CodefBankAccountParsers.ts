@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { Products } from "./Products";
 import { CodefBillingHistories } from "./CodefBillingHistories";
@@ -65,4 +66,10 @@ export class CodefBankAccountParsers extends BaseEntity {
     (codefBillingHistories) => codefBillingHistories.codefBankAccountParser
   )
   codefBillingHistories: CodefBillingHistories[];
+
+  @RelationId(
+    (codefBankAccountParsers: CodefBankAccountParsers) =>
+      codefBankAccountParsers.product
+  )
+  productId: number;
 }

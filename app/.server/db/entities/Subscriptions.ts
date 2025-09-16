@@ -4,26 +4,39 @@ import {
   Entity,
   Index,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
+import { BillingHistories } from "./BillingHistories";
 import { IntegrationGoogleWorkspaceOauthTokenActivities } from "./IntegrationGoogleWorkspaceOauthTokenActivities";
+import { InvoiceAccounts } from "./InvoiceAccounts";
 import { ReviewCampaignSubscriptions } from "./ReviewCampaignSubscriptions";
 import { SignedHistories } from "./SignedHistories";
+import { SubscriptionSeats } from "./SubscriptionSeats";
 import { Tags } from "./Tags";
 import { BankAccounts } from "./BankAccounts";
+import { Products } from "./Products";
 import { Organizations } from "./Organizations";
+import { ProductPaymentPlans } from "./ProductPaymentPlans";
+import { Workspaces } from "./Workspaces";
+import { ProductBillingCycles } from "./ProductBillingCycles";
 import { Moneys } from "./Moneys";
 import { CreditCard } from "./CreditCard";
 import { TeamMembers } from "./TeamMembers";
+import { SyncHistories } from "./SyncHistories";
 import { VendorContracts } from "./VendorContracts";
 
+@Index("IDX_e7391685d36837cce156345f7b", ["currentBillingAmountId"], {
+  unique: true,
+})
 @Index("FK_4e2c60f2098be741982c4e1a1c0", ["productId"], {})
 @Index("FK_ca53e4525d1ce59e7a75ff5db59", ["paymentPlanId"], {})
-@Index("FK_cbde2aec62d9e30a31bb167d7d4", ["workspaceId"], {})
 @Index("FK_d33566532e2a80f66194452537a", ["billingCycleId"], {})
+@Index("FK_cbde2aec62d9e30a31bb167d7d4", ["workspaceId"], {})
 @Entity("subscriptions")
 export class Subscriptions extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -125,6 +138,13 @@ export class Subscriptions extends BaseEntity {
   @Column("tinyint", { name: "is_per_user", default: () => "'0'" })
   isPerUser: number;
 
+  @Column("int", {
+    name: "current_billing_amount_id",
+    nullable: true,
+    unique: true,
+  })
+  currentBillingAmountId: number | null;
+
   @Column("tinyint", { name: "isDynamicBillingAmount", default: () => "'0'" })
   isDynamicBillingAmount: number;
 
@@ -190,11 +210,23 @@ export class Subscriptions extends BaseEntity {
   nextComputedBillingDate: Date | null;
 
   @OneToMany(
+    () => BillingHistories,
+    (billingHistories) => billingHistories.subscription
+  )
+  billingHistories: BillingHistories[];
+
+  @OneToMany(
     () => IntegrationGoogleWorkspaceOauthTokenActivities,
     (integrationGoogleWorkspaceOauthTokenActivities) =>
       integrationGoogleWorkspaceOauthTokenActivities.subscription
   )
   integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities[];
+
+  @ManyToMany(
+    () => InvoiceAccounts,
+    (invoiceAccounts) => invoiceAccounts.subscriptions
+  )
+  invoiceAccounts: InvoiceAccounts[];
 
   @OneToMany(
     () => ReviewCampaignSubscriptions,
@@ -207,6 +239,12 @@ export class Subscriptions extends BaseEntity {
     (signedHistories) => signedHistories.subscription
   )
   signedHistories: SignedHistories[];
+
+  @OneToMany(
+    () => SubscriptionSeats,
+    (subscriptionSeats) => subscriptionSeats.subscription
+  )
+  subscriptionSeats: SubscriptionSeats[];
 
   @ManyToOne(() => Tags, (tags) => tags.subscriptions, {
     onDelete: "NO ACTION",
@@ -222,6 +260,13 @@ export class Subscriptions extends BaseEntity {
   @JoinColumn([{ name: "bank_account_id", referencedColumnName: "id" }])
   bankAccount: BankAccounts;
 
+  @ManyToOne(() => Products, (products) => products.subscriptions, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "product_id", referencedColumnName: "id" }])
+  product: Products;
+
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.subscriptions,
@@ -229,6 +274,29 @@ export class Subscriptions extends BaseEntity {
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
+
+  @ManyToOne(
+    () => ProductPaymentPlans,
+    (productPaymentPlans) => productPaymentPlans.subscriptions,
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+  )
+  @JoinColumn([{ name: "payment_plan_id", referencedColumnName: "id" }])
+  paymentPlan: ProductPaymentPlans;
+
+  @ManyToOne(() => Workspaces, (workspaces) => workspaces.subscriptions, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "workspace_id", referencedColumnName: "id" }])
+  workspace: Workspaces;
+
+  @ManyToOne(
+    () => ProductBillingCycles,
+    (productBillingCycles) => productBillingCycles.subscriptions,
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+  )
+  @JoinColumn([{ name: "billing_cycle_id", referencedColumnName: "id" }])
+  billingCycle: ProductBillingCycles;
 
   @ManyToOne(() => Tags, (tags) => tags.subscriptions2, {
     onDelete: "NO ACTION",
@@ -260,9 +328,47 @@ export class Subscriptions extends BaseEntity {
   @JoinColumn([{ name: "master_id", referencedColumnName: "id" }])
   master: TeamMembers;
 
+  @OneToMany(() => SyncHistories, (syncHistories) => syncHistories.subscription)
+  syncHistories: SyncHistories[];
+
   @OneToMany(
     () => VendorContracts,
     (vendorContracts) => vendorContracts.subscription
   )
   vendorContracts: VendorContracts[];
+
+  @RelationId((subscriptions: Subscriptions) => subscriptions.recurringTypeTag)
+  recurringTypeTagId: number | null;
+
+  @RelationId((subscriptions: Subscriptions) => subscriptions.bankAccount)
+  bankAccountId: number | null;
+
+  @RelationId((subscriptions: Subscriptions) => subscriptions.product)
+  productId2: number;
+
+  @RelationId((subscriptions: Subscriptions) => subscriptions.organization)
+  organizationId: number;
+
+  @RelationId((subscriptions: Subscriptions) => subscriptions.paymentPlan)
+  paymentPlanId2: number | null;
+
+  @RelationId((subscriptions: Subscriptions) => subscriptions.workspace)
+  workspaceId2: number | null;
+
+  @RelationId((subscriptions: Subscriptions) => subscriptions.billingCycle)
+  billingCycleId2: number | null;
+
+  @RelationId((subscriptions: Subscriptions) => subscriptions.billingCycleTag)
+  billingCycleTagId: number | null;
+
+  @RelationId(
+    (subscriptions: Subscriptions) => subscriptions.currentBillingAmount
+  )
+  currentBillingAmountId2: number | null;
+
+  @RelationId((subscriptions: Subscriptions) => subscriptions.creditCard)
+  creditCardId: number | null;
+
+  @RelationId((subscriptions: Subscriptions) => subscriptions.master)
+  masterId: number | null;
 }

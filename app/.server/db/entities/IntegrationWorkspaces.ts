@@ -7,17 +7,17 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { IntegrationGoogleWorkspaceMembers } from "./IntegrationGoogleWorkspaceMembers";
 import { IntegrationGoogleWorkspaceOauthTokenActivities } from "./IntegrationGoogleWorkspaceOauthTokenActivities";
 import { IntegrationSlackMembers } from "./IntegrationSlackMembers";
-import { IntegrationSlackOauthTokenActivities } from "./IntegrationSlackOauthTokenActivities";
 import { Organizations } from "./Organizations";
 
-@Index("IDX_5934b3c32a2a544227f2a89312", ["provider"], {})
 @Index("IDX_integration_provider_uid", ["organizationId", "provider", "uid"], {
   unique: true,
 })
+@Index("IDX_5934b3c32a2a544227f2a89312", ["provider"], {})
 @Entity("integration_workspaces")
 export class IntegrationWorkspaces extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -77,13 +77,6 @@ export class IntegrationWorkspaces extends BaseEntity {
   )
   integrationSlackMembers: IntegrationSlackMembers[];
 
-  @OneToMany(
-    () => IntegrationSlackOauthTokenActivities,
-    (integrationSlackOauthTokenActivities) =>
-      integrationSlackOauthTokenActivities.integrationWorkspace
-  )
-  integrationSlackOauthTokenActivities: IntegrationSlackOauthTokenActivities[];
-
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.integrationWorkspaces,
@@ -91,4 +84,10 @@ export class IntegrationWorkspaces extends BaseEntity {
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
+
+  @RelationId(
+    (integrationWorkspaces: IntegrationWorkspaces) =>
+      integrationWorkspaces.organization
+  )
+  organizationId2: number;
 }

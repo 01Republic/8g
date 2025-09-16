@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { Subscriptions } from "./Subscriptions";
 import { ProductSimilarNames } from "./ProductSimilarNames";
@@ -74,4 +75,32 @@ export class IntegrationGoogleWorkspaceOauthTokenActivities extends BaseEntity {
     { name: "integration_workspace_id", referencedColumnName: "id" },
   ])
   integrationWorkspace: IntegrationWorkspaces;
+
+  @RelationId(
+    (
+      integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities
+    ) => integrationGoogleWorkspaceOauthTokenActivities.subscription
+  )
+  subscriptionId: number | null;
+
+  @RelationId(
+    (
+      integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities
+    ) => integrationGoogleWorkspaceOauthTokenActivities.productSimilarName
+  )
+  productSimilarNameId: number;
+
+  @RelationId(
+    (
+      integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities
+    ) => integrationGoogleWorkspaceOauthTokenActivities.workspaceMember
+  )
+  workspaceMemberId: number;
+
+  @RelationId(
+    (
+      integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities
+    ) => integrationGoogleWorkspaceOauthTokenActivities.integrationWorkspace
+  )
+  integrationWorkspaceId: number;
 }

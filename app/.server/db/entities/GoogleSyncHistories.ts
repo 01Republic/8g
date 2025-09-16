@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { Organizations } from "./Organizations";
 import { GoogleTokenData } from "./GoogleTokenData";
@@ -41,7 +42,7 @@ export class GoogleSyncHistories extends BaseEntity {
   @ManyToOne(
     () => GoogleTokenData,
     (googleTokenData) => googleTokenData.googleSyncHistories,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
   )
   @JoinColumn([{ name: "google_token_data_id", referencedColumnName: "id" }])
   googleTokenData: GoogleTokenData;
@@ -51,4 +52,16 @@ export class GoogleSyncHistories extends BaseEntity {
     (organizations) => organizations.lastGoogleSyncHistory
   )
   organizations: Organizations[];
+
+  @RelationId(
+    (googleSyncHistories: GoogleSyncHistories) =>
+      googleSyncHistories.organization
+  )
+  organizationId: number;
+
+  @RelationId(
+    (googleSyncHistories: GoogleSyncHistories) =>
+      googleSyncHistories.googleTokenData
+  )
+  googleTokenDataId: number;
 }

@@ -6,14 +6,15 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { Users } from "./Users";
 
 @Index("IDX_0b131182935b3fd40d565dd7ed", ["userId", "fcmToken"], {
   unique: true,
 })
-@Index("IDX_da93e83ed00a0f60dd230a1d0b", ["fcmToken"], {})
 @Index("IDX_f426f5bd6b9e082b584e0fbd5e", ["userId"], {})
+@Index("IDX_da93e83ed00a0f60dd230a1d0b", ["fcmToken"], {})
 @Entity("user-devices")
 export class UserDevices extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -46,4 +47,7 @@ export class UserDevices extends BaseEntity {
   })
   @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
   user: Users;
+
+  @RelationId((userDevices: UserDevices) => userDevices.user)
+  userId2: number;
 }

@@ -3,13 +3,16 @@ import {
   Column,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { CodefBillingHistories } from "./CodefBillingHistories";
+import { CreditCard } from "./CreditCard";
+import { CodefAccounts } from "./CodefAccounts";
 
-@Index("FK_7393d58891ea213dcb9329ade82", ["creditCardId"], {})
-@Index("FK_78c19a4f95716168ed278ae2815", ["codefAccountId"], {})
 @Index("IDX_114dc8aba5d765dbe21b27ed08", ["resCardNo"], {})
 @Entity("codef_cards")
 export class CodefCards extends BaseEntity {
@@ -27,12 +30,6 @@ export class CodefCards extends BaseEntity {
     default: () => "'CURRENT_TIMESTAMP(6)'",
   })
   updatedAt: Date;
-
-  @Column("int", { name: "codef_account_id" })
-  codefAccountId: number;
-
-  @Column("int", { name: "credit_card_id", nullable: true })
-  creditCardId: number | null;
 
   @Column("varchar", { name: "resCardNo", length: 255 })
   resCardNo: string;
@@ -87,4 +84,24 @@ export class CodefCards extends BaseEntity {
     (codefBillingHistories) => codefBillingHistories.codefCard
   )
   codefBillingHistories: CodefBillingHistories[];
+
+  @ManyToOne(() => CreditCard, (creditCard) => creditCard.codefCards, {
+    onDelete: "SET NULL",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "credit_card_id", referencedColumnName: "id" }])
+  creditCard: CreditCard;
+
+  @ManyToOne(() => CodefAccounts, (codefAccounts) => codefAccounts.codefCards, {
+    onDelete: "CASCADE",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "codef_account_id", referencedColumnName: "id" }])
+  codefAccount: CodefAccounts;
+
+  @RelationId((codefCards: CodefCards) => codefCards.creditCard)
+  creditCardId: number | null;
+
+  @RelationId((codefCards: CodefCards) => codefCards.codefAccount)
+  codefAccountId: number;
 }

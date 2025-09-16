@@ -2,14 +2,16 @@ import {
   BaseEntity,
   Column,
   Entity,
-  Index,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
+import { BankAccounts } from "./BankAccounts";
+import { CodefAccounts } from "./CodefAccounts";
 import { CodefBillingHistories } from "./CodefBillingHistories";
 
-@Index("FK_752a4360350e321bf9a074d4135", ["bankAccountId"], {})
-@Index("FK_db3f3ce4793532438a94ffb6a22", ["codefAccountId"], {})
 @Entity("codef_bank_accounts")
 export class CodefBankAccounts extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -26,12 +28,6 @@ export class CodefBankAccounts extends BaseEntity {
     default: () => "'CURRENT_TIMESTAMP(6)'",
   })
   updatedAt: Date;
-
-  @Column("int", { name: "codef_account_id" })
-  codefAccountId: number;
-
-  @Column("int", { name: "bank_account_id", nullable: true })
-  bankAccountId: number | null;
 
   @Column("varchar", { name: "resAccountDeposit", length: 255 })
   resAccountDeposit: string;
@@ -122,9 +118,35 @@ export class CodefBankAccounts extends BaseEntity {
   @Column("tinyint", { name: "isSyncRunning", default: () => "'0'" })
   isSyncRunning: number;
 
+  @ManyToOne(
+    () => BankAccounts,
+    (bankAccounts) => bankAccounts.codefBankAccounts,
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+  )
+  @JoinColumn([{ name: "bank_account_id", referencedColumnName: "id" }])
+  bankAccount: BankAccounts;
+
+  @ManyToOne(
+    () => CodefAccounts,
+    (codefAccounts) => codefAccounts.codefBankAccounts,
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+  )
+  @JoinColumn([{ name: "codef_account_id", referencedColumnName: "id" }])
+  codefAccount: CodefAccounts;
+
   @OneToMany(
     () => CodefBillingHistories,
     (codefBillingHistories) => codefBillingHistories.codefBankAccount
   )
   codefBillingHistories: CodefBillingHistories[];
+
+  @RelationId(
+    (codefBankAccounts: CodefBankAccounts) => codefBankAccounts.bankAccount
+  )
+  bankAccountId: number | null;
+
+  @RelationId(
+    (codefBankAccounts: CodefBankAccounts) => codefBankAccounts.codefAccount
+  )
+  codefAccountId: number;
 }

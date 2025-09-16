@@ -26,7 +26,7 @@ if (!DB_NAME) {
   process.exit(1);
 }
 
-const outputDir = path.join(process.cwd(), 'app/api/db/entities');
+const outputDir = path.join(process.cwd(), 'app/.server/db/entities');
 
 const command = [
   'npx typeorm-model-generator',
@@ -43,6 +43,7 @@ const command = [
   '--cp camel',
   '--skipSchema',
   '-a',
+  '--relationIds',
   '--skipTables=typeorm_metadata,migrations'
 ].filter(Boolean).join(' ');
 

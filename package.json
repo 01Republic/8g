@@ -7,7 +7,7 @@
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
-    "db:generate-entities": "node app/api/db/scripts/generate-entities.js"
+    "db:generate-entities": "node app/.server/db/scripts/generate-entities.js"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",

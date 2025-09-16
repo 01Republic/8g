@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { CodefBillingHistories } from "./CodefBillingHistories";
 import { Products } from "./Products";
@@ -65,4 +66,7 @@ export class CodefCardParsers extends BaseEntity {
   })
   @JoinColumn([{ name: "product_id", referencedColumnName: "id" }])
   product: Products;
+
+  @RelationId((codefCardParsers: CodefCardParsers) => codefCardParsers.product)
+  productId: number;
 }

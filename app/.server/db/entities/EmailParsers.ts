@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { Products } from "./Products";
 
@@ -46,4 +47,7 @@ export class EmailParsers extends BaseEntity {
   })
   @JoinColumn([{ name: "product_id", referencedColumnName: "id" }])
   product: Products;
+
+  @RelationId((emailParsers: EmailParsers) => emailParsers.product)
+  productId: number;
 }

@@ -17,7 +17,7 @@ interface IntegrationAppCardProps {
 }
 
 export function IntegrationAppCard({ appKoreanName, appEnglishName, appDescription, appLogo, category }: IntegrationAppCardProps) {
-  const truncateDescription = (text: string, maxLength: number = 50) => {
+  const truncateDescription = (text: string, maxLength: number = 100) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
   };
@@ -34,7 +34,7 @@ export function IntegrationAppCard({ appKoreanName, appEnglishName, appDescripti
           </CardTitle>
         </div>
         <Button className="px-4 py-1 text-sm">
-          Install
+          Connect
         </Button>
       </CardHeader>
       <CardContent className="pt-0">
@@ -42,7 +42,7 @@ export function IntegrationAppCard({ appKoreanName, appEnglishName, appDescripti
           {truncateDescription(appDescription)}
         </CardDescription>
         <div className="text-sm text-gray-400">
-          <span className="font-medium">Models:</span> {category}
+          <span className="font-medium">Category:</span> {category}
         </div>
       </CardContent>
     </Card>

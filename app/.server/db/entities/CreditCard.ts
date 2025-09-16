@@ -6,12 +6,15 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { BillingHistories } from "./BillingHistories";
+import { CodefCards } from "./CodefCards";
 import { TeamMembers } from "./TeamMembers";
 import { Organizations } from "./Organizations";
 import { BankAccounts } from "./BankAccounts";
 import { Subscriptions } from "./Subscriptions";
+import { TeamCreditCards } from "./TeamCreditCards";
 
 @Entity("credit_card")
 export class CreditCard extends BaseEntity {
@@ -94,6 +97,9 @@ export class CreditCard extends BaseEntity {
   )
   billingHistories: BillingHistories[];
 
+  @OneToMany(() => CodefCards, (codefCards) => codefCards.creditCard)
+  codefCards: CodefCards[];
+
   @ManyToOne(() => TeamMembers, (teamMembers) => teamMembers.creditCards, {
     onDelete: "SET NULL",
     onUpdate: "NO ACTION",
@@ -118,4 +124,19 @@ export class CreditCard extends BaseEntity {
 
   @OneToMany(() => Subscriptions, (subscriptions) => subscriptions.creditCard)
   subscriptions: Subscriptions[];
+
+  @OneToMany(
+    () => TeamCreditCards,
+    (teamCreditCards) => teamCreditCards.creditCard
+  )
+  teamCreditCards: TeamCreditCards[];
+
+  @RelationId((creditCard: CreditCard) => creditCard.holdingMember)
+  holdingMemberId: number | null;
+
+  @RelationId((creditCard: CreditCard) => creditCard.organization)
+  organizationId: number;
+
+  @RelationId((creditCard: CreditCard) => creditCard.bankAccount)
+  bankAccountId: number | null;
 }

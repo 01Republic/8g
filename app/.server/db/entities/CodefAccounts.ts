@@ -4,10 +4,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { CodefConnectedIdentities } from "./CodefConnectedIdentities";
 import { Organizations } from "./Organizations";
+import { CodefBankAccounts } from "./CodefBankAccounts";
+import { CodefCards } from "./CodefCards";
 
 @Entity("codef_accounts")
 export class CodefAccounts extends BaseEntity {
@@ -87,6 +91,12 @@ export class CodefAccounts extends BaseEntity {
   })
   clientTypeLevel: "0" | "1" | "2" | "3" | null;
 
+  @Column("varchar", { name: "encUid", nullable: true, length: 255 })
+  encUid: string | null;
+
+  @Column("text", { name: "errorData", nullable: true })
+  errorData: string | null;
+
   @Column("datetime", {
     name: "privacyPolicyTermAgreedAt",
     nullable: true,
@@ -100,12 +110,6 @@ export class CodefAccounts extends BaseEntity {
     comment: "서비스 이용약관 동의 여부",
   })
   serviceUsageTermAgreedAt: Date | null;
-
-  @Column("varchar", { name: "encUid", nullable: true, length: 255 })
-  encUid: string | null;
-
-  @Column("text", { name: "errorData", nullable: true })
-  errorData: string | null;
 
   @Column("int", { name: "codefAssetCount", default: () => "'0'" })
   codefAssetCount: number;
@@ -133,4 +137,21 @@ export class CodefAccounts extends BaseEntity {
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization_2: Organizations;
+
+  @OneToMany(
+    () => CodefBankAccounts,
+    (codefBankAccounts) => codefBankAccounts.codefAccount
+  )
+  codefBankAccounts: CodefBankAccounts[];
+
+  @OneToMany(() => CodefCards, (codefCards) => codefCards.codefAccount)
+  codefCards: CodefCards[];
+
+  @RelationId(
+    (codefAccounts: CodefAccounts) => codefAccounts.codefConnectedIdentity
+  )
+  codefConnectedIdentityId: number | null;
+
+  @RelationId((codefAccounts: CodefAccounts) => codefAccounts.organization_2)
+  organizationId: number;
 }

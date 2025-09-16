@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { Subscriptions } from "./Subscriptions";
 import { TeamMembers } from "./TeamMembers";
@@ -62,4 +63,18 @@ export class SignedHistories extends BaseEntity {
   })
   @JoinColumn([{ name: "account_id", referencedColumnName: "id" }])
   account: Accounts;
+
+  @RelationId(
+    (signedHistories: SignedHistories) => signedHistories.subscription
+  )
+  subscriptionId: number;
+
+  @RelationId((signedHistories: SignedHistories) => signedHistories.teamMember)
+  teamMemberId: number;
+
+  @RelationId((signedHistories: SignedHistories) => signedHistories.user)
+  userId: number | null;
+
+  @RelationId((signedHistories: SignedHistories) => signedHistories.account)
+  accountId: number | null;
 }

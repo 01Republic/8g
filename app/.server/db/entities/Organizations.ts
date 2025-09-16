@@ -7,6 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { Accounts } from "./Accounts";
 import { BankAccounts } from "./BankAccounts";
@@ -18,6 +19,7 @@ import { GmailItems } from "./GmailItems";
 import { GoogleSyncHistories } from "./GoogleSyncHistories";
 import { IntegrationWorkspaces } from "./IntegrationWorkspaces";
 import { InvoiceAccounts } from "./InvoiceAccounts";
+import { Memberships } from "./Memberships";
 import { OrganizationBizInfos } from "./OrganizationBizInfos";
 import { ReviewCampaigns } from "./ReviewCampaigns";
 import { ReviewResponses } from "./ReviewResponses";
@@ -125,6 +127,9 @@ export class Organizations extends BaseEntity {
   )
   invoiceAccounts: InvoiceAccounts[];
 
+  @OneToMany(() => Memberships, (memberships) => memberships.organization)
+  memberships: Memberships[];
+
   @OneToMany(
     () => OrganizationBizInfos,
     (organizationBizInfos) => organizationBizInfos.organization
@@ -194,4 +199,9 @@ export class Organizations extends BaseEntity {
 
   @OneToMany(() => Workspaces, (workspaces) => workspaces.organization)
   workspaces: Workspaces[];
+
+  @RelationId(
+    (organizations: Organizations) => organizations.lastGoogleSyncHistory
+  )
+  lastGoogleSyncHistoryId: number | null;
 }

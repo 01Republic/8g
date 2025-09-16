@@ -7,6 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { TeamMembers } from "./TeamMembers";
 import { IntegrationWorkspaces } from "./IntegrationWorkspaces";
@@ -104,4 +105,16 @@ export class IntegrationGoogleWorkspaceMembers extends BaseEntity {
       integrationGoogleWorkspaceOauthTokenActivities.workspaceMember
   )
   integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities[];
+
+  @RelationId(
+    (integrationGoogleWorkspaceMembers: IntegrationGoogleWorkspaceMembers) =>
+      integrationGoogleWorkspaceMembers.teamMember
+  )
+  teamMemberId: number | null;
+
+  @RelationId(
+    (integrationGoogleWorkspaceMembers: IntegrationGoogleWorkspaceMembers) =>
+      integrationGoogleWorkspaceMembers.integrationWorkspace
+  )
+  integrationWorkspaceId2: number;
 }

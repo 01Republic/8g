@@ -7,6 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { BillingHistories } from "./BillingHistories";
 import { CodefBankAccountParsers } from "./CodefBankAccountParsers";
@@ -14,8 +15,8 @@ import { CodefBankAccounts } from "./CodefBankAccounts";
 import { CodefCardParsers } from "./CodefCardParsers";
 import { CodefCards } from "./CodefCards";
 
-@Index("FK_a3ea46f2562cec5c486c082469a", ["billingHistoryId"], {})
 @Index("IDX_9cd4f4349c1f09d455be116b3c", ["identifyKey"], {})
+@Index("FK_a3ea46f2562cec5c486c082469a", ["billingHistoryId"], {})
 @Entity("codef_billing_histories")
 export class CodefBillingHistories extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -217,4 +218,28 @@ export class CodefBillingHistories extends BaseEntity {
   )
   @JoinColumn([{ name: "codef_card_id", referencedColumnName: "id" }])
   codefCard: CodefCards;
+
+  @RelationId(
+    (codefBillingHistories: CodefBillingHistories) =>
+      codefBillingHistories.codefBankAccountParser
+  )
+  codefBankAccountParserId: number | null;
+
+  @RelationId(
+    (codefBillingHistories: CodefBillingHistories) =>
+      codefBillingHistories.codefBankAccount
+  )
+  codefBankAccountId: number | null;
+
+  @RelationId(
+    (codefBillingHistories: CodefBillingHistories) =>
+      codefBillingHistories.codefCardParser
+  )
+  codefCardParserId: number | null;
+
+  @RelationId(
+    (codefBillingHistories: CodefBillingHistories) =>
+      codefBillingHistories.codefCard
+  )
+  codefCardId: number | null;
 }

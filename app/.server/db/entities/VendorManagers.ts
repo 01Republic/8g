@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { VendorCompanies } from "./VendorCompanies";
 import { VendorContracts } from "./VendorContracts";
@@ -55,4 +56,7 @@ export class VendorManagers extends BaseEntity {
     (vendorContracts) => vendorContracts.vendorManager
   )
   vendorContracts: VendorContracts[];
+
+  @RelationId((vendorManagers: VendorManagers) => vendorManagers.vendorCompany)
+  vendorCompanyId: number;
 }

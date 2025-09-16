@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { VendorCompanies } from "./VendorCompanies";
 import { Subscriptions } from "./Subscriptions";
@@ -53,4 +54,19 @@ export class VendorContracts extends BaseEntity {
   )
   @JoinColumn([{ name: "vendor_manager_id", referencedColumnName: "id" }])
   vendorManager: VendorManagers;
+
+  @RelationId(
+    (vendorContracts: VendorContracts) => vendorContracts.vendorCompany
+  )
+  vendorCompanyId: number;
+
+  @RelationId(
+    (vendorContracts: VendorContracts) => vendorContracts.subscription
+  )
+  subscriptionId: number;
+
+  @RelationId(
+    (vendorContracts: VendorContracts) => vendorContracts.vendorManager
+  )
+  vendorManagerId: number | null;
 }

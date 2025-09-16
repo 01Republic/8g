@@ -3,36 +3,29 @@ import {
   Column,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
+import { Users } from "./Users";
+import { Organizations } from "./Organizations";
 import { NotificationMessages } from "./NotificationMessages";
 import { ReviewCampaigns } from "./ReviewCampaigns";
 import { Roles } from "./Roles";
 import { TeamMembers } from "./TeamMembers";
 
-@Index("IDX_7c1e2fdfed4f6838e0c05ae505", ["userId"], {})
-@Index("IDX_e5380c394ec7912046d07b5429", ["organizationId"], {})
 @Index("IDX_organization_id_user_id", ["organizationId", "userId"], {
   unique: true,
 })
+@Index("IDX_e5380c394ec7912046d07b5429", ["organizationId"], {})
+@Index("IDX_7c1e2fdfed4f6838e0c05ae505", ["userId"], {})
 @Entity("memberships")
 export class Memberships extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
-
-  @Column("datetime", {
-    name: "created_at",
-    default: () => "'CURRENT_TIMESTAMP(6)'",
-  })
-  createdAt: Date;
-
-  @Column("datetime", {
-    name: "updated_at",
-    default: () => "'CURRENT_TIMESTAMP(6)'",
-  })
-  updatedAt: Date;
 
   @Column("int", { name: "organization_id" })
   organizationId: number;
@@ -46,6 +39,18 @@ export class Memberships extends BaseEntity {
     default: () => "'MEMBER'",
   })
   level: "MEMBER" | "OWNER" | "ADMIN";
+
+  @Column("datetime", {
+    name: "created_at",
+    default: () => "'CURRENT_TIMESTAMP(6)'",
+  })
+  createdAt: Date;
+
+  @Column("datetime", {
+    name: "updated_at",
+    default: () => "'CURRENT_TIMESTAMP(6)'",
+  })
+  updatedAt: Date;
 
   @Column("enum", {
     name: "approvalStatus",
@@ -76,6 +81,21 @@ export class Memberships extends BaseEntity {
   })
   lastSignedAt: Date;
 
+  @ManyToOne(() => Users, (users) => users.memberships, {
+    onDelete: "CASCADE",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
+  user: Users;
+
+  @ManyToOne(
+    () => Organizations,
+    (organizations) => organizations.memberships,
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+  )
+  @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
+  organization: Organizations;
+
   @OneToMany(
     () => NotificationMessages,
     (notificationMessages) => notificationMessages.membership
@@ -90,4 +110,10 @@ export class Memberships extends BaseEntity {
 
   @OneToOne(() => TeamMembers, (teamMembers) => teamMembers.membership)
   teamMembers: TeamMembers;
+
+  @RelationId((memberships: Memberships) => memberships.user)
+  userId2: number | null;
+
+  @RelationId((memberships: Memberships) => memberships.organization)
+  organizationId2: number;
 }

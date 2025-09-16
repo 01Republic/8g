@@ -3,16 +3,18 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { PostLikes } from "./PostLikes";
 import { PostUnlikes } from "./PostUnlikes";
 import { PostVisits } from "./PostVisits";
 import { Products } from "./Products";
-import { PostsAuthorsPostAuthors } from "./PostsAuthorsPostAuthors";
-import { PostsTagsPostTags } from "./PostsTagsPostTags";
+import { PostAuthors } from "./PostAuthors";
+import { PostTags } from "./PostTags";
 
 @Entity("posts")
 export class Posts extends BaseEntity {
@@ -80,15 +82,22 @@ export class Posts extends BaseEntity {
   @JoinColumn([{ name: "product_id", referencedColumnName: "id" }])
   product: Products;
 
-  @OneToMany(
-    () => PostsAuthorsPostAuthors,
-    (postsAuthorsPostAuthors) => postsAuthorsPostAuthors.posts
-  )
-  postsAuthorsPostAuthors: PostsAuthorsPostAuthors[];
+  @ManyToOne(() => Products, (products) => products.posts2, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "product_id", referencedColumnName: "id" }])
+  product_2: Products;
 
-  @OneToMany(
-    () => PostsTagsPostTags,
-    (postsTagsPostTags) => postsTagsPostTags.posts
-  )
-  postsTagsPostTags: PostsTagsPostTags[];
+  @ManyToMany(() => PostAuthors, (postAuthors) => postAuthors.posts)
+  postAuthors: PostAuthors[];
+
+  @ManyToMany(() => PostTags, (postTags) => postTags.posts)
+  postTags: PostTags[];
+
+  @RelationId((posts: Posts) => posts.product)
+  productId: number | null;
+
+  @RelationId((posts: Posts) => posts.product_2)
+  productId2: number | null;
 }

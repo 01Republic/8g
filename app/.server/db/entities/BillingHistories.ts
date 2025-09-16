@@ -8,30 +8,32 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { InvoiceApps } from "./InvoiceApps";
 import { CreditCard } from "./CreditCard";
+import { Subscriptions } from "./Subscriptions";
 import { CodefBillingHistories } from "./CodefBillingHistories";
 import { Moneys } from "./Moneys";
 import { Organizations } from "./Organizations";
 import { BankAccounts } from "./BankAccounts";
 import { GmailItems } from "./GmailItems";
 
-@Index("FK_4192c9c974488705ec4610b0282", ["subscriptionId"], {})
+@Index("IDX_f06edc9547c4d7ad4765cca250", ["payAmountId"], { unique: true })
 @Index(
   "IDX_2b9f9da89be5f6075f32c36814",
-  ["emailOriginId", "subscriptionId", "invoiceAppId"],
+  ["subscriptionId", "invoiceAppId", "emailOriginId"],
   { unique: true }
 )
 @Index("IDX_e0a2c11070e06d088ba32daec7", ["vatAmountId"], { unique: true })
-@Index("IDX_e8124120a3148ce8dd00624645", ["emailOriginId"], {})
 @Index("IDX_eba28a7542aa10d69fd1dd8ff1", ["abroadPayAmountId"], {
   unique: true,
 })
-@Index("IDX_f06edc9547c4d7ad4765cca250", ["payAmountId"], { unique: true })
 @Index("REL_eba28a7542aa10d69fd1dd8ff1", ["abroadPayAmountId"], {
   unique: true,
 })
+@Index("FK_4192c9c974488705ec4610b0282", ["subscriptionId"], {})
+@Index("IDX_e8124120a3148ce8dd00624645", ["emailOriginId"], {})
 @Entity("billing_histories")
 export class BillingHistories extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -125,6 +127,14 @@ export class BillingHistories extends BaseEntity {
   creditCard: CreditCard;
 
   @ManyToOne(
+    () => Subscriptions,
+    (subscriptions) => subscriptions.billingHistories,
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+  )
+  @JoinColumn([{ name: "subscription_id", referencedColumnName: "id" }])
+  subscription: Subscriptions;
+
+  @ManyToOne(
     () => CodefBillingHistories,
     (codefBillingHistories) => codefBillingHistories.billingHistories,
     { onDelete: "SET NULL", onUpdate: "NO ACTION" }
@@ -166,4 +176,44 @@ export class BillingHistories extends BaseEntity {
 
   @OneToMany(() => GmailItems, (gmailItems) => gmailItems.billingHistory)
   gmailItems: GmailItems[];
+
+  @RelationId(
+    (billingHistories: BillingHistories) => billingHistories.invoiceApp
+  )
+  invoiceAppId2: number | null;
+
+  @RelationId(
+    (billingHistories: BillingHistories) => billingHistories.creditCard
+  )
+  creditCardId: number | null;
+
+  @RelationId(
+    (billingHistories: BillingHistories) => billingHistories.subscription
+  )
+  subscriptionId2: number | null;
+
+  @RelationId(
+    (billingHistories: BillingHistories) => billingHistories.codefBillingHistory
+  )
+  codefBillingHistoryId: number | null;
+
+  @RelationId(
+    (billingHistories: BillingHistories) => billingHistories.vatAmount
+  )
+  vatAmountId2: number | null;
+
+  @RelationId(
+    (billingHistories: BillingHistories) => billingHistories.organization
+  )
+  organizationId: number;
+
+  @RelationId(
+    (billingHistories: BillingHistories) => billingHistories.payAmount
+  )
+  payAmountId2: number | null;
+
+  @RelationId(
+    (billingHistories: BillingHistories) => billingHistories.bankAccount
+  )
+  bankAccountId: number | null;
 }

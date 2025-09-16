@@ -4,10 +4,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { ProductPaymentPlans } from "./ProductPaymentPlans";
 import { Products } from "./Products";
+import { Subscriptions } from "./Subscriptions";
 
 @Entity("product_billing_cycles")
 export class ProductBillingCycles extends BaseEntity {
@@ -47,9 +50,50 @@ export class ProductBillingCycles extends BaseEntity {
   paymentPlan: ProductPaymentPlans;
 
   @ManyToOne(() => Products, (products) => products.productBillingCycles, {
-    onDelete: "CASCADE",
+    onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })
   @JoinColumn([{ name: "product_id", referencedColumnName: "id" }])
   product: Products;
+
+  @ManyToOne(
+    () => ProductPaymentPlans,
+    (productPaymentPlans) => productPaymentPlans.productBillingCycles2,
+    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
+  )
+  @JoinColumn([{ name: "payment_plan_id", referencedColumnName: "id" }])
+  paymentPlan_2: ProductPaymentPlans;
+
+  @ManyToOne(() => Products, (products) => products.productBillingCycles2, {
+    onDelete: "CASCADE",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "product_id", referencedColumnName: "id" }])
+  product_2: Products;
+
+  @OneToMany(() => Subscriptions, (subscriptions) => subscriptions.billingCycle)
+  subscriptions: Subscriptions[];
+
+  @RelationId(
+    (productBillingCycles: ProductBillingCycles) =>
+      productBillingCycles.paymentPlan
+  )
+  paymentPlanId: number;
+
+  @RelationId(
+    (productBillingCycles: ProductBillingCycles) => productBillingCycles.product
+  )
+  productId: number;
+
+  @RelationId(
+    (productBillingCycles: ProductBillingCycles) =>
+      productBillingCycles.paymentPlan_2
+  )
+  paymentPlanId2: number;
+
+  @RelationId(
+    (productBillingCycles: ProductBillingCycles) =>
+      productBillingCycles.product_2
+  )
+  productId2: number;
 }

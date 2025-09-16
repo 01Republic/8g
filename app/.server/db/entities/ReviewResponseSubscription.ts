@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { ReviewCampaignSubscriptions } from "./ReviewCampaignSubscriptions";
 import { ReviewResponses } from "./ReviewResponses";
@@ -57,4 +58,16 @@ export class ReviewResponseSubscription extends BaseEntity {
   )
   @JoinColumn([{ name: "response_id", referencedColumnName: "id" }])
   response: ReviewResponses;
+
+  @RelationId(
+    (reviewResponseSubscription: ReviewResponseSubscription) =>
+      reviewResponseSubscription.campaignSubscription
+  )
+  campaignSubscriptionId: number;
+
+  @RelationId(
+    (reviewResponseSubscription: ReviewResponseSubscription) =>
+      reviewResponseSubscription.response
+  )
+  responseId: number;
 }

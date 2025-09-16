@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { CodefAccounts } from "./CodefAccounts";
 import { Organizations } from "./Organizations";
@@ -43,4 +44,10 @@ export class CodefConnectedIdentities extends BaseEntity {
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
+
+  @RelationId(
+    (codefConnectedIdentities: CodefConnectedIdentities) =>
+      codefConnectedIdentities.organization
+  )
+  organizationId: number;
 }

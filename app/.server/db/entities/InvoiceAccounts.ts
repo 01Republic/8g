@@ -3,15 +3,20 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { GmailItems } from "./GmailItems";
+import { Subscriptions } from "./Subscriptions";
 import { Organizations } from "./Organizations";
 import { GoogleTokenData } from "./GoogleTokenData";
 import { TeamMembers } from "./TeamMembers";
 import { InvoiceApps } from "./InvoiceApps";
+import { TeamInvoiceAccounts } from "./TeamInvoiceAccounts";
 
 @Entity("invoice_accounts")
 export class InvoiceAccounts extends BaseEntity {
@@ -67,6 +72,20 @@ export class InvoiceAccounts extends BaseEntity {
   @OneToMany(() => GmailItems, (gmailItems) => gmailItems.invoiceAccount)
   gmailItems: GmailItems[];
 
+  @ManyToMany(
+    () => Subscriptions,
+    (subscriptions) => subscriptions.invoiceAccounts
+  )
+  @JoinTable({
+    name: "invoice_account_subscriptions",
+    joinColumns: [{ name: "invoice_account_id", referencedColumnName: "id" }],
+    inverseJoinColumns: [
+      { name: "subscription_id", referencedColumnName: "id" },
+    ],
+    schema: "payplo_staging",
+  })
+  subscriptions: Subscriptions[];
+
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.invoiceAccounts,
@@ -92,4 +111,25 @@ export class InvoiceAccounts extends BaseEntity {
 
   @OneToMany(() => InvoiceApps, (invoiceApps) => invoiceApps.invoiceAccount)
   invoiceApps: InvoiceApps[];
+
+  @OneToMany(
+    () => TeamInvoiceAccounts,
+    (teamInvoiceAccounts) => teamInvoiceAccounts.invoiceAccount
+  )
+  teamInvoiceAccounts: TeamInvoiceAccounts[];
+
+  @RelationId(
+    (invoiceAccounts: InvoiceAccounts) => invoiceAccounts.organization
+  )
+  organizationId: number;
+
+  @RelationId(
+    (invoiceAccounts: InvoiceAccounts) => invoiceAccounts.googleTokenData
+  )
+  googleTokenDataId: number | null;
+
+  @RelationId(
+    (invoiceAccounts: InvoiceAccounts) => invoiceAccounts.holdingMember
+  )
+  holdingMemberId: number | null;
 }

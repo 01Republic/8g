@@ -3,11 +3,15 @@ import {
   Column,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
+import { Teams } from "./Teams";
+import { InvoiceAccounts } from "./InvoiceAccounts";
 
-@Index("FK_40ffd77e803ae336ac786ea72c6", ["invoiceAccountId"], {})
-@Index("IDX_4964827b13dea442563a9e6ea6", ["teamId", "invoiceAccountId"], {
+@Index("IDX_4964827b13dea442563a9e6ea6", ["invoiceAccountId", "teamId"], {
   unique: true,
 })
 @Entity("team_invoice_accounts")
@@ -32,4 +36,30 @@ export class TeamInvoiceAccounts extends BaseEntity {
 
   @Column("int", { name: "team_id" })
   teamId: number;
+
+  @ManyToOne(() => Teams, (teams) => teams.teamInvoiceAccounts, {
+    onDelete: "CASCADE",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "team_id", referencedColumnName: "id" }])
+  team: Teams;
+
+  @ManyToOne(
+    () => InvoiceAccounts,
+    (invoiceAccounts) => invoiceAccounts.teamInvoiceAccounts,
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+  )
+  @JoinColumn([{ name: "invoice_account_id", referencedColumnName: "id" }])
+  invoiceAccount: InvoiceAccounts;
+
+  @RelationId(
+    (teamInvoiceAccounts: TeamInvoiceAccounts) => teamInvoiceAccounts.team
+  )
+  teamId2: number;
+
+  @RelationId(
+    (teamInvoiceAccounts: TeamInvoiceAccounts) =>
+      teamInvoiceAccounts.invoiceAccount
+  )
+  invoiceAccountId2: number;
 }

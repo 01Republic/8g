@@ -6,11 +6,12 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { Users } from "./Users";
 
-@Index("IDX_15a2153fed5a6017ec824983be", ["email"], {})
 @Index("social_account_identity", ["provider", "uid"], { unique: true })
+@Index("IDX_15a2153fed5a6017ec824983be", ["email"], {})
 @Entity("users_social_accounts")
 export class UsersSocialAccounts extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -49,4 +50,9 @@ export class UsersSocialAccounts extends BaseEntity {
   })
   @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
   user: Users;
+
+  @RelationId(
+    (usersSocialAccounts: UsersSocialAccounts) => usersSocialAccounts.user
+  )
+  userId: number;
 }

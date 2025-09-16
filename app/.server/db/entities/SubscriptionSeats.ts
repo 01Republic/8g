@@ -3,13 +3,18 @@ import {
   Column,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
+import { Subscriptions } from "./Subscriptions";
+import { TeamMembers } from "./TeamMembers";
 
-@Index("IDX_016773c1dbb0492bda7f2df9b1", ["status"], {})
-@Index("IDX_9829e971fc359ab67f022d6c19", ["subscriptionId"], {})
 @Index("IDX_9aa1ce4adea7871813a37a7287", ["teamMemberId"], {})
+@Index("IDX_9829e971fc359ab67f022d6c19", ["subscriptionId"], {})
 @Index("IDX_c332a550c7f70f41c5636e416d", ["deletedAt"], {})
+@Index("IDX_016773c1dbb0492bda7f2df9b1", ["status"], {})
 @Entity("subscription_seats")
 export class SubscriptionSeats extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -54,4 +59,30 @@ export class SubscriptionSeats extends BaseEntity {
 
   @Column("text", { name: "memo", nullable: true })
   memo: string | null;
+
+  @ManyToOne(
+    () => Subscriptions,
+    (subscriptions) => subscriptions.subscriptionSeats,
+    { onDelete: "SET NULL", onUpdate: "CASCADE" }
+  )
+  @JoinColumn([{ name: "subscription_id", referencedColumnName: "id" }])
+  subscription: Subscriptions;
+
+  @ManyToOne(
+    () => TeamMembers,
+    (teamMembers) => teamMembers.subscriptionSeats,
+    { onDelete: "SET NULL", onUpdate: "CASCADE" }
+  )
+  @JoinColumn([{ name: "team_member_id", referencedColumnName: "id" }])
+  teamMember: TeamMembers;
+
+  @RelationId(
+    (subscriptionSeats: SubscriptionSeats) => subscriptionSeats.subscription
+  )
+  subscriptionId2: number | null;
+
+  @RelationId(
+    (subscriptionSeats: SubscriptionSeats) => subscriptionSeats.teamMember
+  )
+  teamMemberId2: number | null;
 }

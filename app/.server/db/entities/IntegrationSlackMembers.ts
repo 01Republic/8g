@@ -6,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { IntegrationWorkspaces } from "./IntegrationWorkspaces";
 import { TeamMembers } from "./TeamMembers";
@@ -74,9 +75,6 @@ export class IntegrationSlackMembers extends BaseEntity {
   })
   updatedAt: Date;
 
-  @Column("tinyint", { name: "isHelloMessageSent", default: () => "'0'" })
-  isHelloMessageSent: number;
-
   @ManyToOne(
     () => IntegrationWorkspaces,
     (integrationWorkspaces) => integrationWorkspaces.integrationSlackMembers,
@@ -94,4 +92,16 @@ export class IntegrationSlackMembers extends BaseEntity {
   )
   @JoinColumn([{ name: "team_member_id", referencedColumnName: "id" }])
   teamMember: TeamMembers;
+
+  @RelationId(
+    (integrationSlackMembers: IntegrationSlackMembers) =>
+      integrationSlackMembers.integrationWorkspace
+  )
+  integrationWorkspaceId2: number;
+
+  @RelationId(
+    (integrationSlackMembers: IntegrationSlackMembers) =>
+      integrationSlackMembers.teamMember
+  )
+  teamMemberId: number | null;
 }

@@ -8,7 +8,9 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
+import { ProductTags } from "./ProductTags";
 import { Subscriptions } from "./Subscriptions";
 import { Organizations } from "./Organizations";
 import { Teams } from "./Teams";
@@ -46,6 +48,12 @@ export class Tags extends BaseEntity {
   @Column("varchar", { name: "name", unique: true, length: 255 })
   name: string;
 
+  @OneToMany(() => ProductTags, (productTags) => productTags.tag)
+  productTags: ProductTags[];
+
+  @OneToMany(() => ProductTags, (productTags) => productTags.tag_2)
+  productTags2: ProductTags[];
+
   @OneToMany(
     () => Subscriptions,
     (subscriptions) => subscriptions.recurringTypeTag
@@ -77,4 +85,10 @@ export class Tags extends BaseEntity {
 
   @ManyToMany(() => Teams, (teams) => teams.tags)
   teams: Teams[];
+
+  @RelationId((tags: Tags) => tags.organization)
+  organizationId: number | null;
+
+  @RelationId((tags: Tags) => tags.parentTag)
+  parentTagId: number | null;
 }

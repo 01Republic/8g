@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { ScordiPayments } from "./ScordiPayments";
 import { ScordiPlans } from "./ScordiPlans";
@@ -72,4 +73,21 @@ export class ScordiSubscriptions extends BaseEntity {
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
+
+  @RelationId(
+    (scordiSubscriptions: ScordiSubscriptions) =>
+      scordiSubscriptions.nextSubscription
+  )
+  nextSubscriptionId: number | null;
+
+  @RelationId(
+    (scordiSubscriptions: ScordiSubscriptions) => scordiSubscriptions.scordiPlan
+  )
+  scordiPlanId: number | null;
+
+  @RelationId(
+    (scordiSubscriptions: ScordiSubscriptions) =>
+      scordiSubscriptions.organization
+  )
+  organizationId: number;
 }

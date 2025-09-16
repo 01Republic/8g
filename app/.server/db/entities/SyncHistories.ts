@@ -6,7 +6,9 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
+import { Subscriptions } from "./Subscriptions";
 import { Users } from "./Users";
 
 @Index("FK_1cb749aceb548cdb63aa99c014c", ["subscriptionId"], {})
@@ -46,10 +48,24 @@ export class SyncHistories extends BaseEntity {
   @Column("datetime", { name: "finishedAt", nullable: true })
   finishedAt: Date | null;
 
+  @ManyToOne(
+    () => Subscriptions,
+    (subscriptions) => subscriptions.syncHistories,
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+  )
+  @JoinColumn([{ name: "subscription_id", referencedColumnName: "id" }])
+  subscription: Subscriptions;
+
   @ManyToOne(() => Users, (users) => users.syncHistories, {
     onDelete: "SET NULL",
     onUpdate: "NO ACTION",
   })
   @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
   user: Users;
+
+  @RelationId((syncHistories: SyncHistories) => syncHistories.subscription)
+  subscriptionId2: number;
+
+  @RelationId((syncHistories: SyncHistories) => syncHistories.user)
+  userId: number | null;
 }

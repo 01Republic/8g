@@ -3,10 +3,14 @@ import {
   Column,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
+import { Accounts } from "./Accounts";
+import { TeamMembers } from "./TeamMembers";
 
-@Index("FK_5b0fb1410224e82210d3a44eff4", ["teamMemberId"], {})
 @Index("IDX_3b6aaf83f13b115743207662ad", ["accountId", "teamMemberId"], {})
 @Entity("account_permissions")
 export class AccountPermissions extends BaseEntity {
@@ -44,4 +48,29 @@ export class AccountPermissions extends BaseEntity {
     default: () => "'CREATOR'",
   })
   role: "MEMBER" | "CREATOR" | "OWNER" | "ADMIN";
+
+  @ManyToOne(() => Accounts, (accounts) => accounts.accountPermissions, {
+    onDelete: "CASCADE",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "account_id", referencedColumnName: "id" }])
+  account: Accounts;
+
+  @ManyToOne(
+    () => TeamMembers,
+    (teamMembers) => teamMembers.accountPermissions,
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+  )
+  @JoinColumn([{ name: "team_member_id", referencedColumnName: "id" }])
+  teamMember: TeamMembers;
+
+  @RelationId(
+    (accountPermissions: AccountPermissions) => accountPermissions.account
+  )
+  accountId2: number;
+
+  @RelationId(
+    (accountPermissions: AccountPermissions) => accountPermissions.teamMember
+  )
+  teamMemberId2: number;
 }

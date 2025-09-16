@@ -8,8 +8,11 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
-import { TeamMemberships } from "./TeamMemberships";
+import { TeamCreditCards } from "./TeamCreditCards";
+import { TeamInvoiceAccounts } from "./TeamInvoiceAccounts";
+import { TeamMembers } from "./TeamMembers";
 import { Tags } from "./Tags";
 import { Organizations } from "./Organizations";
 
@@ -45,15 +48,24 @@ export class Teams extends BaseEntity {
   @Column("int", { name: "invoiceAccountCount", default: () => "'0'" })
   invoiceAccountCount: number;
 
-  @OneToMany(() => TeamMemberships, (teamMemberships) => teamMemberships.team)
-  teamMemberships: TeamMemberships[];
+  @OneToMany(() => TeamCreditCards, (teamCreditCards) => teamCreditCards.team)
+  teamCreditCards: TeamCreditCards[];
+
+  @OneToMany(
+    () => TeamInvoiceAccounts,
+    (teamInvoiceAccounts) => teamInvoiceAccounts.team
+  )
+  teamInvoiceAccounts: TeamInvoiceAccounts[];
+
+  @ManyToMany(() => TeamMembers, (teamMembers) => teamMembers.teams)
+  teamMembers: TeamMembers[];
 
   @ManyToMany(() => Tags, (tags) => tags.teams)
   @JoinTable({
     name: "team_tags",
     joinColumns: [{ name: "team_id", referencedColumnName: "id" }],
     inverseJoinColumns: [{ name: "tag_id", referencedColumnName: "id" }],
-    schema: "mydb",
+    schema: "payplo_staging",
   })
   tags: Tags[];
 
@@ -63,4 +75,7 @@ export class Teams extends BaseEntity {
   })
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
+
+  @RelationId((teams: Teams) => teams.organization)
+  organizationId: number;
 }

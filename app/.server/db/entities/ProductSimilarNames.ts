@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { IntegrationGoogleWorkspaceOauthTokenActivities } from "./IntegrationGoogleWorkspaceOauthTokenActivities";
 import { Products } from "./Products";
@@ -46,4 +47,9 @@ export class ProductSimilarNames extends BaseEntity {
   })
   @JoinColumn([{ name: "product_id", referencedColumnName: "id" }])
   product: Products;
+
+  @RelationId(
+    (productSimilarNames: ProductSimilarNames) => productSimilarNames.product
+  )
+  productId: number | null;
 }

@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { Organizations } from "./Organizations";
 
@@ -38,4 +39,10 @@ export class OrganizationBizInfos extends BaseEntity {
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
+
+  @RelationId(
+    (organizationBizInfos: OrganizationBizInfos) =>
+      organizationBizInfos.organization
+  )
+  organizationId: number;
 }

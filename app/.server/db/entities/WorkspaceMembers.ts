@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { Workspaces } from "./Workspaces";
 import { TeamMembers } from "./TeamMembers";
@@ -51,4 +52,14 @@ export class WorkspaceMembers extends BaseEntity {
   })
   @JoinColumn([{ name: "team_member_id", referencedColumnName: "id" }])
   teamMember: TeamMembers;
+
+  @RelationId(
+    (workspaceMembers: WorkspaceMembers) => workspaceMembers.workspace
+  )
+  workspaceId: number;
+
+  @RelationId(
+    (workspaceMembers: WorkspaceMembers) => workspaceMembers.teamMember
+  )
+  teamMemberId: number | null;
 }

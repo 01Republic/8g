@@ -6,10 +6,12 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { TeamMembers } from "./TeamMembers";
 import { Organizations } from "./Organizations";
 import { BillingHistories } from "./BillingHistories";
+import { CodefBankAccounts } from "./CodefBankAccounts";
 import { CreditCard } from "./CreditCard";
 import { Subscriptions } from "./Subscriptions";
 
@@ -126,9 +128,21 @@ export class BankAccounts extends BaseEntity {
   )
   billingHistories: BillingHistories[];
 
+  @OneToMany(
+    () => CodefBankAccounts,
+    (codefBankAccounts) => codefBankAccounts.bankAccount
+  )
+  codefBankAccounts: CodefBankAccounts[];
+
   @OneToMany(() => CreditCard, (creditCard) => creditCard.bankAccount)
   creditCards: CreditCard[];
 
   @OneToMany(() => Subscriptions, (subscriptions) => subscriptions.bankAccount)
   subscriptions: Subscriptions[];
+
+  @RelationId((bankAccounts: BankAccounts) => bankAccounts.holdingMember)
+  holdingMemberId: number | null;
+
+  @RelationId((bankAccounts: BankAccounts) => bankAccounts.organization)
+  organizationId: number;
 }

@@ -5,6 +5,7 @@ import {
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { Moneys } from "./Moneys";
 import { GmailItems } from "./GmailItems";
@@ -57,4 +58,10 @@ export class GmailItemBillingInfo extends BaseEntity {
 
   @OneToOne(() => GmailItems, (gmailItems) => gmailItems.billingInfo)
   gmailItems: GmailItems;
+
+  @RelationId(
+    (gmailItemBillingInfo: GmailItemBillingInfo) =>
+      gmailItemBillingInfo.payAmount
+  )
+  payAmountId: number | null;
 }

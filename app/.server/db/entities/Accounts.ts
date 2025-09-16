@@ -7,14 +7,17 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
+import { AccountPermissions } from "./AccountPermissions";
 import { Organizations } from "./Organizations";
 import { Products } from "./Products";
 import { SignedHistories } from "./SignedHistories";
+import { WorkspaceRoles } from "./WorkspaceRoles";
 import { Workspaces } from "./Workspaces";
 
-@Index("IDX_58727fdc27b4741fff3bc8d8cd", ["productId", "organizationId"], {})
 @Index("IDX_70f03445d49a83965842c19551", ["sign"], {})
+@Index("IDX_58727fdc27b4741fff3bc8d8cd", ["productId", "organizationId"], {})
 @Entity("accounts")
 export class Accounts extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -57,6 +60,12 @@ export class Accounts extends BaseEntity {
   @Column("text", { name: "memo", nullable: true })
   memo: string | null;
 
+  @OneToMany(
+    () => AccountPermissions,
+    (accountPermissions) => accountPermissions.account
+  )
+  accountPermissions: AccountPermissions[];
+
   @ManyToOne(() => Organizations, (organizations) => organizations.accounts, {
     onDelete: "CASCADE",
     onUpdate: "NO ACTION",
@@ -65,11 +74,18 @@ export class Accounts extends BaseEntity {
   organization: Organizations;
 
   @ManyToOne(() => Products, (products) => products.accounts, {
-    onDelete: "CASCADE",
+    onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })
   @JoinColumn([{ name: "product_id", referencedColumnName: "id" }])
   product: Products;
+
+  @ManyToOne(() => Products, (products) => products.accounts2, {
+    onDelete: "CASCADE",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "product_id", referencedColumnName: "id" }])
+  product_2: Products;
 
   @OneToMany(
     () => SignedHistories,
@@ -77,6 +93,18 @@ export class Accounts extends BaseEntity {
   )
   signedHistories: SignedHistories[];
 
+  @OneToMany(() => WorkspaceRoles, (workspaceRoles) => workspaceRoles.account)
+  workspaceRoles: WorkspaceRoles[];
+
   @OneToMany(() => Workspaces, (workspaces) => workspaces.syncAccount)
   workspaces: Workspaces[];
+
+  @RelationId((accounts: Accounts) => accounts.organization)
+  organizationId2: number;
+
+  @RelationId((accounts: Accounts) => accounts.product)
+  productId2: number;
+
+  @RelationId((accounts: Accounts) => accounts.product_2)
+  productId3: number;
 }
