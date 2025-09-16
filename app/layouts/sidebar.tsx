@@ -7,25 +7,26 @@ import {
     SidebarGroup,
     SidebarHeader,
   } from "~/components/ui/sidebar"
-import { Link, Links, Meta, Outlet } from "react-router"
+import { Link, Links, Meta, Outlet, Scripts } from "react-router"
 import { Button } from "../components/ui/button"
   
 export default function SidebarLayout() {
   return (
     <html lang="en">
-    <body>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
+      <body>
       <SidebarProvider>
         <AppSidebar />
         <main className="flex-1 w-full">
           <Outlet />
         </main>
-        </SidebarProvider>
+        </SidebarProvider>       
+        <Scripts />
       </body>
     </html>
   )
