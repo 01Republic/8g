@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
     Command,
     CommandEmpty,
@@ -8,37 +7,20 @@ import {
     CommandList,
 } from "~/components/ui/command"
 
-const apps = [
-    "Slack",
-    "Google Drive",
-    "Google Calendar",
-    "Google Docs",
-    "Google Sheets",
-    "Google Slides",
-    "Google Forms",
-    "Notion",
-    "Trello",
-    "Asana",
-    "Jira",
-    "Monday",
-    "Basecamp",
-    "Trello",
-]
+interface SearchCommandProps {
+    query: string;
+    onQueryChange: (value: string) => void;
+    predictions: string[];
+}
 
-export function SearchCommand() {
-    const [predictions, setPredictions] = useState<string[]>([]);
-    const [query, setQuery] = useState("");
-
-    useEffect(() => {
-        setPredictions(apps.filter((app) => app.toLowerCase().includes(query.toLowerCase())));
-    }, [query]);
+export function SearchCommand({ query, onQueryChange, predictions }: SearchCommandProps) {
 
     return (
           <Command className="w-full border-2 rounded-lg">
             <CommandInput 
                 placeholder="Find apps to see who uses them..." 
                 value={query} 
-                onValueChange={setQuery}
+                onValueChange={onQueryChange}
                 className="w-full h-12 px-4 text-base border-0 focus:ring-0"
             />
                     {query && (
