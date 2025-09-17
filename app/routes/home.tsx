@@ -63,7 +63,8 @@ export default function Home() {
   }, [query]);
 
   return (
-    <div className="flex flex-col items-center h-full w-full p-8 pt-64">
+    <div className="flex flex-col items-center h-full w-full p-8 pt-64 gap-12">
+      {/* 상단 타이틀이랑 검색창 색션 */}
       <div className="w-full max-w-2xl space-y-6">
         <div className="text-center">
           <h1 className="text-2xl font-semibold text-gray-900 mb-2">
@@ -79,7 +80,8 @@ export default function Home() {
           />
         </div>
       </div>
-      
+
+      {/* 최근 사용한 앱 */}
       <div className="w-full max-w-4xl space-y-6 mt-12">
         <div className="text-left">
           <h3 className="text-xl font-semibold text-gray-900 mb-8">
