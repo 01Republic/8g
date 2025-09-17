@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "react-router build",
-    "dev": "react-router dev",
-    "start": "react-router-serve ./build/server/index.js",
+    "dev": "NODE_ENV=development node server.js",
+    "start": "npm run build && NODE_ENV=production node server.js",
     "typecheck": "react-router typegen && tsc",
     "db:generate-entities": "node app/.server/db/scripts/generate-entities.js"
   },
@@ -17,11 +17,13 @@
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@react-router/express": "^7.9.1",
     "@react-router/node": "^7.7.1",
-    "@react-router/serve": "^7.7.1",
+    "@types/ws": "^8.18.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "express": "^5.1.0",
     "isbot": "^5.1.27",
     "lucide-react": "^0.544.0",
     "mysql2": "^3.14.5",
@@ -30,7 +32,8 @@
     "react-router": "^7.7.1",
     "reflect-metadata": "^0.2.2",
     "tailwind-merge": "^3.3.1",
-    "typeorm": "^0.3.26"
+    "typeorm": "^0.3.26",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@react-router/dev": "^7.7.1",

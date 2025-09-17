@@ -8,4 +8,8 @@ export default defineConfig({
   esbuild: {
     target: 'es2022',
   },
+  server: {
+    cors: true,
+    port: 3000
+  }
 });
