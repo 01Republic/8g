@@ -56,19 +56,6 @@ function broadcastToClients(message, excludeId) {
   });
 }
 
-// API 라우트에서 사용할 수 있도록 브로드캐스트 함수 설정
-async function setupApiConnection() {
-  try {
-    const apiModule = await import('./app/.server/api/route.js');
-    if (apiModule.setWebSocketBroadcast) {
-      apiModule.setWebSocketBroadcast(broadcastToClients);
-      console.log('✅ API-WebSocket connection established');
-    }
-  } catch (error) {
-    console.log('⚠️  API module not available in development mode');
-  }
-}
-
 wss.on('connection', function connection(ws) {
   const clientId = generateClientId();
   const client = {
@@ -86,11 +73,6 @@ wss.on('connection', function connection(ws) {
     clientId,
     message: 'Connected successfully'
   }));
-  
-  broadcastToClients({
-    type: 'client_count',
-    count: clients.size
-  }, clientId);
   
   ws.on('message', function message(data) {
     try {
@@ -122,11 +104,6 @@ wss.on('connection', function connection(ws) {
   ws.on('close', function close() {
     clients.delete(clientId);
     console.log(`WebSocket Client ${clientId} disconnected. Total clients: ${clients.size}`);
-    
-    broadcastToClients({
-      type: 'client_count',
-      count: clients.size
-    });
   });
   
   ws.on('error', function error(err) {
@@ -154,9 +131,6 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, async () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`🔌 WebSocket available on ws://localhost:${PORT}`);
-  
-  // API-WebSocket 연결 설정
-  await setupApiConnection();
 });
 
 process.on('SIGINT', () => {
