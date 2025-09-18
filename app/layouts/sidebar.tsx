@@ -22,9 +22,7 @@ export default function SidebarLayout() {
       <body>
       <SidebarProvider>
         <AppSidebar />
-        <main className="flex-1 w-full">
-          <Outlet />
-        </main>
+        <Outlet />
         </SidebarProvider>       
         <Scripts />
       </body>
