@@ -1,21 +1,12 @@
 import { IntegrationAppCard } from "~/models/integration/components/IntegrationAppCard";
 import type { Route } from "../+types/root";
+import { IntegartionAppModal } from "~/models/integration/components/IntegrationAppModal";
+import { useState } from "react";
+import type { IntegrationApp } from "~/models/integration/types/integration-app";
 const { initializeDatabase } = await import("~/.server/db");
 const { Products } = await import("~/.server/db/entities/Products");
 
 const searchTextDev = "slack"
-
-export interface IntegrationApp {
-    nameKo: string;
-    nameEn: string;
-    tagline: string | null;
-    image: string;
-    productTags: Array<{
-      tag: {
-        name: string;
-      };
-    }>;
-  }
 
 export async function loader(): Promise<{ apps: IntegrationApp[] }> {
     await initializeDatabase()
@@ -34,27 +25,27 @@ export default function Integration(
     { loaderData }: Route.ComponentProps
 ) {
     const { apps } = loaderData || { apps: [] as IntegrationApp[] }
+    const [open, setOpen] = useState(false)
 
     return (
         <div className="h-full w-full p-8">
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-6xl ml-4">
                 <div className="mb-8">
-                    <h1 className="text-2xl font-semibold mb-2">SaaS 연동 앱</h1>
-                    <p className="text-gray-400">SaaS 연동 앱을 검색해주세요</p>
+                    <h1 className="mt-4 ml-16 text-2xl font-semibold mb-2">SaaS 연동 앱</h1>
+                    <p className="ml-16 text-gray-400">SaaS 연동 앱을 검색해주세요</p>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ml-12">
                     {apps.map((app, index: number) => (
                         <IntegrationAppCard
                             key={index}
-                            appKoreanName={app.nameKo}
-                            appEnglishName={app.nameEn}
-                            appDescription={app.tagline || "No description"}
-                            appLogo={app.image}
-                            category={app.productTags.map((tag) => tag.tag.name).join(", ") || ""}
+                            appInfo={app}
+                            openIntegartionModal={setOpen}
                         />
                     ))}
                 </div>
+
+                <IntegartionAppModal open={open} setOpen={setOpen} service="slack"/>
             </div>
         </div>
     )
