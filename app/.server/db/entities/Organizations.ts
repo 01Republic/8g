@@ -33,6 +33,7 @@ import { TeamMembers } from "./TeamMembers";
 import { Teams } from "./Teams";
 import { VendorCompanies } from "./VendorCompanies";
 import { Workspaces } from "./Workspaces";
+import type { Users } from "./Users";
 
 @Index("IDX_963693341bd612aa01ddf3a4b6", ["slug"], { unique: true })
 @Entity("organizations")
@@ -204,4 +205,10 @@ export class Organizations extends BaseEntity {
     (organizations: Organizations) => organizations.lastGoogleSyncHistory
   )
   lastGoogleSyncHistoryId: number | null;
+
+  isAdmin(user: Users): boolean {
+    return !!this.memberships?.find(membership => {
+      return membership.user.id === user.id && membership.user.isAdmin
+    })
+  }
 }

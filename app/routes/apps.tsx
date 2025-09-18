@@ -1,4 +1,6 @@
 import { AppTable } from "~/models/app/components/AppTable";
+import type { Route } from "./+types/apps";
+import { authMiddleware } from "~/middleware/auth";
 
 const apps = [
     {
@@ -30,6 +32,10 @@ const apps = [
     }
   ]
 
+export const middleware: Route.MiddlewareFunction[] = [
+  authMiddleware,
+];
+  
 export default function Apps() {
     return (
         <div className="h-full w-full p-8">

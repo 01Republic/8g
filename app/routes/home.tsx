@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { SearchCommand } from "~/models/home/components/SearchCommand";
 import type { Route } from "./+types/home";
 import { RecentAppCard } from "~/models/home/components/RecentAppCard";
+import { authMiddleware } from "~/middleware/auth";
+import { userContext } from "~/context";
+
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -54,7 +57,21 @@ const recentApps = [
   }
 ]
 
-export default function Home() {
+export const middleware: Route.MiddlewareFunction[] = [
+  authMiddleware,
+];
+
+export async function loader({
+  context,
+}: Route.LoaderArgs){
+  const user = context.get(userContext); // Guaranteed to exist
+  return { user };
+}
+
+export default function Home(
+  { loaderData }: Route.ComponentProps
+) {
+  const { user } = loaderData
   const [predictions, setPredictions] = useState<string[]>([]);
   const [query, setQuery] = useState("");
 
@@ -68,7 +85,7 @@ export default function Home() {
       <div className="w-full max-w-2xl space-y-6">
         <div className="text-center">
           <h1 className="text-2xl font-semibold text-gray-900 mb-2">
-            안녕하세요 선진님, 어떤 앱을 쓰고 계신가요?
+            안녕하세요 {user?.name}님, 어떤 앱을 쓰고 계신가요?
           </h1>
         </div>
         

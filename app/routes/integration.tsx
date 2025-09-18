@@ -1,14 +1,18 @@
 import { IntegrationAppCard } from "~/models/integration/components/IntegrationAppCard";
-import type { Route } from "../+types/root";
 import { IntegartionAppModal } from "~/models/integration/components/IntegrationAppModal";
 import { useState } from "react";
-import type { IntegrationApp } from "~/models/integration/types/integration-app";
+import type { Route } from "./+types/integration";
+import { authMiddleware } from "~/middleware/auth";
 const { initializeDatabase } = await import("~/.server/db");
 const { Products } = await import("~/.server/db/entities/Products");
 
 const searchTextDev = "slack"
 
-export async function loader(): Promise<{ apps: IntegrationApp[] }> {
+export const middleware: Route.MiddlewareFunction[] = [
+    authMiddleware,
+];
+  
+export async function loader() {
     await initializeDatabase()
     const apps = await Products.createQueryBuilder('product')
         .leftJoinAndSelect('product.productTags', 'productTag')  // 1차 조인
@@ -24,7 +28,7 @@ export async function loader(): Promise<{ apps: IntegrationApp[] }> {
 export default function Integration(
     { loaderData }: Route.ComponentProps
 ) {
-    const { apps } = loaderData || { apps: [] as IntegrationApp[] }
+    const { apps } = loaderData
     const [open, setOpen] = useState(false)
 
     return (
