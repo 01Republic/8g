@@ -3,6 +3,8 @@ import { WorkspaceSelectionStep } from './steps/WorkspaceSelectionStep'
 import { MemberListStep } from './steps/MemberListStep'
 import { CompletionStep } from './steps/CompletionStep'
 import { useSlackIntegration } from '~/models/integration/hook/use-slack-integration'
+import { useFetcher } from 'react-router'
+import { useEffect } from 'react'
 import type { ReactNode } from 'react'
 
 export interface StepComponentProps {
@@ -11,6 +13,8 @@ export interface StepComponentProps {
   onSelectedItemChange: (value: string) => void
   onStepChange: (step: number) => void
   onModalClose: () => void
+  organizationId: number
+  productId: number
 }
 
 export interface StepBuilder {
@@ -38,6 +42,8 @@ export function SlackStepBuilder(): StepBuilder {
         resetAdminStatus,
         resetMembers,
       } = useSlackIntegration()
+
+      const fetcher = useFetcher()
 
       const handleTestDataCollection = async () => {
         try {
@@ -82,6 +88,34 @@ export function SlackStepBuilder(): StepBuilder {
         }
       }
 
+      const handleSaveIntegration = async () => {
+        if (!props.selectedItem || !workspaces[parseInt(props.selectedItem)] || memberData.length === 0) {
+          alert('워크스페이스와 멤버 데이터가 필요합니다.')
+          return
+        }
+
+        const selectedWorkspace = workspaces[parseInt(props.selectedItem)]
+        
+        const formData = new FormData()
+        formData.append('workspace', JSON.stringify(selectedWorkspace))
+        formData.append('members', JSON.stringify(memberData))
+        formData.append('productId', props.productId.toString())
+
+        fetcher.submit(formData, { method: 'POST' })
+      }
+
+      // Handle fetcher response with useEffect
+      useEffect(() => {
+        if (fetcher.data) {
+          if (fetcher.data.success) {
+            props.onStepChange(4)
+          } else {
+            console.error('Save integration failed:', fetcher.data.error)
+            alert('데이터 저장에 실패했습니다: ' + fetcher.data.error)
+          }
+        }
+      }, [fetcher.data, props.onStepChange])
+
       return [
         <ExtensionCheckStep
           key="step-1"
@@ -118,7 +152,7 @@ export function SlackStepBuilder(): StepBuilder {
           onCheckAdminPermission={handleCheckAdminPermission}
           onCollectMembers={handleFetchMembers}
           onPrevious={() => props.onStepChange(2)}
-          onNext={() => props.onStepChange(4)}
+          onNext={handleSaveIntegration}
         />,
 
         <CompletionStep

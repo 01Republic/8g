@@ -2,7 +2,7 @@ import { createCookieSessionStorage } from "react-router";
 
 type SessionData = {
   userId: string;
-  subdomain?: string;
+  orgId: string;
 };
 
 type SessionFlashData = {

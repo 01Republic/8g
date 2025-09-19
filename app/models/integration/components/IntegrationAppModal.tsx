@@ -24,12 +24,16 @@ interface IntegartionAppModalProps {
     open: boolean,
     setOpen: Dispatch<SetStateAction<boolean>>
     service: IntegrationService
+    organizationId: number
+    productId: number
 }
 
 export function IntegartionAppModal({
     open, 
     setOpen,
-    service
+    service,
+    organizationId,
+    productId
 }: IntegartionAppModalProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedItem, setSelectedItem] = useState<string>("");
@@ -43,7 +47,9 @@ export function IntegartionAppModal({
     selectedItem,
     onSelectedItemChange: setSelectedItem,
     onStepChange: setCurrentStep,
-    onModalClose: () => setOpen(false)
+    onModalClose: () => setOpen(false),
+    organizationId,
+    productId
   };
   
   const steps = stepBuilder.buildSteps(stepProps);

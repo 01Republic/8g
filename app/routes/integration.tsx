@@ -3,8 +3,10 @@ import { IntegartionAppModal } from "~/models/integration/components/Integration
 import { useState } from "react";
 import type { Route } from "./+types/integration";
 import { authMiddleware } from "~/middleware/auth";
+import { userContext } from "~/context";
 const { initializeDatabase } = await import("~/.server/db");
 const { Products } = await import("~/.server/db/entities/Products");
+const { SlackIntegrationService } = await import("~/.server/db/services/slack-integration.service");
 
 const searchTextDev = "slack"
 
@@ -23,6 +25,38 @@ export async function loader() {
         .getMany()
         
     return { apps }
+}
+
+export async function action({ request, context }: Route.ActionArgs) {
+    await initializeDatabase()
+    
+    const user = context.get(userContext);
+    const formData = await request.formData()
+    
+    const workspace = JSON.parse(formData.get('workspace') as string)
+    const members = JSON.parse(formData.get('members') as string)
+    const organizationId = user!.orgId
+    const productId = parseInt(formData.get('productId') as string)
+    
+    try {
+        const slackService = new SlackIntegrationService()
+        const result = await slackService.saveSlackIntegration({
+            workspace,
+            members,
+            organizationId,
+            productId
+        })
+        
+        return {
+            success: true,
+            data: result
+        }
+    } catch (error) {
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : 'Unknown error'
+        }
+    }
 }
 
 export default function Integration(
@@ -49,7 +83,13 @@ export default function Integration(
                     ))}
                 </div>
 
-                <IntegartionAppModal open={open} setOpen={setOpen} service="slack"/>
+                <IntegartionAppModal 
+                    open={open} 
+                    setOpen={setOpen} 
+                    service="slack"
+                    organizationId={1} // TODO: Get from auth context
+                    productId={apps[0]?.id || 1} // TODO: Get selected app's product ID
+                />
             </div>
         </div>
     )

@@ -9,7 +9,7 @@ export interface SlackWorkspace {
 
 export interface SlackMember {
   email: string;
-  status: string;
+  status: "활성" | "비활성화됨";
   joinDate: string;
 }
 
@@ -140,7 +140,7 @@ export function useSlackIntegration(): UseSlackIntegrationReturn {
       for (let i = 0; i < maxLength; i++) {
         memberList.push({
           email: emails[i] || 'N/A',
-          status: statuses[i] || 'N/A',
+          status: statuses[i] as any,
           joinDate: joinDates[i] || 'N/A'
         });
       }

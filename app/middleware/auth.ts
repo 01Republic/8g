@@ -11,6 +11,7 @@ export const authMiddleware = async ({
     request.headers.get("Cookie"),
   );
   const userId = session.get("userId");
+  const orgId = session.get("orgId")
 
   if (!userId) {
     throw redirect("/login");
@@ -22,5 +23,5 @@ export const authMiddleware = async ({
         id: parseInt(userId)
     }
   })
-  context.set(userContext, user);
+  context.set(userContext, {...user, orgId});
 };

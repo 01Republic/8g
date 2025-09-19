@@ -5,6 +5,7 @@ type User = {
     name: string;
     phone: string;
     profileImgUrl: string;
+    orgId: number
 }
 
 export const userContext = createContext<User | null>(null);

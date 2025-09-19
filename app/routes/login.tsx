@@ -87,7 +87,6 @@ export async function action({
   const session = await getSession(
     request.headers.get("Cookie"),
   );
-  console.log(session.get("userId"))
   
   const form = await request.formData();
   const username = form.get("username") as string;
@@ -133,7 +132,7 @@ export async function action({
 
   // 세션에 userId와 subdomain 저장
   session.set("userId", userId.toString());
-  session.set("subdomain", subdomain);
+  session.set("orgId", org.id.toString());
 
   // Login succeeded, send them to the home page.
   return redirect("/", {
