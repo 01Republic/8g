@@ -2,7 +2,10 @@ import { ExtensionCheckStep } from './steps/ExtensionCheckStep'
 import { WorkspaceSelectionStep } from './steps/WorkspaceSelectionStep' 
 import { MemberListStep } from './steps/MemberListStep'
 import { CompletionStep } from './steps/CompletionStep'
-import { useSlackIntegration } from '~/models/integration/hook/use-slack-integration'
+import { useExtensionCheck } from '~/models/integration/hook/slack/use-extension-check'
+import { useWorkspaceCollection } from '~/models/integration/hook/slack/use-workspace-collection'
+import { useAdminPermission } from '~/models/integration/hook/slack/use-admin-permission'
+import { useMemberCollection } from '~/models/integration/hook/slack/use-member-collection'
 import { useFetcher } from 'react-router'
 import { useEffect } from 'react'
 import type { ReactNode } from 'react'
@@ -24,77 +27,33 @@ export interface StepBuilder {
 }
 
 export function SlackStepBuilder(): StepBuilder {
+  const { extensionStatus } = useExtensionCheck()
+  const { workspaces } = useWorkspaceCollection()
+  const { isAdmin, isCheckingAdmin, checkAdminPermission, resetAdminStatus } = useAdminPermission()
+  const { members: memberData, isCollectingMembers, collectMembers, resetMembers } = useMemberCollection()
+  const fetcher = useFetcher()
+  
   return {
     buildSteps: (props: StepComponentProps) => {
-      const {
-        extensionStatus,
-        isChecking,
-        checkExtension,
-        workspaces,
-        isCollectingWorkspaces,
-        collectWorkspaces,
-        isAdmin,
-        isCheckingAdmin,
-        checkAdminPermission,
-        members: memberData,
-        isCollectingMembers,
-        collectMembers,
-        resetAdminStatus,
-        resetMembers,
-      } = useSlackIntegration()
+      const selectedWorkspace = props.selectedItem ? workspaces[parseInt(props.selectedItem)] : null
 
-      const fetcher = useFetcher()
-
-      const handleTestDataCollection = async () => {
-        try {
-          await collectWorkspaces()
-        } catch (error) {
-          console.error('Data collection failed:', error)
-          alert('데이터 수집에 실패했습니다: ' + (error instanceof Error ? error.message : 'Unknown error'))
+      const handleCheckAdminPermission = () => {
+        if (selectedWorkspace) {
+          checkAdminPermission(selectedWorkspace.elementId)
         }
       }
 
-      const handleCheckAdminPermission = async () => {
-        if (!props.selectedItem || !workspaces[parseInt(props.selectedItem)]) {
-          alert('먼저 workspace를 선택해주세요.')
-          return
-        }
-
-        const selectedWorkspace = workspaces[parseInt(props.selectedItem)]
-        const workspaceId = selectedWorkspace.elementId
-        
-        try {
-          await checkAdminPermission(workspaceId)
-        } catch (error) {
-          console.error('Admin permission check failed:', error)
-          alert('관리자 권한 확인에 실패했습니다: ' + (error instanceof Error ? error.message : 'Unknown error'))
-        }
-      }
-
-      const handleFetchMembers = async () => {
-        if (!props.selectedItem || !workspaces[parseInt(props.selectedItem)]) {
-          alert('먼저 workspace를 선택해주세요.')
-          return
-        }
-
-        const selectedWorkspace = workspaces[parseInt(props.selectedItem)]
-        const workspaceId = selectedWorkspace.elementId
-        
-        try {
-          await collectMembers(workspaceId)
-        } catch (error) {
-          console.error('Member data collection failed:', error)
-          alert('멤버 데이터 수집에 실패했습니다: ' + (error instanceof Error ? error.message : 'Unknown error'))
+      const handleCollectMembers = () => {
+        if (selectedWorkspace) {
+          collectMembers(selectedWorkspace.elementId)
         }
       }
 
       const handleSaveIntegration = async () => {
-        if (!props.selectedItem || !workspaces[parseInt(props.selectedItem)] || memberData.length === 0) {
+        if (!selectedWorkspace || memberData.length === 0) {
           alert('워크스페이스와 멤버 데이터가 필요합니다.')
           return
         }
-
-        const selectedWorkspace = workspaces[parseInt(props.selectedItem)]
         
         const formData = new FormData()
         formData.append('workspace', JSON.stringify(selectedWorkspace))
@@ -117,22 +76,18 @@ export function SlackStepBuilder(): StepBuilder {
       }, [fetcher.data, props.onStepChange])
 
       return [
-        <ExtensionCheckStep
-          key="step-1"
-          extensionStatus={extensionStatus}
-          isChecking={isChecking}
-          checkExtension={checkExtension}
-          onNext={() => props.onStepChange(2)}
-        />,
+        extensionStatus?.installed ? null : (
+          <ExtensionCheckStep
+            key="step-1"
+            onNext={() => props.onStepChange(2)}
+          />
+        ),
         
-        extensionStatus?.installed ? (
+        workspaces.length === 0 ? null : (
           <WorkspaceSelectionStep
             key="step-2"
-            workspaces={workspaces}
-            isCollectingWorkspaces={isCollectingWorkspaces}
             selectedItem={props.selectedItem}
             onSelectedItemChange={props.onSelectedItemChange}
-            onCollectWorkspaces={handleTestDataCollection}
             onPrevious={() => props.onStepChange(1)}
             onNext={() => {
               props.onStepChange(3)
@@ -140,40 +95,36 @@ export function SlackStepBuilder(): StepBuilder {
               resetMembers()
             }}
           />
-        ) : null,
+        ),
 
-        <MemberListStep
-          key="step-3"
-          isAdmin={isAdmin}
-          isCheckingAdmin={isCheckingAdmin}
-          memberData={memberData}
-          isCollectingMembers={isCollectingMembers}
-          selectedItem={props.selectedItem}
-          onCheckAdminPermission={handleCheckAdminPermission}
-          onCollectMembers={handleFetchMembers}
-          onPrevious={() => props.onStepChange(2)}
-          onNext={handleSaveIntegration}
-        />,
+        selectedWorkspace ? (
+          <MemberListStep
+            key="step-3"
+            selectedWorkspace={selectedWorkspace}
+            isAdmin={isAdmin}
+            isCheckingAdmin={isCheckingAdmin}
+            onCheckAdminPermission={handleCheckAdminPermission}
+            memberData={memberData}
+            isCollectingMembers={isCollectingMembers}
+            onCollectMembers={handleCollectMembers}
+            onPrevious={() => props.onStepChange(2)}
+            onNext={handleSaveIntegration}
+          />
+        ) : null,
 
         <CompletionStep
           key="step-4"
         />
-      ]
+      ].filter(Boolean)
     },
 
     getStepCount: () => 4,
 
     getLoadingStates: () => {
-      const {
-        isChecking,
-        isCollectingWorkspaces,
-        isCollectingMembers
-      } = useSlackIntegration()
-
       return {
-        1: isChecking,
-        2: isCollectingWorkspaces,
-        3: isCollectingMembers,
+        1: false,
+        2: false,
+        3: false,
         4: false
       }
     }

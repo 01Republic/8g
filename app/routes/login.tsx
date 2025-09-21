@@ -50,7 +50,7 @@ export async function loader({
   // Subdomain (slug) 추출
   const subdomain = extractSubdomain(request);
   if(!subdomain){
-    throw new Error()
+    throw new Error('Subdomain not found')
   }
 
   await initializeDatabase()

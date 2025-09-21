@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Button } from "~/components/ui/button"
 import {
   Select,
@@ -7,27 +8,22 @@ import {
   SelectValue,
 } from "~/components/ui/select"
 import { LoaderCircleIcon } from "lucide-react"
-import type { SlackWorkspace } from "~/models/integration/hook/use-slack-integration"
+import { useWorkspaceCollection } from "~/models/integration/hook"
 
 interface WorkspaceSelectionStepProps {
-  workspaces: SlackWorkspace[]
-  isCollectingWorkspaces: boolean
   selectedItem: string
   onSelectedItemChange: (value: string) => void
-  onCollectWorkspaces: () => void
   onPrevious: () => void
   onNext: () => void
 }
 
 export function WorkspaceSelectionStep({
-  workspaces,
-  isCollectingWorkspaces,
   selectedItem,
   onSelectedItemChange,
-  onCollectWorkspaces,
   onPrevious,
   onNext
 }: WorkspaceSelectionStepProps) {
+  const { workspaces, isCollectingWorkspaces, collectWorkspaces } = useWorkspaceCollection();
   return (
     <div className="space-y-4 max-w-md mx-auto w-full">
       <h3 className="text-lg font-semibold text-center">워크스페이스 선택</h3>
@@ -35,7 +31,7 @@ export function WorkspaceSelectionStep({
       {workspaces.length === 0 ? (
         <div className="flex justify-center">
           <Button 
-            onClick={onCollectWorkspaces}
+            onClick={collectWorkspaces}
             disabled={isCollectingWorkspaces}
             className="px-8 py-2"
           >

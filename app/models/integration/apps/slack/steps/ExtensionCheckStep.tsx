@@ -1,19 +1,15 @@
 import { Button } from "~/components/ui/button"
-import type { ExtensionStatus } from "~/models/integration/hook/8g-extension-interface"
+import { useExtensionCheck } from "~/models/integration/hook/slack/use-extension-check";
 
 interface ExtensionCheckStepProps {
-  extensionStatus: ExtensionStatus | null
-  isChecking: boolean
-  checkExtension: () => Promise<void>
   onNext: () => void
 }
 
 export function ExtensionCheckStep({
-  extensionStatus,
-  isChecking,
-  checkExtension,
   onNext
 }: ExtensionCheckStepProps) {
+  const { extensionStatus, isChecking, checkExtension } = useExtensionCheck();
+  
   const getExtensionStatusDisplay = () => {
     if (isChecking) {
       return (

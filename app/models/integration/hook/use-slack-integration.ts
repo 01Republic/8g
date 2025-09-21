@@ -1,5 +1,10 @@
 import { useState } from 'react';
-import { EightG, type ExtensionStatus } from './8g-extension-interface';
+import { EightGClient, type CollectDataResult, type ElementData, type GetElementDataBlock, type GetTextBlock } from '8g-extension';
+
+export interface ExtensionStatus {
+  installed: boolean;
+  version: string | null;
+}
 
 export interface SlackWorkspace {
   elementId: string;
@@ -60,7 +65,8 @@ export function useSlackIntegration(): UseSlackIntegrationReturn {
   const checkExtension = async () => {
     setIsChecking(true);
     try {
-      const status = await EightG.checkInstalled();
+      const client = new EightGClient();
+      const status = await client.checkExtension();
       setExtensionStatus(status);
     } catch (error) {
       console.error('Extension check failed:', error);
@@ -77,11 +83,32 @@ export function useSlackIntegration(): UseSlackIntegrationReturn {
 
     setIsCollectingWorkspaces(true);
     try {
-      const result = await EightG.collectIdAndText(
-        'https://slack.com/intl/ko-kr',
-        'span.ss-c-workspace-detail__title'
-      );
-      setWorkspaces(result);
+      const client = new EightGClient();
+
+      const result: CollectDataResult<ElementData[] | ElementData> = await client.collectData({
+        targetUrl: 'https://slack.com/intl/ko-kr',
+        block: {
+          name: 'get-element-data',
+          selector: 'span.ss-c-workspace-detail__title',
+          findBy: 'cssSelector',
+          includeText: true,
+          attributes: ['id'],
+          option: {
+            waitForSelector: true,
+            waitSelectorTimeout: 5000,
+            multiple: true,
+          }
+        } as GetElementDataBlock
+      });
+
+      const workspaceData = result.data!.result.data || [];
+      
+      const workspaces = workspaceData.map((it: ElementData) => ({
+        elementId: it.attributes?.['id'] || '',
+        elementText: it.text || ''
+      }));
+      
+      setWorkspaces(workspaces);
     } catch (error) {
       console.error('Workspace collection failed:', error);
       throw error;
@@ -98,16 +125,27 @@ export function useSlackIntegration(): UseSlackIntegrationReturn {
     setIsCheckingAdmin(true);
     try {
       const adminUrl = `https://${workspaceId}.slack.com/admin`;
-      const h1Text = await EightG.collectText(
-        adminUrl,
-        '#page_contents > h1',
-        { multiple: false }
-      );
+
+      const client = new EightGClient();
+      const h1Text = await client.collectData({
+        targetUrl: adminUrl,
+        block: {
+          name: 'get-text',
+          selector: '#page_contents > h1',
+          findBy: 'cssSelector',
+          option: {
+            waitForSelector: true,
+            waitSelectorTimeout: 5000,
+            multiple: false,
+          }
+        } as GetTextBlock
+      });
       
-      const pageTitle = h1Text[0] || '';
+      const pageTitle = h1Text.data?.result.data as string || '';
       const hasAdminAccess = !pageTitle.includes('워크스페이스 관리자만 이 페이지를 볼 수 있습니다.');
       
       setIsAdmin(hasAdminAccess);
+      
     } catch (error) {
       console.error('Admin permission check failed:', error);
       setIsAdmin(false);
@@ -125,26 +163,53 @@ export function useSlackIntegration(): UseSlackIntegrationReturn {
     setIsCollectingMembers(true);
     try {
       const adminUrl = `https://${workspaceId}.slack.com/admin`;
+      const client = new EightGClient();
       
-      // 각 컬럼별로 데이터를 수집
       const [emails, statuses, joinDates] = await Promise.all([
-        EightG.collectText(adminUrl, '[data-qa-column="workspace-members_table_email"] .c-truncate', { multiple: true }),
-        EightG.collectText(adminUrl, '[data-qa-column="workspace-members_table_account_status"] div div', { multiple: true }),
-        EightG.collectText(adminUrl, '[data-qa-column="workspace-members_table_created"] .c-table_cell', { multiple: true })
+        client.collectData({
+          targetUrl: adminUrl, 
+          block: {
+            name: 'get-text',
+            selector: '[data-qa-column="workspace-members_table_email"] .c-truncate', 
+            findBy: 'cssSelector',
+            option: { multiple: true }
+          } as GetTextBlock
+        }),
+        client.collectData({
+          targetUrl: adminUrl, 
+          block: {
+            name: 'get-text',
+            selector: '[data-qa-column="workspace-members_table_account_status"] div div', 
+            findBy: 'cssSelector',
+            option: { multiple: true }
+          } as GetTextBlock
+        }),
+        client.collectData({
+          targetUrl: adminUrl, 
+          block: {
+            name: 'get-text',
+            selector: '[data-qa-column="workspace-members_table_created"] .c-table_cell', 
+            findBy: 'cssSelector',
+            option: { multiple: true }
+          } as GetTextBlock
+        })
       ]);
 
-      // 각 배열을 결합하여 멤버 객체 생성
-      const maxLength = Math.max(emails.length, statuses.length, joinDates.length);
+      const maxLength = Math.max(
+        emails.data?.result.data.length, 
+        statuses.data?.result.data.length,
+        joinDates.data?.result.data.length
+      );
       const memberList: SlackMember[] = [];
       
       for (let i = 0; i < maxLength; i++) {
         memberList.push({
-          email: emails[i] || 'N/A',
-          status: statuses[i] as any,
-          joinDate: joinDates[i] || 'N/A'
+          email: emails.data?.result.data[i] || 'N/A',
+          status: statuses.data?.result.data[i] as any,
+          joinDate: joinDates.data?.result.data[i] || 'N/A',
         });
       }
-      
+
       setMembers(memberList);
     } catch (error) {
       console.error('Member collection failed:', error);

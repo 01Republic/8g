@@ -9,31 +9,36 @@ import {
   TableRow,
 } from "~/components/ui/table"
 import { LoaderCircleIcon } from "lucide-react"
-import type { SlackMember } from "~/models/integration/hook/use-slack-integration"
+import { useAdminPermission } from "~/models/integration/hook"
+import { useMemberCollection } from "~/models/integration/hook"
+import type { SlackWorkspace } from "~/models/integration/hook/slack/use-workspace-collection"
 
 interface MemberListStepProps {
-  isAdmin: boolean | null
-  isCheckingAdmin: boolean
-  memberData: SlackMember[]
-  isCollectingMembers: boolean
-  selectedItem: string
-  onCheckAdminPermission: () => void
-  onCollectMembers: () => void
+  selectedWorkspace: SlackWorkspace | null
   onPrevious: () => void
   onNext: () => void
 }
 
 export function MemberListStep({
-  isAdmin,
-  isCheckingAdmin,
-  memberData,
-  isCollectingMembers,
-  selectedItem,
-  onCheckAdminPermission,
-  onCollectMembers,
+  selectedWorkspace,
   onPrevious,
   onNext
 }: MemberListStepProps) {
+  const { isAdmin, isCheckingAdmin, checkAdminPermission } = useAdminPermission();
+  const { members: memberData, isCollectingMembers, collectMembers } = useMemberCollection();
+
+  const handleCheckAdminPermission = () => {
+    if (selectedWorkspace) {
+      checkAdminPermission(selectedWorkspace.elementId);
+    }
+  };
+
+  const handleCollectMembers = () => {
+    if (selectedWorkspace) {
+      collectMembers(selectedWorkspace.elementId);
+    }
+  };
+  
   return (
     <div className="space-y-4 w-full">
       <h3 className="text-lg font-semibold text-center">멤버 리스트 확인</h3>
@@ -42,8 +47,8 @@ export function MemberListStep({
         <div className="text-center space-y-4">
           <p className="text-gray-600">먼저 워크스페이스 관리자 권한을 확인하세요.</p>
           <Button 
-            onClick={onCheckAdminPermission}
-            disabled={isCheckingAdmin || !selectedItem}
+            onClick={handleCheckAdminPermission}
+            disabled={isCheckingAdmin || !selectedWorkspace}
             className="px-8 py-2"
           >
             {isCheckingAdmin ? (
@@ -78,7 +83,7 @@ export function MemberListStep({
           </div>
           <p className="text-gray-600">이제 멤버 데이터를 수집할 수 있습니다.</p>
           <Button 
-            onClick={onCollectMembers}
+            onClick={handleCollectMembers}
             disabled={isCollectingMembers}
             className="px-8 py-2"
           >
@@ -102,7 +107,6 @@ export function MemberListStep({
                   <TableHead className="w-16">#</TableHead>
                   <TableHead>이메일</TableHead>
                   <TableHead>상태</TableHead>
-                  <TableHead>참여일</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
