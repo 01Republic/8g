@@ -7,13 +7,13 @@ import {
     CommandList,
 } from "~/components/ui/command"
 
-interface SearchCommandProps {
+interface SubscriptionSearchCommandProps {
     query: string;
     onQueryChange: (value: string) => void;
     predictions: string[];
 }
 
-export function SearchCommand({ query, onQueryChange, predictions }: SearchCommandProps) {
+export function SubscriptionSearchCommand({ query, onQueryChange, predictions }: SubscriptionSearchCommandProps) {
 
     return (
           <Command className="w-full border-2 rounded-lg">

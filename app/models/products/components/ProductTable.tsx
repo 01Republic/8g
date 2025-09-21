@@ -8,7 +8,7 @@ import {
     TableRow,
   } from "~/components/ui/table"
   
-  interface AppTableProps {
+  interface ProductTableProps {
     apps: {
         id: number;
         appLogo: string;
@@ -59,7 +59,7 @@ import {
     }).format(new Date(date));
   };
 
-  export function AppTable({ apps }: AppTableProps) {
+  export function ProductTable({ apps }: ProductTableProps) {
     return (
       <div className="border rounded-lg overflow-hidden bg-white">
         <Table>

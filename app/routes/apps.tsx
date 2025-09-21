@@ -1,4 +1,4 @@
-import { AppTable } from "~/models/app/components/AppTable";
+import { ProductTable } from "~/models/products/components/ProductTable";
 import type { Route } from "./+types/apps";
 import { authMiddleware } from "~/middleware/auth";
 import { useLoaderData } from "react-router";
@@ -63,7 +63,7 @@ export default function Apps() {
         <div className="h-full w-full p-8">
             <div className="max-w-7xl mx-auto">
                 <h1 className="text-2xl font-semibold mb-6">Apps</h1>
-                <AppTable apps={apps} />
+                <ProductTable apps={apps} />
             </div>
         </div>
     )

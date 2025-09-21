@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { SearchCommand } from "~/models/home/components/SearchCommand";
+import { SubscriptionSearchCommand } from "~/models/subscriptions/components/SearchCommand";
 import type { Route } from "./+types/home";
-import { RecentAppCard } from "~/models/home/components/RecentAppCard";
+import { RecentSubscriptionCard } from "~/models/subscriptions/components/RecentSubscriptionCard";
 import { authMiddleware } from "~/middleware/auth";
 import { userContext } from "~/context";
 
@@ -90,7 +90,7 @@ export default function Home(
         </div>
         
         <div className="relative w-full">
-          <SearchCommand 
+          <SubscriptionSearchCommand 
             query={query}
             onQueryChange={setQuery}
             predictions={predictions}
@@ -106,7 +106,7 @@ export default function Home(
           </h3>
           <div className="grid grid-cols-3 gap-6">
             {recentApps.map((app) => (
-              <RecentAppCard 
+              <RecentSubscriptionCard 
                 key={app.appKoreanName} 
                 appName={app.appKoreanName + " / " + app.appEnglishName} 
                 appLogo={app.appLogo} 

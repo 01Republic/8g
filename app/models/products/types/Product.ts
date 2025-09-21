@@ -1,4 +1,4 @@
-export type IntegrationApp = {
+export type Product = {
     id: number;
     nameKo: string;
     nameEn: string;

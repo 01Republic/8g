@@ -8,10 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card"
-import type { IntegrationApp } from "../types/integration-app";
+import type { Product } from "../../products/types/Product";
 
 interface IntegrationAppCardProps {
-  appInfo: IntegrationApp
+  appInfo: Product
   openIntegartionModal: Dispatch<SetStateAction<boolean>>
 }
 

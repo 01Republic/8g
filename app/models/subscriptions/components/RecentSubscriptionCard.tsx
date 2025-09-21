@@ -5,14 +5,14 @@ import {
   CardTitle,
 } from "~/components/ui/card"
 
-interface RecentAppCardProps {
+interface RecentSubscriptionCardProps {
   appName: string;
   appLogo: string;
   lastUsedAt: Date;
   onClick?: () => void;
 }
 
-export function RecentAppCard({ appName, appLogo, lastUsedAt, onClick }: RecentAppCardProps) {
+export function RecentSubscriptionCard({ appName, appLogo, lastUsedAt, onClick }: RecentSubscriptionCardProps) {
   const formatTimeAgo = (date: Date) => {
     const now = new Date();
     const diffInMonths = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24 * 30));
