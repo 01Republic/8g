@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from "~/components/ui/select"
 import { LoaderCircleIcon } from "lucide-react"
-import type { SlackWorkspace } from "~/models/integration/hook/use-slack-integration"
+import type { SlackWorkspace } from "~/models/integration/apps/slack/types"
 
 interface WorkspaceSelectionStepProps {
   selectedItem: string

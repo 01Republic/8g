@@ -145,7 +145,7 @@ export async function action({
 export default function Login({
   loaderData,
 }: Route.ComponentProps) {
-  const { error, org } = loaderData;
+  const { org } = loaderData;
   const defaultLogo = 'scordi-logo.png'
     return (
       <div className="grid min-h-svh lg:grid-cols-2">

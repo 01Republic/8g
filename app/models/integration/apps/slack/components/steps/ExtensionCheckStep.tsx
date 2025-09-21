@@ -1,5 +1,5 @@
 import { Button } from "~/components/ui/button"
-import type { ExtensionStatus } from "~/models/integration/hook/use-slack-integration";
+import type { ExtensionStatus } from "~/models/integration/apps/slack/types";
 
 interface ExtensionCheckStepProps {
   onNext: () => void

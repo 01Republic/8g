@@ -1,11 +1,15 @@
-import { ExtensionCheckStep } from './steps/ExtensionCheckStep'
-import { WorkspaceSelectionStep } from './steps/WorkspaceSelectionStep' 
-import { MemberListStep } from './steps/MemberListStep'
-import { CompletionStep } from './steps/CompletionStep'
-import { useSlackIntegration } from '~/models/integration/hook/use-slack-integration'
+
 import { useFetcher } from 'react-router'
 import { useEffect } from 'react'
 import type { ReactNode } from 'react'
+import { useSlackAdmin } from '../hook/use-admin'
+import { useSlackExtension } from '../hook/use-extension'
+import { useSlackMembers } from '../hook/use-members'
+import { useSlackWorkspaces } from '../hook/use-workspaces'
+import { CompletionStep } from './steps/CompletionStep'
+import { ExtensionCheckStep } from './steps/ExtensionCheckStep'
+import { MemberListStep } from './steps/MemberListStep'
+import { WorkspaceSelectionStep } from './steps/WorkspaceSelectionStep'
 
 export interface StepComponentProps {
   currentStep: number
@@ -24,22 +28,10 @@ export interface StepBuilder {
 }
 
 export function SlackStepBuilder(): StepBuilder {
-  const {
-    extensionStatus,
-    isChecking,
-    checkExtension,
-    workspaces,
-    isCollectingWorkspaces,
-    collectWorkspaces,
-    isAdmin,
-    isCheckingAdmin,
-    checkAdminPermission,
-    members: memberData,
-    isCollectingMembers,
-    collectMembers,
-    resetAdminStatus,
-    resetMembers,
-  } = useSlackIntegration()
+  const { extensionStatus, isChecking, checkExtension } = useSlackExtension()
+  const { workspaces, isCollectingWorkspaces, collectWorkspaces } = useSlackWorkspaces()
+  const { isAdmin, isCheckingAdmin, checkAdminPermission, resetAdminStatus } = useSlackAdmin()
+  const { members: memberData, isCollectingMembers, collectMembers, resetMembers } = useSlackMembers()
   const fetcher = useFetcher()
   
   return {

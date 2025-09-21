@@ -1,5 +1,5 @@
-import type { StepBuilder } from './slack/SlackStepBuilder'
-import { SlackStepBuilder } from './slack/SlackStepBuilder'
+import type { StepBuilder } from './slack/components/SlackStepBuilder'
+import { SlackStepBuilder } from './slack/components/SlackStepBuilder'
 
 export type IntegrationService = 'slack' | 'notion' | 'github' | 'linear'
 

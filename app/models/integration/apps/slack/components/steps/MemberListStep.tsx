@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "~/components/ui/table"
 import { LoaderCircleIcon } from "lucide-react"
-import type { SlackWorkspace, SlackMember } from "~/models/integration/hook/use-slack-integration"
+import type { SlackWorkspace, SlackMember } from "~/models/integration/apps/slack/types"
 
 interface MemberListStepProps {
   selectedWorkspace: SlackWorkspace | null

@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Avatar, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button"
 import {
   Card,
