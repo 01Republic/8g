@@ -102,13 +102,30 @@ export function useSlackIntegration(): UseSlackIntegrationReturn {
       });
 
       const workspaceData = result.data!.result.data || [];
-      
-      const workspaces = workspaceData.map((it: ElementData) => ({
-        elementId: it.attributes?.['id'] || '',
-        elementText: it.text || ''
+
+      console.log(workspaceData)
+
+      // 1) 매핑 + 공백 트림
+      const mapped = (workspaceData as ElementData[]).map((it: ElementData) => ({
+        elementId: (it.attributes?.['id'] || '').trim(),
+        elementText: (it.text || '').trim(),
       }));
-      
-      setWorkspaces(workspaces);
+
+      // 2) 빈 값 제거
+      const nonEmpty = mapped.filter(w => w.elementId || w.elementText);
+
+      // 3) 중복 제거 (id 우선, 없으면 텍스트 기준)
+      const uniqueMap = new Map<string, { elementId: string; elementText: string }>();
+      for (const w of nonEmpty) {
+        const key = (w.elementId && `id:${w.elementId}`) || `text:${w.elementText}`;
+        if (!uniqueMap.has(key)) {
+          uniqueMap.set(key, w);
+        }
+      }
+
+      const uniqueWorkspaces = Array.from(uniqueMap.values());
+
+      setWorkspaces(uniqueWorkspaces as any);
     } catch (error) {
       console.error('Workspace collection failed:', error);
       throw error;

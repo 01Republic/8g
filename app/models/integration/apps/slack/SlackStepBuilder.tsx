@@ -2,10 +2,7 @@ import { ExtensionCheckStep } from './steps/ExtensionCheckStep'
 import { WorkspaceSelectionStep } from './steps/WorkspaceSelectionStep' 
 import { MemberListStep } from './steps/MemberListStep'
 import { CompletionStep } from './steps/CompletionStep'
-import { useExtensionCheck } from '~/models/integration/hook/slack/use-extension-check'
-import { useWorkspaceCollection } from '~/models/integration/hook/slack/use-workspace-collection'
-import { useAdminPermission } from '~/models/integration/hook/slack/use-admin-permission'
-import { useMemberCollection } from '~/models/integration/hook/slack/use-member-collection'
+import { useSlackIntegration } from '~/models/integration/hook/use-slack-integration'
 import { useFetcher } from 'react-router'
 import { useEffect } from 'react'
 import type { ReactNode } from 'react'
@@ -27,10 +24,22 @@ export interface StepBuilder {
 }
 
 export function SlackStepBuilder(): StepBuilder {
-  const { extensionStatus } = useExtensionCheck()
-  const { workspaces } = useWorkspaceCollection()
-  const { isAdmin, isCheckingAdmin, checkAdminPermission, resetAdminStatus } = useAdminPermission()
-  const { members: memberData, isCollectingMembers, collectMembers, resetMembers } = useMemberCollection()
+  const {
+    extensionStatus,
+    isChecking,
+    checkExtension,
+    workspaces,
+    isCollectingWorkspaces,
+    collectWorkspaces,
+    isAdmin,
+    isCheckingAdmin,
+    checkAdminPermission,
+    members: memberData,
+    isCollectingMembers,
+    collectMembers,
+    resetAdminStatus,
+    resetMembers,
+  } = useSlackIntegration()
   const fetcher = useFetcher()
   
   return {
@@ -76,56 +85,56 @@ export function SlackStepBuilder(): StepBuilder {
       }, [fetcher.data, props.onStepChange])
 
       return [
-        extensionStatus?.installed ? null : (
-          <ExtensionCheckStep
-            key="step-1"
-            onNext={() => props.onStepChange(2)}
-          />
-        ),
-        
-        workspaces.length === 0 ? null : (
-          <WorkspaceSelectionStep
-            key="step-2"
-            selectedItem={props.selectedItem}
-            onSelectedItemChange={props.onSelectedItemChange}
-            onPrevious={() => props.onStepChange(1)}
-            onNext={() => {
-              props.onStepChange(3)
-              resetAdminStatus()
-              resetMembers()
-            }}
-          />
-        ),
+        <ExtensionCheckStep
+          key="step-1"
+          extensionStatus={extensionStatus}
+          isChecking={isChecking}
+          onCheckExtension={checkExtension}
+          onNext={() => props.onStepChange(2)}
+        />,
 
-        selectedWorkspace ? (
-          <MemberListStep
-            key="step-3"
-            selectedWorkspace={selectedWorkspace}
-            isAdmin={isAdmin}
-            isCheckingAdmin={isCheckingAdmin}
-            onCheckAdminPermission={handleCheckAdminPermission}
-            memberData={memberData}
-            isCollectingMembers={isCollectingMembers}
-            onCollectMembers={handleCollectMembers}
-            onPrevious={() => props.onStepChange(2)}
-            onNext={handleSaveIntegration}
-          />
-        ) : null,
+        <WorkspaceSelectionStep
+          key="step-2"
+          selectedItem={props.selectedItem}
+          onSelectedItemChange={props.onSelectedItemChange}
+          onPrevious={() => props.onStepChange(1)}
+          onNext={() => {
+            props.onStepChange(3)
+            resetAdminStatus()
+            resetMembers()
+          }}
+          workspaces={workspaces}
+          isCollectingWorkspaces={isCollectingWorkspaces}
+          onCollectWorkspaces={collectWorkspaces}
+        />,
+
+        <MemberListStep
+          key="step-3"
+          selectedWorkspace={selectedWorkspace}
+          isAdmin={isAdmin}
+          isCheckingAdmin={isCheckingAdmin}
+          onCheckAdminPermission={handleCheckAdminPermission}
+          memberData={memberData}
+          isCollectingMembers={isCollectingMembers}
+          onCollectMembers={handleCollectMembers}
+          onPrevious={() => props.onStepChange(2)}
+          onNext={handleSaveIntegration}
+        />,
 
         <CompletionStep
           key="step-4"
         />
-      ].filter(Boolean)
+      ]
     },
 
     getStepCount: () => 4,
 
     getLoadingStates: () => {
       return {
-        1: false,
-        2: false,
-        3: false,
-        4: false
+        1: !!isChecking,
+        2: !!isCollectingWorkspaces,
+        3: !!(isCheckingAdmin || isCollectingMembers),
+        4: fetcher.state !== 'idle'
       }
     }
   }

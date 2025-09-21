@@ -9,35 +9,33 @@ import {
   TableRow,
 } from "~/components/ui/table"
 import { LoaderCircleIcon } from "lucide-react"
-import { useAdminPermission } from "~/models/integration/hook"
-import { useMemberCollection } from "~/models/integration/hook"
-import type { SlackWorkspace } from "~/models/integration/hook/slack/use-workspace-collection"
+import type { SlackWorkspace, SlackMember } from "~/models/integration/hook/use-slack-integration"
 
 interface MemberListStepProps {
   selectedWorkspace: SlackWorkspace | null
+  isAdmin: boolean | null
+  isCheckingAdmin: boolean
+  onCheckAdminPermission: () => void
+  memberData: SlackMember[]
+  isCollectingMembers: boolean
+  onCollectMembers: () => void
   onPrevious: () => void
   onNext: () => void
 }
 
 export function MemberListStep({
   selectedWorkspace,
+  isAdmin,
+  isCheckingAdmin,
+  onCheckAdminPermission,
+  memberData,
+  isCollectingMembers,
+  onCollectMembers,
   onPrevious,
   onNext
 }: MemberListStepProps) {
-  const { isAdmin, isCheckingAdmin, checkAdminPermission } = useAdminPermission();
-  const { members: memberData, isCollectingMembers, collectMembers } = useMemberCollection();
-
-  const handleCheckAdminPermission = () => {
-    if (selectedWorkspace) {
-      checkAdminPermission(selectedWorkspace.elementId);
-    }
-  };
-
-  const handleCollectMembers = () => {
-    if (selectedWorkspace) {
-      collectMembers(selectedWorkspace.elementId);
-    }
-  };
+  const handleCheckAdminPermission = onCheckAdminPermission;
+  const handleCollectMembers = onCollectMembers;
   
   return (
     <div className="space-y-4 w-full">
@@ -107,6 +105,7 @@ export function MemberListStep({
                   <TableHead className="w-16">#</TableHead>
                   <TableHead>이메일</TableHead>
                   <TableHead>상태</TableHead>
+                  <TableHead>가입일</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

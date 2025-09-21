@@ -1,14 +1,19 @@
 import { Button } from "~/components/ui/button"
-import { useExtensionCheck } from "~/models/integration/hook/slack/use-extension-check";
+import type { ExtensionStatus } from "~/models/integration/hook/use-slack-integration";
 
 interface ExtensionCheckStepProps {
   onNext: () => void
+  extensionStatus: ExtensionStatus | null
+  isChecking: boolean
+  onCheckExtension: () => void
 }
 
 export function ExtensionCheckStep({
-  onNext
+  onNext,
+  extensionStatus,
+  isChecking,
+  onCheckExtension
 }: ExtensionCheckStepProps) {
-  const { extensionStatus, isChecking, checkExtension } = useExtensionCheck();
   
   const getExtensionStatusDisplay = () => {
     if (isChecking) {
@@ -57,7 +62,7 @@ export function ExtensionCheckStep({
       {!extensionStatus && (
         <div className="flex justify-center">
           <Button 
-            onClick={checkExtension}
+            onClick={onCheckExtension}
             disabled={isChecking}
             className="px-8 py-2"
           >
