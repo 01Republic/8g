@@ -20,6 +20,15 @@ import {
 
 import { StepBuilderFactory, type IntegrationService } from '../apps/StepBuilderFactory'
 
+// Reusable fade transition wrapper (mounts only current content)
+function FadeStep({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="transition-opacity duration-300 opacity-100">
+      {children}
+    </div>
+  )
+}
+
 interface IntegartionAppModalProps {
     open: boolean,
     setOpen: Dispatch<SetStateAction<boolean>>
@@ -98,8 +107,10 @@ export function IntegartionAppModal({
           </div>
 
           {/* Right Side - Content View */}
-          <div className="flex-1 flex flex-col justify-center px-8">
-            {steps[currentStep - 1]}
+          <div className="flex-1 relative px-8">
+            <FadeStep key={currentStep}>
+              <div className="min-h-[420px] flex items-center">{steps[currentStep - 1]}</div>
+            </FadeStep>
           </div>
         </div>
       </DialogContent>

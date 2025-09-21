@@ -1,4 +1,8 @@
 import { Button } from "~/components/ui/button"
+import { useEffect, useState } from "react"
+import { LoaderCircleIcon } from "lucide-react"
+import { CenteredSection } from "~/components/ui/centered-section"
+import { LoadingCard } from "~/components/ui/loading-card"
 import type { ExtensionStatus } from "~/models/integration/apps/slack/types";
 
 interface ExtensionCheckStepProps {
@@ -14,14 +18,29 @@ export function ExtensionCheckStep({
   isChecking,
   onCheckExtension
 }: ExtensionCheckStepProps) {
+  // 최소 로딩 시간을 적용해 너무 빠른 전환을 방지
+  const [minDelayDone, setMinDelayDone] = useState(false)
+
+  // 의존성에 onCheckExtension을 넣지 않아 타이머가 반복 초기화되는 문제를 방지
+  useEffect(() => {
+    onCheckExtension()
+    const timer = setTimeout(() => setMinDelayDone(true), 800)
+    return () => clearTimeout(timer)
+  }, [])
+
+  // 설치됨이면 1.6초 후 자동 다음 단계로 이동(전환 속도 완화)
+  useEffect(() => {
+    if (extensionStatus?.installed) {
+      const t = setTimeout(() => onNext(), 1600)
+      return () => clearTimeout(t)
+    }
+  }, [extensionStatus?.installed, onNext])
   
   const getExtensionStatusDisplay = () => {
-    if (isChecking) {
+    // 결과가 아직 없을 때만 최소 지연을 적용
+    if (isChecking || (!extensionStatus && !minDelayDone)) {
       return (
-        <div className="flex items-center gap-2 text-yellow-600">
-          <div className="w-4 h-4 border-2 border-yellow-600 border-t-transparent rounded-full animate-spin"></div>
-          <span>8G Extension 확인 중...</span>
-        </div>
+        <LoadingCard message="8G Extension 확인 중..." icon={<LoaderCircleIcon className="w-4 h-4 animate-spin" />} />
       )
     }
 
@@ -30,55 +49,32 @@ export function ExtensionCheckStep({
     }
 
     if (extensionStatus.installed) {
+      const msg = `8G Extension 설치됨${extensionStatus.version ? ` v${extensionStatus.version}` : ''}`
       return (
-        <div className="flex items-center gap-2 text-green-600">
-          <span className="text-lg">✅</span>
-          <div>
-            <span>8G Extension 설치됨</span>
-            {extensionStatus.version && (
-              <span className="text-sm text-gray-500 ml-2">v{extensionStatus.version}</span>
-            )}
-          </div>
-        </div>
+        <LoadingCard icon={<span className="text-lg">✅</span>} message={msg} />
       )
     } else {
       return (
-        <div className="flex items-center gap-2 text-red-600">
-          <span className="text-lg">❌</span>
-          <span>8G Extension이 설치되지 않았습니다</span>
-        </div>
+        <LoadingCard icon={<span className="text-lg">❌</span>} message="8G Extension이 설치되지 않았습니다" />
       )
     }
   }
 
   return (
-    <div className="space-y-4 max-w-md mx-auto w-full">
+    <div className="space-y-6 max-w-md mx-auto w-full">
       <h3 className="text-lg font-semibold text-center">Extension 상태 확인</h3>
       
-      <div className="flex justify-center">
-        {getExtensionStatusDisplay()}
-      </div>
+      <CenteredSection>{getExtensionStatusDisplay()}</CenteredSection>
       
-      {!extensionStatus && (
-        <div className="flex justify-center">
+      {!extensionStatus || extensionStatus.installed ? null : (
+        <div className="flex justify-end pt-2">
           <Button 
             onClick={onCheckExtension}
-            disabled={isChecking}
+            disabled={isChecking || !minDelayDone}
+            variant="outline"
             className="px-8 py-2"
           >
-            {isChecking ? '확인 중...' : '익스텐션 설치 확인'}
-          </Button>
-        </div>
-      )}
-      
-      {extensionStatus && (
-        <div className="flex justify-center pt-4">
-          <Button 
-            onClick={onNext} 
-            disabled={!extensionStatus?.installed}
-            className="px-8 py-2"
-          >
-            다음 단계로
+            재시도
           </Button>
         </div>
       )}

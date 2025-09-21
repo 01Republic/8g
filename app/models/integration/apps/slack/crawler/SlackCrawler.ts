@@ -56,8 +56,19 @@ export class SlackCrawler {
         option: { waitForSelector: true, waitSelectorTimeout: 5000, multiple: false }
       } as GetTextBlock
     });
-    const pageTitle = (h1Text.data?.result.data as string) || '';
-    return !pageTitle.includes('워크스페이스 관리자만 이 페이지를 볼 수 있습니다.');
+    const pageTitle = ((h1Text.data?.result.data as string) || '').toLowerCase();
+
+    // Deny patterns for non-admin users across locales
+    const denyPatterns = [
+      'only workspace admins can view this page',
+      'workspace admins can view this page',
+      'only workspace owners and admins',
+      '관리자만',
+      '워크스페이스 관리자만',
+    ];
+
+    const isDenied = denyPatterns.some((pattern) => pageTitle.includes(pattern));
+    return !isDenied;
   }
 
   async collectMembers(workspaceId: string): Promise<SlackMember[]> {
