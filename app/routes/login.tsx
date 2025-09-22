@@ -6,8 +6,8 @@ import type { Route } from "./+types/login";
 import { LoginForm } from "~/components/login-form";
 
 async function getUser(
-    email: string,
-    password: string,
+  email: string,
+  password: string,
 ): Promise<Users> {
     const user = await Users.findOne({
         where: {
@@ -15,16 +15,16 @@ async function getUser(
         }
     })
 
-    if (!user) {
-      throw new Error()
-    }
-  
-    if (!(await compare(password, user.password))) {
-      throw new Error('invalid password');
-    }
-  
-    // POST /user/session 에서의 @CurrentUser() 는 여기서 정의됩니다.
-    return user;
+  if (!user) {
+    throw new Error('invalid credentials')
+  }
+
+  if (!(await compare(password, user.password))) {
+    throw new Error('invalid credentials');
+  }
+
+  // POST /user/session 에서의 @CurrentUser() 는 여기서 정의됩니다.
+  return user;
 }
 
 function extractSubdomain(request: Request): string | null {
@@ -49,20 +49,17 @@ export async function loader({
 
   // Subdomain (slug) 추출
   const subdomain = extractSubdomain(request);
-  if(!subdomain){
-    throw new Error('Subdomain not found')
-  }
 
   await initializeDatabase()
-  const org = await Organizations.findOne({
+  const org = subdomain ? await Organizations.findOne({
     where: {
-        slug: subdomain
+      slug: subdomain
     },
     relations:[
-        "memberships",
-        "memberships.user"
+      "memberships",
+      "memberships.user"
     ]
-  })
+  }) : null
 
   if (session.has("userId")) {
     return redirect("/");
@@ -93,25 +90,53 @@ export async function action({
   const password = form.get("password") as string;
 
   await initializeDatabase()
-  const user = await getUser(username, password)
+  let user: Users
+  try {
+    user = await getUser(username, password)
+  } catch (err) {
+    session.flash("error", "Invalid username/password")
+    return redirect("/login", {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    })
+  }
 
   // Subdomain (slug) 추출
   const subdomain = extractSubdomain(request);
   if (!subdomain) {
-    throw new Error()
+    session.flash("error", "Subdomain required for login")
+    return redirect("/login", {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    })
   }
   const org = await Organizations.findOne({
     where: {
-        slug: subdomain
+      slug: subdomain
     },
     relations:[
-        "memberships",
-        "memberships.user"
+      "memberships",
+      "memberships.user"
     ]
   })
 
-  if(!org?.isAdmin(user)) {
-    throw new Error("이 에러야?")
+  if(!org) {
+    session.flash("error", "Organization not found")
+    return redirect("/login", {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    })
+  }
+  if(!org.isAdmin(user)) {
+    session.flash("error", "You do not have access to this organization")
+    return redirect("/login", {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    })
   }
 
   const userId = user.id
