@@ -63,6 +63,8 @@ export default function Integration(
 ) {
     const { apps } = loaderData
     const [open, setOpen] = useState(false)
+    const [service, setService] = useState<'slack' | 'notion'>('slack')
+    const [productId, setProductId] = useState<number>(apps[0]?.id || 1)
 
     return (
         <div className="h-full w-full p-8">
@@ -77,7 +79,12 @@ export default function Integration(
                         <IntegrationAppCard
                             key={index}
                             appInfo={app}
-                            openIntegartionModal={setOpen}
+                            onOpen={(svc, pid) => { 
+                                const safe = (svc === 'slack' || svc === 'notion') ? svc : 'slack';
+                                setService(safe); 
+                                setProductId(pid); 
+                                setOpen(true); 
+                            }}
                         />
                     ))}
                 </div>
@@ -85,9 +92,9 @@ export default function Integration(
                 <IntegartionAppModal 
                     open={open} 
                     setOpen={setOpen} 
-                    service="notion"
+                    service={service}
                     organizationId={1} // TODO: Get from auth context
-                    productId={apps[0]?.id || 1} // TODO: Get selected app's product ID
+                    productId={productId}
                 />
             </div>
         </div>

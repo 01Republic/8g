@@ -4,6 +4,8 @@ import type { Route } from "./+types/home";
 import { RecentSubscriptionCard } from "~/models/subscriptions/components/RecentSubscriptionCard";
 import { authMiddleware } from "~/middleware/auth";
 import { userContext } from "~/context";
+import { initializeDatabase } from "~/.server/db/config";
+import { Subscriptions } from "~/.server/db/entities/Subscriptions";
 
 
 export function meta({}: Route.MetaArgs) {
@@ -65,13 +67,31 @@ export async function loader({
   context,
 }: Route.LoaderArgs){
   const user = context.get(userContext); // Guaranteed to exist
-  return { user };
+
+  await initializeDatabase()
+  const subscriptions = await Subscriptions.find({
+    where: {
+      organization: {
+        id: user!.orgId
+      }
+    },
+    order: {
+      registeredAt: 'DESC'
+    },
+    relations: [
+      'product',
+      'currentBillingAmount', 
+      'paymentPlan',
+      'organization'
+    ]
+  })
+  return { user, subscriptions };
 }
 
 export default function Home(
   { loaderData }: Route.ComponentProps
 ) {
-  const { user } = loaderData
+  const { user, subscriptions } = loaderData
   const [predictions, setPredictions] = useState<string[]>([]);
   const [query, setQuery] = useState("");
 
@@ -102,15 +122,15 @@ export default function Home(
       <div className="w-full max-w-4xl space-y-6 mt-12">
         <div className="text-left">
           <h3 className="text-xl font-semibold text-gray-900 mb-8">
-            최근 사용한 앱
+            최근 등록한 구독
           </h3>
           <div className="grid grid-cols-3 gap-6">
-            {recentApps.map((app) => (
+            {subscriptions.map((subscription) => (
               <RecentSubscriptionCard 
-                key={app.appKoreanName} 
-                appName={app.appKoreanName + " / " + app.appEnglishName} 
-                appLogo={app.appLogo} 
-                lastUsedAt={app.lastUsedAt} 
+                key={subscription.id} 
+                appName={subscription.product?.nameKo + " / " + subscription.product?.nameEn} 
+                appLogo={subscription.product?.image} 
+                lastUsedAt={subscription.updatedAt} 
               />
             ))}
           </div>

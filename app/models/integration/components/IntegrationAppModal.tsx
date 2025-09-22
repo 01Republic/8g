@@ -18,7 +18,7 @@ import {
   } from '~/components/ui/stepper';
   import { Check, LoaderCircleIcon } from 'lucide-react';
 
-import { StepBuilderFactory, type IntegrationService } from '../apps/StepBuilderFactory'
+import { StepBuilderFactory, type IntegrationAppType } from '../apps/StepBuilderFactory'
 
 // Reusable fade transition wrapper (mounts only current content)
 function FadeStep({ children }: { children: React.ReactNode }) {
@@ -32,7 +32,7 @@ function FadeStep({ children }: { children: React.ReactNode }) {
 interface IntegartionAppModalProps {
     open: boolean,
     setOpen: Dispatch<SetStateAction<boolean>>
-    service: IntegrationService
+    service: IntegrationAppType
     organizationId: number
     productId: number
 }

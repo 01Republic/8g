@@ -2,10 +2,10 @@ import { NotionStepBuilder } from './notion/components/NotionStepBuilder'
 import type { StepBuilder } from './slack/components/SlackStepBuilder'
 import { SlackStepBuilder } from './slack/components/SlackStepBuilder'
 
-export type IntegrationService = 'slack' | 'notion' | 'github' | 'linear'
+export type IntegrationAppType = 'slack' | 'notion' | 'github' | 'linear'
 
 export class StepBuilderFactory {
-  static create(service: IntegrationService): StepBuilder {
+  static create(service: IntegrationAppType): StepBuilder {
     switch (service) {
       case 'slack':
         return SlackStepBuilder()
@@ -26,11 +26,11 @@ export class StepBuilderFactory {
     }
   }
 
-  static getSupportedServices(): IntegrationService[] {
+  static getSupportedServices(): IntegrationAppType[] {
     return ['slack'] // Add more as they're implemented
   }
 
-  static isServiceSupported(service: IntegrationService): boolean {
+  static isServiceSupported(service: IntegrationAppType): boolean {
     return this.getSupportedServices().includes(service)
   }
 }

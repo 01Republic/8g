@@ -9,15 +9,16 @@ import {
   CardTitle,
 } from "~/components/ui/card"
 import type { Product } from "../../products/types/Product";
+import type { IntegrationAppType } from "../apps/StepBuilderFactory";
 
 interface IntegrationAppCardProps {
   appInfo: Product
-  openIntegartionModal: Dispatch<SetStateAction<boolean>>
+  onOpen: (service: IntegrationAppType, productId: number) => void
 }
 
 export function IntegrationAppCard({ 
   appInfo,
-  openIntegartionModal
+  onOpen
 }: IntegrationAppCardProps) {
   const { nameEn, nameKo, image, tagline, productTags } = appInfo;
   const category = productTags.map((tag) => tag.tag.name).join(", ") || ""
@@ -38,7 +39,11 @@ export function IntegrationAppCard({
             {nameKo} / {nameEn}
           </CardTitle>
         </div>
-        <Button className="px-4 py-1 text-sm" onClick={() => openIntegartionModal(true)}>
+        <Button className="px-4 py-1 text-sm" onClick={() => {
+          const lower = nameEn.toLowerCase()
+          const service = (lower.includes('slack') || lower.includes('notion') ? lower : 'slack') as IntegrationAppType
+          onOpen(service, appInfo.id)
+        }}>
           Connect
         </Button>
       </CardHeader>
