@@ -1,17 +1,9 @@
-import { useEffect } from "react"
-import { useConfetti } from "~/hooks/use-confetti"
+import { useEffect } from 'react'
+import { useConfetti } from '~/hooks/use-confetti'
 
-interface CompletionStepProps {
-}
-
-export function CompletionStep({
-}: CompletionStepProps) {
+export function CompletionStep() {
   const { triggerConfetti, confettiElement } = useConfetti()
-
-  useEffect(() => {
-    triggerConfetti()
-  }, [triggerConfetti])
-
+  useEffect(() => { triggerConfetti() }, [triggerConfetti])
   return (
     <>
       {confettiElement}
@@ -21,3 +13,5 @@ export function CompletionStep({
     </>
   )
 }
+
+

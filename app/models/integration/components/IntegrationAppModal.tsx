@@ -18,7 +18,8 @@ import {
   } from '~/components/ui/stepper';
   import { Check, LoaderCircleIcon } from 'lucide-react';
 
-import { StepBuilderFactory, type IntegrationAppType } from '../apps/StepBuilderFactory'
+import { DynamicStepBuilder } from "../apps/DynamicStepBuilder";
+import type { IntegrationAppType } from "../apps/metadata";
 
 // Reusable fade transition wrapper (mounts only current content)
 function FadeStep({ children }: { children: React.ReactNode }) {
@@ -47,7 +48,7 @@ export function IntegartionAppModal({
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedItem, setSelectedItem] = useState<string>("");
   
-  const stepBuilder = StepBuilderFactory.create(service);
+  const stepBuilder = DynamicStepBuilder(service)
   const stepCount = stepBuilder.getStepCount();
   const loadingStates = stepBuilder.getLoadingStates();
   
@@ -66,6 +67,7 @@ export function IntegartionAppModal({
   useEffect(() => {
     if (open) {
       setCurrentStep(1);
+      setSelectedItem("");
     }
   }, [open]);
 

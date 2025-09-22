@@ -18,7 +18,7 @@ export async function loader() {
         .leftJoinAndSelect('product.productTags', 'productTag')  // 1차 조인
         .leftJoinAndSelect('productTag.tag', 'tag')              // 2차 조인
         .where('(product.searchText LIKE :kw1 OR product.searchText LIKE :kw2)', {
-            kw1: 'notion',
+            kw1: '%slack%',
             kw2: '%slack%',
           })
           .getMany();
@@ -92,7 +92,7 @@ export default function Integration(
                 <IntegartionAppModal 
                     open={open} 
                     setOpen={setOpen} 
-                    service={service}
+                    service={"slack"}
                     organizationId={1} // TODO: Get from auth context
                     productId={productId}
                 />
