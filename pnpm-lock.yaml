@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       8g-extension:
-        specifier: ^1.2.9
-        version: 1.2.9
+        specifier: ^1.5.0
+        version: 1.5.0
       '@radix-ui/react-alert-dialog':
         specifier: ^1.1.15
         version: 1.1.15(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -138,8 +138,8 @@ importers:
 
 packages:
 
-  8g-extension@1.2.9:
-    resolution: {integrity: sha512-FUq4W0TB8hc0x/QS4nHPMRzl0SoJRVap2eQQzaSSO1xNh0y95Poiz8cxiv31Ib8huRbohY4z5P7VAal83ZiN0Q==}
+  8g-extension@1.5.0:
+    resolution: {integrity: sha512-vjcyVRzAnBJ8VltrtDg2fDIXAo+5enTAPuSDJePusSkX7MV0H9wbQxZ6iODi8D7fCKpIzu5+gnR2MkP/VLAFAw==}
 
   '@azure/abort-controller@2.1.2':
     resolution: {integrity: sha512-nBrLsEWm4J2u5LpAPjxADTlq3trDgVZZXHNKabeXZtpq3d3AbN/KGO82R87rdDz5/lYB024rtEf10/q0urNgsA==}
@@ -3378,7 +3378,7 @@ packages:
 
 snapshots:
 
-  8g-extension@1.2.9:
+  8g-extension@1.5.0:
     dependencies:
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)

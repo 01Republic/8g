@@ -6,9 +6,7 @@ import { authMiddleware } from "~/middleware/auth";
 import { userContext } from "~/context";
 const { initializeDatabase } = await import("~/.server/db");
 const { Products } = await import("~/.server/db/entities/Products");
-const { SlackIntegrationService } = await import("~/.server/db/services/slack-integration.service");
-
-const searchTextDev = "slack"
+const { SubscriptionService } = await import("~/.server/db/services/subscription.service");
 
 export const middleware: Route.MiddlewareFunction[] = [
     authMiddleware,
@@ -19,10 +17,11 @@ export async function loader() {
     const apps = await Products.createQueryBuilder('product')
         .leftJoinAndSelect('product.productTags', 'productTag')  // 1차 조인
         .leftJoinAndSelect('productTag.tag', 'tag')              // 2차 조인
-        .where('product.searchText LIKE :search', { 
-            search: `%${searchTextDev}%` 
-        })
-        .getMany()
+        .where('(product.searchText LIKE :kw1 OR product.searchText LIKE :kw2)', {
+            kw1: 'notion',
+            kw2: '%slack%',
+          })
+          .getMany();
         
     return { apps }
 }
@@ -39,8 +38,8 @@ export async function action({ request, context }: Route.ActionArgs) {
     const productId = parseInt(formData.get('productId') as string)
     
     try {
-        const slackService = new SlackIntegrationService()
-        const result = await slackService.saveSlackIntegration({
+        const slackService = new SubscriptionService()
+        const result = await slackService.saveSubscription({
             workspace,
             members,
             organizationId,
@@ -86,7 +85,7 @@ export default function Integration(
                 <IntegartionAppModal 
                     open={open} 
                     setOpen={setOpen} 
-                    service="slack"
+                    service="notion"
                     organizationId={1} // TODO: Get from auth context
                     productId={apps[0]?.id || 1} // TODO: Get selected app's product ID
                 />

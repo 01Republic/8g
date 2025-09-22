@@ -29,6 +29,7 @@ export class SlackCrawler {
       } as GetElementDataBlock
     });
 
+    // @ts-ignore
     const workspaceData = result.data!.result.data || [];
     const mapped = (workspaceData as ElementData[]).map((it: ElementData) => ({
       elementId: (it.attributes?.['id'] || '').trim(),
@@ -56,6 +57,7 @@ export class SlackCrawler {
         option: { waitForSelector: true, waitSelectorTimeout: 5000, multiple: false }
       } as GetTextBlock
     });
+    // @ts-ignore
     const pageTitle = ((h1Text.data?.result.data as string) || '').toLowerCase();
 
     // Deny patterns for non-admin users across locales
@@ -105,16 +107,22 @@ export class SlackCrawler {
     ]);
 
     const maxLength = Math.max(
+      // @ts-ignore
       emails.data?.result.data.length || 0,
+      // @ts-ignore
       statuses.data?.result.data.length || 0,
+      // @ts-ignore
       joinDates.data?.result.data.length || 0
     );
 
     const memberList: SlackMember[] = [];
     for (let i = 0; i < maxLength; i++) {
       memberList.push({
+        // @ts-ignore
         email: (emails.data?.result.data[i] as string) || 'N/A',
+        // @ts-ignore
         status: (statuses.data?.result.data[i] === "활성" ? "active" : "inactive"),
+        // @ts-ignore
         joinDate: (joinDates.data?.result.data[i] as string) || 'N/A',
       });
     }

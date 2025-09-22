@@ -1,3 +1,4 @@
+import { NotionStepBuilder } from './notion/components/NotionStepBuilder'
 import type { StepBuilder } from './slack/components/SlackStepBuilder'
 import { SlackStepBuilder } from './slack/components/SlackStepBuilder'
 
@@ -10,8 +11,7 @@ export class StepBuilderFactory {
         return SlackStepBuilder()
       
       case 'notion':
-        // TODO: Implement NotionStepBuilder
-        throw new Error('Notion integration not implemented yet')
+        return NotionStepBuilder()
       
       case 'github':
         // TODO: Implement GitHubStepBuilder  
