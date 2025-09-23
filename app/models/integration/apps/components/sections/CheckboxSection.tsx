@@ -5,7 +5,7 @@ import { LoadingCard } from '~/components/ui/loading-card'
 import { LoaderCircleIcon } from 'lucide-react'
 import { useWorkflowExecution } from '../../hooks/useWorkflowExecution'
 
-interface CheckboxStepProps {
+interface CheckboxSectionProps {
   title: string
   workflow: any
   targetUrl?: string
@@ -14,7 +14,7 @@ interface CheckboxStepProps {
   ctx?: any
 }
 
-export function CheckboxStep({ title, workflow, targetUrl, onPrevious, onNext, ctx }: CheckboxStepProps) {
+export function CheckboxSection({ title, workflow, targetUrl, onPrevious, onNext, ctx }: CheckboxSectionProps) {
   const resolvedUrl = targetUrl ?? (typeof workflow?.targetUrl === 'function' ? workflow.targetUrl(ctx) : workflow?.targetUrl)
   const { loading, error, parsed } = useWorkflowExecution(workflow, resolvedUrl)
 
@@ -50,5 +50,6 @@ export function CheckboxStep({ title, workflow, targetUrl, onPrevious, onNext, c
     </div>
   )
 }
+
 
 

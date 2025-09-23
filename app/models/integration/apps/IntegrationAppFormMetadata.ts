@@ -1,9 +1,6 @@
 import type { ElementData, WorkflowStep } from "8g-extension"
 
-export type StepType = 'extension' | 'workspace' | 'admin' | 'members' | 'completion'
-
-export interface AppStepMeta {
-  type: StepType
+export interface AppFormSectionMeta {
   title: string
   uiSchema? : {
     type: 'select-box'
@@ -32,29 +29,29 @@ export interface AppStepMeta {
       parser: (result: any) => any
       targetUrl?: string | ((ctx: any) => string)
     }
-  } | {
-    type: 'initial-check'
-  }
+    } | {
+      type: 'initial-check'
+    }  | {
+      type: 'completion'
+    }
 }
 
-export interface IntegrationAppMetadata {
-  steps: AppStepMeta[]
+export interface IntegrationAppFormMetadata {
+  sections: AppFormSectionMeta[]
 }
 
 export type IntegrationAppType = 'slack' | 'notion' | 'github' | 'linear'
 
-export const integrationAppStepsMetadata: Record<IntegrationAppType, IntegrationAppMetadata> = {
+export const integrationAppFormMetadata: Record<IntegrationAppType, IntegrationAppFormMetadata> = {
   slack: {
-    steps: [
+    sections: [
       { 
-        type: 'extension', 
         title: 'Extension 상태 확인',
         uiSchema: {
           type: 'initial-check',
         }
       },
       {
-        type: 'workspace',
         title: '워크스페이스 선택',
         uiSchema: {
           type: 'select-box',
@@ -95,7 +92,6 @@ export const integrationAppStepsMetadata: Record<IntegrationAppType, Integration
         },
       },
       {
-        type: 'admin',
         title: '관리자 권한 확인',
         uiSchema: {
           type: 'checkbox',
@@ -134,7 +130,6 @@ export const integrationAppStepsMetadata: Record<IntegrationAppType, Integration
         },
       },
       {
-        type: 'members',
         title: '멤버 연동',
         uiSchema: {
           type: 'table',
@@ -178,25 +173,25 @@ export const integrationAppStepsMetadata: Record<IntegrationAppType, Integration
           },
         },
       },
-      { type: 'completion', title: '연동 완료' },
+      { title: '연동 완료' },
     ],
   },
   notion: {
-    steps: [
-      { type: 'extension', title: 'Extension 상태 확인' },
-      { type: 'workspace', title: '워크스페이스 선택' },
-      { type: 'admin', title: '관리자 권한 확인' },
-      { type: 'members', title: '멤버 연동' },
-      { type: 'completion', title: '연동 완료' },
+    sections: [
+      { title: 'Extension 상태 확인' },
+      { title: '워크스페이스 선택' },
+      { title: '관리자 권한 확인' },
+      { title: '멤버 연동' },
+      { title: '연동 완료' },
     ],
   },
-  github: { steps: [] },
-  linear: { steps: [] },
+  github: { sections: [] },
+  linear: { sections: [] },
 }
 
 export function getSupportedServicesFromMetadata(): IntegrationAppType[] {
-  return (Object.keys(integrationAppStepsMetadata) as IntegrationAppType[])
-    .filter((key) => integrationAppStepsMetadata[key].steps.length > 0)
+  return (Object.keys(integrationAppFormMetadata) as IntegrationAppType[])
+    .filter((key) => integrationAppFormMetadata[key].sections.length > 0)
 }
 
 

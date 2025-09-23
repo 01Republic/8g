@@ -18,8 +18,8 @@ import {
   } from '~/components/ui/stepper';
   import { Check, LoaderCircleIcon } from 'lucide-react';
 
-import { DynamicStepBuilder } from "../apps/DynamicStepBuilder";
-import type { IntegrationAppType } from "../apps/metadata";
+import { DynamicFormBuilder } from "../apps/DynamicFormBuilder";
+import type { IntegrationAppType } from "../apps/IntegrationAppFormMetadata";
 
 // Reusable fade transition wrapper (mounts only current content)
 function FadeStep({ children }: { children: React.ReactNode }) {
@@ -45,34 +45,34 @@ export function IntegartionAppModal({
     organizationId,
     productId
 }: IntegartionAppModalProps) {
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentSection, setCurrentSection] = useState(0);
   const [selectedItem, setSelectedItem] = useState<string>("");
   
-  const stepBuilder = DynamicStepBuilder(service)
-  const stepCount = stepBuilder.getStepCount();
-  const loadingStates = stepBuilder.getLoadingStates();
+  const formBuilder = DynamicFormBuilder(service)
+  const sectionCount = formBuilder.getSectionCount();
+  const loadingStates = formBuilder.getLoadingStates();
   
-  const stepProps = {
-    currentStep,
+  const sectionProps = {
+    currentSection,
     selectedItem,
     onSelectedItemChange: setSelectedItem,
-    onStepChange: setCurrentStep,
+    onSectionChange: setCurrentSection,
     onModalClose: () => setOpen(false),
     organizationId,
     productId
   };
   
-  const steps = stepBuilder.buildSteps(stepProps);
+  const sections = formBuilder.buildSections(sectionProps);
 
   useEffect(() => {
     if (open) {
-      setCurrentStep(1);
+      setCurrentSection(1);
       setSelectedItem("");
     }
   }, [open]);
 
 
-  const stepNumbers = Array.from({ length: stepCount }, (_, i) => i + 1);
+  const sectionNumbers = Array.from({ length: sectionCount }, (_, i) => i + 1);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -86,7 +86,7 @@ export function IntegartionAppModal({
           <div className="w-16 flex justify-center items-center">
             <Stepper
               className="flex flex-col items-center justify-center"
-              value={currentStep}
+              value={currentSection}
               orientation="vertical"
               indicators={{
                 completed: <Check className="size-4" />,
@@ -94,14 +94,14 @@ export function IntegartionAppModal({
               }}
             >
               <StepperNav>
-                {stepNumbers.map((step) => (
+                {sectionNumbers.map((step) => (
                   <StepperItem key={step} step={step} loading={loadingStates[step] || false}>
                     <StepperTrigger>
                       <StepperIndicator className="data-[state=completed]:bg-green-500 data-[state=completed]:text-white data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=inactive]:text-gray-500">
                         {step}
                       </StepperIndicator>
                     </StepperTrigger>
-                    {stepNumbers.length > step && <StepperSeparator className="group-data-[state=completed]/step:bg-green-500" />}
+                    {sectionNumbers.length > step && <StepperSeparator className="group-data-[state=completed]/step:bg-green-500" />}
                   </StepperItem>
                 ))}
               </StepperNav>
@@ -110,8 +110,8 @@ export function IntegartionAppModal({
 
           {/* Right Side - Content View */}
           <div className="flex-1 relative px-8">
-            <FadeStep key={currentStep}>
-              <div className="min-h-[420px] flex items-center">{steps[currentStep - 1]}</div>
+            <FadeStep key={currentSection}>
+              <div className="min-h-[420px] flex items-center">{sections[currentSection - 1]}</div>
             </FadeStep>
           </div>
         </div>

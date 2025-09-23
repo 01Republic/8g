@@ -5,7 +5,7 @@ import { Button } from '~/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { useWorkflowExecution } from '../../hooks/useWorkflowExecution'
 
-interface TableStepProps {
+interface TableSectionProps {
   title: string
   workflow: any
   targetUrl?: string
@@ -14,7 +14,7 @@ interface TableStepProps {
   ctx?: any
 }
 
-export function TableStep({ title, workflow, targetUrl, onConfirm, selectedWorkspaceLabel, ctx }: TableStepProps) {
+export function TableSection({ title, workflow, targetUrl, onConfirm, selectedWorkspaceLabel, ctx }: TableSectionProps) {
   const resolvedUrl = targetUrl ?? (typeof workflow?.targetUrl === 'function' ? workflow.targetUrl(ctx) : workflow?.targetUrl)
   const { loading, error, parsed } = useWorkflowExecution(workflow, resolvedUrl)
   const rows: any[] = Array.isArray(parsed) ? parsed : []
@@ -61,5 +61,6 @@ export function TableStep({ title, workflow, targetUrl, onConfirm, selectedWorks
     </div>
   )
 }
+
 
 

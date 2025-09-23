@@ -11,7 +11,7 @@ import {
 } from '~/components/ui/select'
 import { useWorkflowExecution } from '../../hooks/useWorkflowExecution'
 
-interface SelectBoxStepProps {
+interface SelectBoxSectionProps {
   title: string
   workflow: any
   placeholder?: string
@@ -23,7 +23,7 @@ interface SelectBoxStepProps {
   fallbackUrl?: string
 }
 
-export function SelectBoxStep({ title, workflow, placeholder, selectedValue, onSelectedValueChange, onNext, onParsed, ctx, fallbackUrl }: SelectBoxStepProps) {
+export function SelectBoxSection({ title, workflow, placeholder, selectedValue, onSelectedValueChange, onNext, onParsed, ctx, fallbackUrl }: SelectBoxSectionProps) {
   const dynamicUrl = typeof workflow?.targetUrl === 'function' ? workflow.targetUrl(ctx) : fallbackUrl
   const { loading, error, parsed } = useWorkflowExecution(workflow, dynamicUrl)
 
@@ -72,5 +72,6 @@ export function SelectBoxStep({ title, workflow, placeholder, selectedValue, onS
     </div>
   )
 }
+
 
 

@@ -5,12 +5,12 @@ import { CenteredSection } from '~/components/ui/centered-section'
 import { LoadingCard } from '~/components/ui/loading-card'
 import { LoaderCircleIcon } from 'lucide-react'
 
-interface InitialCheckStepProps {
+interface InitialCheckSectionProps {
   title: string
   onNext: () => void
 }
 
-export function InitialCheckStep({ title, onNext }: InitialCheckStepProps) {
+export function InitialCheckSection({ title, onNext }: InitialCheckSectionProps) {
   const [loading, setLoading] = useState(true)
   const [installed, setInstalled] = useState<boolean | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -57,5 +57,6 @@ export function InitialCheckStep({ title, onNext }: InitialCheckStepProps) {
     </div>
   )
 }
+
 
 

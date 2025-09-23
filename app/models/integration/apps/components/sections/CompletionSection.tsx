@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useConfetti } from '~/hooks/use-confetti'
 
-export function CompletionStep() {
+export function CompletionSection() {
   const { triggerConfetti, confettiElement } = useConfetti()
   useEffect(() => { triggerConfetti() }, [triggerConfetti])
   return (
@@ -13,5 +13,6 @@ export function CompletionStep() {
     </>
   )
 }
+
 
 
