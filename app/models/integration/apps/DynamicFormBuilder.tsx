@@ -1,13 +1,15 @@
 import type { ReactNode } from 'react'
-import { useEffect, useRef, useState } from 'react'
-import type { IntegrationAppType } from './IntegrationAppFormMetadata'
-import { integrationAppFormMetadata } from './IntegrationAppFormMetadata'
-import { useFetcher } from 'react-router'
-import { SelectBoxSection } from './components/sections/SelectBoxSection'
-import { CheckboxSection } from './components/sections/CheckboxSection'
-import { TableSection } from './components/sections/TableSection'
-import { InitialCheckSection } from './components/sections/InitialCheckSection'
-import { CompletionSection } from './components/sections/CompletionSection'
+import type { IntegrationAppFormMetadata, SelectBoxSectionSchema, TableSectionSchema, CheckboxSectionSchema } from './IntegrationAppFormMetadata'
+import { buildSections } from './components/SectionsBuilder'
+import {
+  Stepper,
+  StepperIndicator,
+  StepperItem,
+  StepperNav,
+  StepperSeparator,
+  StepperTrigger,
+} from '~/components/ui/stepper'
+import { Check, LoaderCircleIcon } from 'lucide-react'
 
 export interface FormComponentProps {
   currentSection: number
@@ -15,131 +17,63 @@ export interface FormComponentProps {
   onSelectedItemChange: (value: string) => void
   onSectionChange: (section: number) => void
   onModalClose: () => void
-  organizationId: number
   productId: number
 }
 
+// Options to customize builder behavior (e.g., preview mode in form-builder)
+type BuilderOptions = {
+  meta: IntegrationAppFormMetadata,
+  onSubmit: (payload: { workspace?: any; members?: any[]; productId: number }) => Promise<void>
+}
+
 // No per-app hooks; everything is metadata-driven now
-export function DynamicFormBuilder(app: IntegrationAppType) {
-  const fetcher = useFetcher()
-  const [saveError, setSaveError] = useState<string | null>(null)
+export function DynamicFormBuilder(options: BuilderOptions) {
+  const { meta, onSubmit } = options
 
-  const meta = integrationAppFormMetadata[app]
-
-  // internal components removed; using imported components instead
+  const renderSections = (props: FormComponentProps): ReactNode[] => buildSections(meta, props, onSubmit)
 
   return {
-    buildSections: (props: FormComponentProps) => {
+    buildStepper: (args: { props: FormComponentProps; loadingStates?: Record<number, boolean> }) => {
+      const sectionCount = meta.sections.length
+      const sectionNumbers = Array.from({ length: sectionCount }, (_, i) => i + 1)
+      const loadingStates = args.loadingStates || Object.fromEntries(sectionNumbers.map((n) => [n, false]))
+      const sections = renderSections(args.props)
 
-      const didSubmitRef = useRef(false)
-      useEffect(() => {
-        if (!didSubmitRef.current) return
-        if (fetcher.data) {
-          if ((fetcher.data as any).success) {
-            props.onSectionChange(meta.sections.length)
-            setSaveError(null)
-          } else {
-            console.error('Save integration failed:', (fetcher.data as any).error)
-            setSaveError('데이터 저장에 실패했습니다: ' + (fetcher.data as any).error)
-          }
-          didSubmitRef.current = false
-        }
-      }, [fetcher.data, props.onSectionChange])
+      const stepperSection = (
+        <Stepper
+          className="flex flex-col items-center justify-center"
+          value={args.props.currentSection}
+          orientation="vertical"
+          indicators={{
+            completed: <Check className="size-4" />,
+            loading: <LoaderCircleIcon className="size-4 animate-spin" />,
+          }}
+        >
+          <StepperNav>
+            {sectionNumbers.map((step) => (
+              <StepperItem key={step} step={step} loading={loadingStates[step] || false}>
+                <StepperTrigger onClick={() => args.props.onSectionChange(step)}>
+                  <StepperIndicator className="data-[state=completed]:bg-green-500 data-[state=completed]:text-white data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=inactive]:text-gray-500">
+                    {step}
+                  </StepperIndicator>
+                </StepperTrigger>
+                {sectionNumbers.length > step && (
+                  <StepperSeparator className="group-data-[state=completed]/step:bg-green-500" />
+                )}
+              </StepperItem>
+            ))}
+          </StepperNav>
+        </Stepper>
+      )
 
-      const workspaceParsedRef = useRef<any[]>([])
+      const stepSection = (
+        <div className="min-h-[420px] flex items-center">{sections[args.props.currentSection - 1]}</div>
+      )
 
-      // Template resolution moved into hook; builder only records results
-
-      const result: ReactNode[] = []
-
-      // Context shared across sections
-      const contextRef = useRef<any>({})
-      meta.sections.forEach((sectionMeta, index) => {
-        const sectionIndex = index + 1
-
-        if (sectionMeta.uiSchema && sectionMeta.uiSchema.type === 'initial-check') {
-          if (sectionMeta.uiSchema && sectionMeta.uiSchema.type === 'initial-check') {
-            result.push(
-              <InitialCheckSection
-                key={`section-${sectionIndex}`}
-                title={sectionMeta.title}
-                onNext={() => { props.onSelectedItemChange(''); props.onSectionChange(sectionIndex + 1) }}
-              />
-            )
-          }
-
-        } else if (sectionMeta.uiSchema && sectionMeta.uiSchema.type === 'select-box') {
-          if (sectionMeta.uiSchema && sectionMeta.uiSchema.type === 'select-box') {
-            result.push(
-              <SelectBoxSection
-                key={`section-${sectionIndex}`}
-                title={sectionMeta.title}
-                workflow={sectionMeta.uiSchema.workflow}
-                placeholder="Workspace를 선택하세요"
-                selectedValue={props.selectedItem}
-                onSelectedValueChange={(v) => props.onSelectedItemChange(v)}
-                onNext={() => { props.onSectionChange(sectionIndex + 1) }}
-                onParsed={(list) => {
-                  workspaceParsedRef.current = list
-                  // selection will be resolved in hook using global store if needed
-                }}
-              />
-            )
-          }
-
-        } else if (sectionMeta.uiSchema && sectionMeta.uiSchema.type === 'checkbox') {
-          if (sectionMeta.uiSchema && sectionMeta.uiSchema.type === 'checkbox') {
-            result.push(
-              <CheckboxSection
-                key={`section-${sectionIndex}`}
-                title={sectionMeta.title}
-                workflow={sectionMeta.uiSchema.workflow}
-                onPrevious={() => { props.onSelectedItemChange(''); props.onSectionChange(sectionIndex - 1) }}
-                onNext={() => props.onSectionChange(sectionIndex + 1)}
-              />
-            )
-          }
-
-        } else if (sectionMeta.uiSchema && sectionMeta.uiSchema.type === 'table') {
-          if (sectionMeta.uiSchema && sectionMeta.uiSchema.type === 'table') {
-            result.push(
-              <TableSection
-                key={`section-${sectionIndex}`}
-                title={sectionMeta.title}
-                workflow={sectionMeta.uiSchema.workflow}
-                onConfirm={(rows) => {
-                  if (!Array.isArray(rows) || rows.length === 0) return
-                  const formData = new FormData()
-                  const selected = workspaceParsedRef.current[parseInt(props.selectedItem || '0')] || null
-                  if (selected) formData.append('workspace', JSON.stringify(selected))
-                  formData.append('members', JSON.stringify(rows))
-                  formData.append('productId', props.productId.toString())
-                  didSubmitRef.current = true
-                  fetcher.submit(formData, { method: 'POST' })
-                }}
-              />
-            )
-          }
-        } else if (sectionMeta.uiSchema && sectionMeta.uiSchema.type === 'completion') {
-          result.push(<CompletionSection key={`section-${sectionIndex}`} />)
-        }
-      })
-
-      return result
+      return { stepperSection, stepSection }
     },
-
-    getSectionCount: () => meta.sections.length,
-
-    getLoadingStates: () => {
-      const states: Record<number, boolean> = {}
-      meta.sections.forEach((sectionMeta, index) => {
-        const sectionIndex = index + 1
-        // UI는 메타데이터 기반 제너릭 렌더러가 각자 로딩을 표시하므로 기본값은 false
-        states[sectionIndex] = false
-        if (sectionMeta.uiSchema && sectionMeta.uiSchema.type === 'completion') states[sectionIndex] = (fetcher.state !== 'idle')
-      })
-      return states
-    },
+    
+    buildSections: (props: FormComponentProps) => renderSections(props),
   }
 }
 

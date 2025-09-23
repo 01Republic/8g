@@ -9,10 +9,10 @@ import { setSectionResult } from '../../hooks/sectionResults'
 interface TableSectionProps {
   title: string
   workflow: any
-  onConfirm: (rows: any[]) => void
+  onNext: (rows: any[]) => void
 }
 
-export function TableSection({ title, workflow, onConfirm }: TableSectionProps) {
+export function TableSection({ title, workflow, onNext }: TableSectionProps) {
   const { loading, error, parsed } = useWorkflowExecution(workflow)
   const rows: any[] = Array.isArray(parsed) ? parsed : []
 
@@ -51,7 +51,7 @@ export function TableSection({ title, workflow, onConfirm }: TableSectionProps) 
             </Table>
           </div>
           <div className="flex justify-end items-center pt-2">
-            <Button className="px-8 py-2" onClick={() => { setSectionResult('table', { result: rows }); onConfirm(rows) }}>완료하기</Button>
+            <Button className="px-8 py-2" onClick={() => { setSectionResult('table', { result: rows }); onNext(rows) }}>완료하기</Button>
           </div>
         </div>
       )}

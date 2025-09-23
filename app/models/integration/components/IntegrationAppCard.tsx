@@ -9,11 +9,10 @@ import {
   CardTitle,
 } from "~/components/ui/card"
 import type { Product } from "../../products/types/Product";
-import type { IntegrationAppType } from "../apps/StepBuilderFactory";
 
 interface IntegrationAppCardProps {
   appInfo: Product
-  onOpen: (service: IntegrationAppType, productId: number) => void
+  onOpen: (productId: number) => void
 }
 
 export function IntegrationAppCard({ 
@@ -40,9 +39,7 @@ export function IntegrationAppCard({
           </CardTitle>
         </div>
         <Button className="px-4 py-1 text-sm" onClick={() => {
-          const lower = nameEn.toLowerCase()
-          const service = (lower.includes('slack') || lower.includes('notion') ? lower : 'slack') as IntegrationAppType
-          onOpen(service, appInfo.id)
+          onOpen(appInfo.id)
         }}>
           Connect
         </Button>

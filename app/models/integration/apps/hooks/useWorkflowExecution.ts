@@ -47,7 +47,10 @@ export function useWorkflowExecution(workflow: FormWorkflow) {
         if (workflow?.parser) {
           try {
             const mapped = workflow.parser(result)
-            setParsed(mapped)
+            const stabilized = Array.isArray(mapped)
+              ? [...mapped]
+              : mapped
+            setParsed(stabilized)
           } catch (e: any) {
             setError(e?.message || 'Parser error')
           }

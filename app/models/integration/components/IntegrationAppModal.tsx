@@ -7,50 +7,26 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog"
 import type { Dispatch, SetStateAction } from "react"
-
-import {
-    Stepper,
-    StepperIndicator,
-    StepperItem,
-    StepperNav,
-    StepperSeparator,
-    StepperTrigger,
-  } from '~/components/ui/stepper';
-  import { Check, LoaderCircleIcon } from 'lucide-react';
-
 import { DynamicFormBuilder } from "../apps/DynamicFormBuilder";
-import type { IntegrationAppType } from "../apps/IntegrationAppFormMetadata";
-
-// Reusable fade transition wrapper (mounts only current content)
-function FadeStep({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="transition-opacity duration-300 opacity-100">
-      {children}
-    </div>
-  )
-}
+import { type IntegrationAppFormMetadata } from "../apps/IntegrationAppFormMetadata";
 
 interface IntegartionAppModalProps {
     open: boolean,
     setOpen: Dispatch<SetStateAction<boolean>>
-    service: IntegrationAppType
-    organizationId: number
+    onSubmit: (payload: { workspace?: any; members?: any[]; productId: number }) => Promise<void>
+    meta: IntegrationAppFormMetadata
     productId: number
 }
 
 export function IntegartionAppModal({
     open, 
     setOpen,
-    service,
-    organizationId,
+    onSubmit,
+    meta,
     productId
 }: IntegartionAppModalProps) {
   const [currentSection, setCurrentSection] = useState(0);
   const [selectedItem, setSelectedItem] = useState<string>("");
-  
-  const formBuilder = DynamicFormBuilder(service)
-  const sectionCount = formBuilder.getSectionCount();
-  const loadingStates = formBuilder.getLoadingStates();
   
   const sectionProps = {
     currentSection,
@@ -58,11 +34,11 @@ export function IntegartionAppModal({
     onSelectedItemChange: setSelectedItem,
     onSectionChange: setCurrentSection,
     onModalClose: () => setOpen(false),
-    organizationId,
     productId
   };
   
-  const sections = formBuilder.buildSections(sectionProps);
+  const formBuilder = DynamicFormBuilder({ meta, onSubmit })
+  const { stepperSection, stepSection } = formBuilder.buildStepper({ props: sectionProps })
 
   useEffect(() => {
     if (open) {
@@ -70,9 +46,6 @@ export function IntegartionAppModal({
       setSelectedItem("");
     }
   }, [open]);
-
-
-  const sectionNumbers = Array.from({ length: sectionCount }, (_, i) => i + 1);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -84,35 +57,12 @@ export function IntegartionAppModal({
         <div className="flex gap-8 min-h-[500px]">
           {/* Left Side - Vertical Stepper */}
           <div className="w-16 flex justify-center items-center">
-            <Stepper
-              className="flex flex-col items-center justify-center"
-              value={currentSection}
-              orientation="vertical"
-              indicators={{
-                completed: <Check className="size-4" />,
-                loading: <LoaderCircleIcon className="size-4 animate-spin" />,
-              }}
-            >
-              <StepperNav>
-                {sectionNumbers.map((step) => (
-                  <StepperItem key={step} step={step} loading={loadingStates[step] || false}>
-                    <StepperTrigger>
-                      <StepperIndicator className="data-[state=completed]:bg-green-500 data-[state=completed]:text-white data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=inactive]:text-gray-500">
-                        {step}
-                      </StepperIndicator>
-                    </StepperTrigger>
-                    {sectionNumbers.length > step && <StepperSeparator className="group-data-[state=completed]/step:bg-green-500" />}
-                  </StepperItem>
-                ))}
-              </StepperNav>
-            </Stepper>
+            {stepperSection}
           </div>
 
           {/* Right Side - Content View */}
           <div className="flex-1 relative px-8">
-            <FadeStep key={currentSection}>
-              <div className="min-h-[420px] flex items-center">{sections[currentSection - 1]}</div>
-            </FadeStep>
+            {stepSection}
           </div>
         </div>
       </DialogContent>

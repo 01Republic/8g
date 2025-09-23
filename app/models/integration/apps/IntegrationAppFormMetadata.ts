@@ -31,22 +31,34 @@ export type CompletionSectionSchema = {
   type: 'completion'
 }
 
-export type FormSectionSchema = SelectBoxSectionSchema | TableSectionSchema | CheckboxSectionSchema | InitialCheckSectionSchema | CompletionSectionSchema
+export type FormSectionSchema =
+  | SelectBoxSectionSchema
+  | TableSectionSchema
+  | CheckboxSectionSchema
+  | InitialCheckSectionSchema
+  | CompletionSectionSchema
 
-export interface AppFormSectionMeta {
-  id: string,
+// Sections that require a workflow must always provide uiSchema with workflow
+export type RequiredWorkflowSectionMeta = {
+  id: string
   title: string
-  uiSchema? : FormSectionSchema
+  uiSchema: SelectBoxSectionSchema | TableSectionSchema | CheckboxSectionSchema
 }
+
+// Sections without workflow can omit uiSchema entirely or provide minimal schema
+export type OptionalWorkflowlessSectionMeta = {
+  id: string
+  title: string
+  uiSchema?: InitialCheckSectionSchema | CompletionSectionSchema
+}
+
+export type AppFormSectionMeta = RequiredWorkflowSectionMeta | OptionalWorkflowlessSectionMeta
 
 export interface IntegrationAppFormMetadata {
   sections: AppFormSectionMeta[]
 }
 
-export type IntegrationAppType = 'slack'
-
-export const integrationAppFormMetadata: Record<IntegrationAppType, IntegrationAppFormMetadata> = {
-  slack: {
+export const slackMetadata: IntegrationAppFormMetadata = {
     sections: [
       { 
         id: 'initial-check',
@@ -182,11 +194,5 @@ export const integrationAppFormMetadata: Record<IntegrationAppType, IntegrationA
       { id: 'completion', title: '연동 완료' },
     ],
   }
-}
-
-export function getSupportedServicesFromMetadata(): IntegrationAppType[] {
-  return (Object.keys(integrationAppFormMetadata) as IntegrationAppType[])
-    .filter((key) => integrationAppFormMetadata[key].sections.length > 0)
-}
 
 
