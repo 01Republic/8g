@@ -4,6 +4,7 @@ import { CenteredSection } from '~/components/ui/centered-section'
 import { LoadingCard } from '~/components/ui/loading-card'
 import { LoaderCircleIcon } from 'lucide-react'
 import { useWorkflowExecution } from '../../hooks/useWorkflowExecution'
+import { setSectionResult } from '../../hooks/sectionResults'
 
 interface CheckboxSectionProps {
   title: string
@@ -11,15 +12,14 @@ interface CheckboxSectionProps {
   targetUrl?: string
   onPrevious: () => void
   onNext: () => void
-  ctx?: any
 }
 
-export function CheckboxSection({ title, workflow, targetUrl, onPrevious, onNext, ctx }: CheckboxSectionProps) {
-  const resolvedUrl = targetUrl ?? (typeof workflow?.targetUrl === 'function' ? workflow.targetUrl(ctx) : workflow?.targetUrl)
-  const { loading, error, parsed } = useWorkflowExecution(workflow, resolvedUrl)
+export function CheckboxSection({ title, workflow, onPrevious, onNext }: CheckboxSectionProps) {
+  const { loading, error, parsed } = useWorkflowExecution(workflow)
 
   useEffect(() => {
     if (parsed === true) {
+      setSectionResult('checkbox', { result: true })
       const t = window.setTimeout(() => onNext(), 600)
       return () => window.clearTimeout(t)
     }

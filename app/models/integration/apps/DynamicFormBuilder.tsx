@@ -48,6 +48,8 @@ export function DynamicFormBuilder(app: IntegrationAppType) {
 
       const workspaceParsedRef = useRef<any[]>([])
 
+      // Template resolution moved into hook; builder only records results
+
       const result: ReactNode[] = []
 
       // Context shared across sections
@@ -77,52 +79,44 @@ export function DynamicFormBuilder(app: IntegrationAppType) {
                 selectedValue={props.selectedItem}
                 onSelectedValueChange={(v) => props.onSelectedItemChange(v)}
                 onNext={() => { props.onSectionChange(sectionIndex + 1) }}
-                onParsed={(list) => { workspaceParsedRef.current = list; contextRef.current.workspaceList = list; contextRef.current.workspace = props.selectedItem ? list[parseInt(props.selectedItem)] : null; }}
-                ctx={contextRef.current}
+                onParsed={(list) => {
+                  workspaceParsedRef.current = list
+                  // selection will be resolved in hook using global store if needed
+                }}
               />
             )
           }
 
         } else if (sectionMeta.uiSchema && sectionMeta.uiSchema.type === 'checkbox') {
           if (sectionMeta.uiSchema && sectionMeta.uiSchema.type === 'checkbox') {
-            const selectedWorkspaceFromUi = props.selectedItem ? workspaceParsedRef.current[parseInt(props.selectedItem)] : null
-            const selectedId = selectedWorkspaceFromUi?.elementId
-            const targetUrl = (app === 'slack' && selectedId) ? `https://${selectedId}.slack.com/admin` : undefined
             result.push(
               <CheckboxSection
                 key={`section-${sectionIndex}`}
                 title={sectionMeta.title}
                 workflow={sectionMeta.uiSchema.workflow}
-                targetUrl={targetUrl}
                 onPrevious={() => { props.onSelectedItemChange(''); props.onSectionChange(sectionIndex - 1) }}
                 onNext={() => props.onSectionChange(sectionIndex + 1)}
-                ctx={{ ...contextRef.current, workspace: selectedWorkspaceFromUi }}
               />
             )
           }
 
         } else if (sectionMeta.uiSchema && sectionMeta.uiSchema.type === 'table') {
           if (sectionMeta.uiSchema && sectionMeta.uiSchema.type === 'table') {
-            const selectedWorkspaceFromUi = props.selectedItem ? workspaceParsedRef.current[parseInt(props.selectedItem)] : null
-            const selectedId = selectedWorkspaceFromUi?.elementId
-            const targetUrl = (app === 'slack' && selectedId) ? `https://${selectedId}.slack.com/admin` : undefined
             result.push(
               <TableSection
                 key={`section-${sectionIndex}`}
                 title={sectionMeta.title}
                 workflow={sectionMeta.uiSchema.workflow}
-                targetUrl={targetUrl}
-                selectedWorkspaceLabel={selectedWorkspaceFromUi?.elementText}
                 onConfirm={(rows) => {
-                  if (!selectedWorkspaceFromUi || !Array.isArray(rows) || rows.length === 0) return
+                  if (!Array.isArray(rows) || rows.length === 0) return
                   const formData = new FormData()
-                  formData.append('workspace', JSON.stringify(selectedWorkspaceFromUi))
+                  const selected = workspaceParsedRef.current[parseInt(props.selectedItem || '0')] || null
+                  if (selected) formData.append('workspace', JSON.stringify(selected))
                   formData.append('members', JSON.stringify(rows))
                   formData.append('productId', props.productId.toString())
                   didSubmitRef.current = true
                   fetcher.submit(formData, { method: 'POST' })
                 }}
-                ctx={{ ...contextRef.current, workspace: selectedWorkspaceFromUi }}
               />
             )
           }

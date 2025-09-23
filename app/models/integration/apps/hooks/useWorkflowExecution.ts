@@ -1,11 +1,28 @@
-import { useEffect, useState } from 'react'
-import { EightGClient } from '8g-extension'
+import { useEffect, useMemo, useState } from 'react'
+import { EightGClient, type Workflow } from '8g-extension'
+import type { FormWorkflow } from '../IntegrationAppFormMetadata'
+import { getAllSectionResults } from './sectionResults'
 
-export function useWorkflowExecution(workflow: any, targetUrl?: string) {
+function resolveTemplateString(template?: string): string | undefined {
+  if (!template || typeof template !== 'string') return template
+  const all = getAllSectionResults()
+  return template.replace(/\{\{\$\.([a-zA-Z0-9_-]+)\.result\}\}/g, (_m, sectionId) => {
+    const v = all?.[sectionId]?.result
+    return (v ?? '').toString()
+  })
+}
+
+export function useWorkflowExecution(workflow: FormWorkflow) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [raw, setRaw] = useState<any>(null)
   const [parsed, setParsed] = useState<any>(null)
+
+  const evaluatedUrl = useMemo(() => {
+    const rawUrl = typeof (workflow as any)?.targetUrl === 'function' ? (workflow as any).targetUrl() : (workflow as any)?.targetUrl
+    return resolveTemplateString(rawUrl) || location.href
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workflow, JSON.stringify(getAllSectionResults())])
 
   useEffect(() => {
     let cancelled = false
@@ -14,15 +31,14 @@ export function useWorkflowExecution(workflow: any, targetUrl?: string) {
         setLoading(true)
         setError(null)
         const client = new EightGClient()
-        const finalUrl = targetUrl || (typeof workflow?.targetUrl === 'string' ? workflow.targetUrl : undefined) || location.href
-        const workflowPayload = {
-          version: workflow?.version,
-          start: workflow?.start,
-          steps: workflow?.steps,
-        }
+        const finalUrl = evaluatedUrl
         const result = await client.collectWorkflow({
           targetUrl: finalUrl,
-          workflow: workflowPayload,
+          workflow: {
+            version: '1.0',
+            start: workflow.start,
+            steps: workflow.steps,
+          },
           closeTabAfterCollection: true,
           activateTab: false,
         })
@@ -44,7 +60,7 @@ export function useWorkflowExecution(workflow: any, targetUrl?: string) {
     }
     run()
     return () => { cancelled = true }
-  }, [workflow, targetUrl])
+  }, [workflow, evaluatedUrl])
 
   return { loading, error, raw, parsed }
 }

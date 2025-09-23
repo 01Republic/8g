@@ -4,19 +4,16 @@ import { LoaderCircleIcon } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { useWorkflowExecution } from '../../hooks/useWorkflowExecution'
+import { setSectionResult } from '../../hooks/sectionResults'
 
 interface TableSectionProps {
   title: string
   workflow: any
-  targetUrl?: string
   onConfirm: (rows: any[]) => void
-  selectedWorkspaceLabel?: string
-  ctx?: any
 }
 
-export function TableSection({ title, workflow, targetUrl, onConfirm, selectedWorkspaceLabel, ctx }: TableSectionProps) {
-  const resolvedUrl = targetUrl ?? (typeof workflow?.targetUrl === 'function' ? workflow.targetUrl(ctx) : workflow?.targetUrl)
-  const { loading, error, parsed } = useWorkflowExecution(workflow, resolvedUrl)
+export function TableSection({ title, workflow, onConfirm }: TableSectionProps) {
+  const { loading, error, parsed } = useWorkflowExecution(workflow)
   const rows: any[] = Array.isArray(parsed) ? parsed : []
 
   return (
@@ -54,7 +51,7 @@ export function TableSection({ title, workflow, targetUrl, onConfirm, selectedWo
             </Table>
           </div>
           <div className="flex justify-end items-center pt-2">
-            <Button className="px-8 py-2" onClick={() => onConfirm(rows)}>완료하기</Button>
+            <Button className="px-8 py-2" onClick={() => { setSectionResult('table', { result: rows }); onConfirm(rows) }}>완료하기</Button>
           </div>
         </div>
       )}

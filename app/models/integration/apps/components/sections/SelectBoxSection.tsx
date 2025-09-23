@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from '~/components/ui/select'
 import { useWorkflowExecution } from '../../hooks/useWorkflowExecution'
+import { setSectionList, setSectionResult } from '../../hooks/sectionResults'
 
 interface SelectBoxSectionProps {
   title: string
@@ -19,22 +20,21 @@ interface SelectBoxSectionProps {
   onSelectedValueChange: (v: string) => void
   onNext: () => void
   onParsed?: (list: any[]) => void
-  ctx?: any
-  fallbackUrl?: string
 }
 
-export function SelectBoxSection({ title, workflow, placeholder, selectedValue, onSelectedValueChange, onNext, onParsed, ctx, fallbackUrl }: SelectBoxSectionProps) {
-  const dynamicUrl = typeof workflow?.targetUrl === 'function' ? workflow.targetUrl(ctx) : fallbackUrl
-  const { loading, error, parsed } = useWorkflowExecution(workflow, dynamicUrl)
+export function SelectBoxSection({ title, workflow, placeholder, selectedValue, onSelectedValueChange, onNext, onParsed }: SelectBoxSectionProps) {
+  const { loading, error, parsed } = useWorkflowExecution(workflow)
 
   useEffect(() => {
     if (Array.isArray(parsed) && onParsed) {
       onParsed(parsed)
+      setSectionList('select-box', parsed)
     }
   }, [parsed, onParsed])
 
   useEffect(() => {
     if (selectedValue) {
+      setSectionResult('select-box', { result: parsed?.[parseInt(selectedValue)]?.elementId || parsed?.[parseInt(selectedValue)]?.elementText || selectedValue, list: parsed })
       const t = window.setTimeout(() => onNext(), 600)
       return () => window.clearTimeout(t)
     }

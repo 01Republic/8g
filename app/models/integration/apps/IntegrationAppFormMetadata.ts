@@ -1,57 +1,62 @@
-import type { ElementData, WorkflowStep } from "8g-extension"
+import type { ElementData, GetElementDataBlock, WorkflowStep } from "8g-extension"
+
+export interface FormWorkflow {
+  version: string
+  start: string
+  steps: WorkflowStep[]
+  parser: (result: any) => any
+  targetUrl: string
+}
+
+export type SelectBoxSectionSchema = {
+  type: 'select-box'
+  workflow: FormWorkflow
+}
+
+export type TableSectionSchema = {
+  type: 'table'
+  workflow: FormWorkflow
+}
+
+export type CheckboxSectionSchema = {
+  type: 'checkbox'
+  workflow: FormWorkflow
+}
+
+export type InitialCheckSectionSchema = {
+  type: 'initial-check'
+}
+
+export type CompletionSectionSchema = {
+  type: 'completion'
+}
+
+export type FormSectionSchema = SelectBoxSectionSchema | TableSectionSchema | CheckboxSectionSchema | InitialCheckSectionSchema | CompletionSectionSchema
 
 export interface AppFormSectionMeta {
+  id: string,
   title: string
-  uiSchema? : {
-    type: 'select-box'
-    workflow: {
-      version: string
-      start: string
-      steps: unknown[]
-      parser: (result: any) => any
-      targetUrl?: string | ((ctx: any) => string)
-    }
-  } | {
-    type: 'table'
-    workflow: {
-      version: string
-      start: string
-      steps: WorkflowStep[]
-      parser: (result: any) => any
-      targetUrl?: string | ((ctx: any) => string)
-    }
-  } | {
-    type: 'checkbox'
-    workflow: {
-      version: string
-      start: string
-      steps: unknown[]
-      parser: (result: any) => any
-      targetUrl?: string | ((ctx: any) => string)
-    }
-    } | {
-      type: 'initial-check'
-    }  | {
-      type: 'completion'
-    }
+  uiSchema? : FormSectionSchema
 }
 
 export interface IntegrationAppFormMetadata {
   sections: AppFormSectionMeta[]
 }
 
-export type IntegrationAppType = 'slack' | 'notion' | 'github' | 'linear'
+export type IntegrationAppType = 'slack'
 
 export const integrationAppFormMetadata: Record<IntegrationAppType, IntegrationAppFormMetadata> = {
   slack: {
     sections: [
       { 
+        id: 'initial-check',
         title: 'Extension 상태 확인',
         uiSchema: {
           type: 'initial-check',
         }
       },
       {
+        id: 'select-box',
         title: '워크스페이스 선택',
         uiSchema: {
           type: 'select-box',
@@ -68,7 +73,7 @@ export const integrationAppFormMetadata: Record<IntegrationAppType, IntegrationA
                   includeText: true,
                   attributes: ['id'],
                   option: { waitForSelector: true, waitSelectorTimeout: 5000, multiple: true },
-                },
+                } as GetElementDataBlock,
               },
             ],
             parser: (result: any) => {
@@ -87,11 +92,12 @@ export const integrationAppFormMetadata: Record<IntegrationAppType, IntegrationA
               }
               return Array.from(uniqueMap.values());
             },
-            targetUrl: (ctx: any) => `https://slack.com/intl/ko-kr/`,
+            targetUrl: `https://slack.com/intl/ko-kr/`,
           },
         },
       },
       {
+        id: 'checkbox',
         title: '관리자 권한 확인',
         uiSchema: {
           type: 'checkbox',
@@ -125,11 +131,12 @@ export const integrationAppFormMetadata: Record<IntegrationAppType, IntegrationA
               const isDenied = denyPatterns.some((pattern) => pageTitle.includes(pattern));
               return !isDenied;
             },
-            targetUrl: (ctx: any) => `https://${ctx.workspace.elementId}.slack.com/admin`,
+            targetUrl: `https://{{$.select-box.result}}.slack.com/admin`,
           },
         },
       },
-      {
+      { 
+        id: 'table',
         title: '멤버 연동',
         uiSchema: {
           type: 'table',
@@ -142,7 +149,6 @@ export const integrationAppFormMetadata: Record<IntegrationAppType, IntegrationA
               { id: 'collectJoinDates', block: { name: 'get-text', selector: '[data-qa-column="workspace-members_table_created"] .c-table_cell', findBy: 'cssSelector', option: { multiple: true } } },
             ],
             parser: (result: any) => {
-              console.log('result', result)
               const emails = result.steps[0].result.data || [];
               const statuses = result.steps[1].result.data || [];
               const joinDates = result.steps[2].result.data || [];
@@ -169,24 +175,13 @@ export const integrationAppFormMetadata: Record<IntegrationAppType, IntegrationA
               }
               return memberList;
             },
-            targetUrl: (ctx: any) => `https://${ctx.workspace.elementId}.slack.com/admin`,
+            targetUrl: `https://{{$.select-box.result}}.slack.com/admin`,
           },
         },
       },
-      { title: '연동 완료' },
+      { id: 'completion', title: '연동 완료' },
     ],
-  },
-  notion: {
-    sections: [
-      { title: 'Extension 상태 확인' },
-      { title: '워크스페이스 선택' },
-      { title: '관리자 권한 확인' },
-      { title: '멤버 연동' },
-      { title: '연동 완료' },
-    ],
-  },
-  github: { sections: [] },
-  linear: { sections: [] },
+  }
 }
 
 export function getSupportedServicesFromMetadata(): IntegrationAppType[] {
