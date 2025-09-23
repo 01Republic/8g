@@ -94,7 +94,7 @@ export const slackMetadata: IntegrationAppFormMetadata = {
                 elementId: (it.attributes?.['id'] || '').trim(),
                 elementText: (it.text || '').trim(),
               }));
-              const nonEmpty = mapped.filter(w => w.elementId || w.elementText);
+              const nonEmpty = mapped.filter(w => w.elementId || w.elementText || (w.elementId !== 'app' && w.elementId !== 'join'));
               const uniqueMap = new Map<string, { elementId: string; elementText: string }>();
               for (const w of nonEmpty) {
                 const key = (w.elementId && `id:${w.elementId}`) || `text:${w.elementText}`;
