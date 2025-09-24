@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { CenteredSection } from '~/components/ui/centered-section'
 import { LoadingCard } from '~/components/ui/loading-card'
 import { LoaderCircleIcon } from 'lucide-react'
+import { Button } from '~/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -15,15 +16,29 @@ import { setSectionList, setSectionResult } from '../../hooks/sectionResults'
 interface SelectBoxSectionProps {
   title: string
   workflow: any
-  placeholder?: string
+  placeholder: string
   selectedValue: string
   onSelectedValueChange: (v: string) => void
   onNext: () => void
   onParsed?: (list: any[]) => void
+  onPrevious?: () => void
+  hasPrevious?: boolean
+  hasNext?: boolean
 }
 
-export function SelectBoxSection({ title, workflow, placeholder, selectedValue, onSelectedValueChange, onNext, onParsed }: SelectBoxSectionProps) {
-  const { loading, error, parsed } = useWorkflowExecution(workflow)
+export function SelectBoxSection({ 
+  title, 
+  workflow, 
+  placeholder, 
+  selectedValue, 
+  onSelectedValueChange, 
+  onNext, 
+  onParsed, 
+  onPrevious, 
+  hasPrevious, 
+  hasNext 
+}: SelectBoxSectionProps) {
+  const { loading, error, parsed, run } = useWorkflowExecution(workflow)
 
   useEffect(() => {
     if (Array.isArray(parsed) && onParsed) {
@@ -34,11 +49,12 @@ export function SelectBoxSection({ title, workflow, placeholder, selectedValue, 
 
   useEffect(() => {
     if (selectedValue) {
-      setSectionResult('select-box', { result: parsed?.[parseInt(selectedValue)]?.elementId || parsed?.[parseInt(selectedValue)]?.elementText || selectedValue, list: parsed })
-      const t = window.setTimeout(() => onNext(), 600)
-      return () => window.clearTimeout(t)
+      setSectionResult('select-box', { 
+        result: parsed?.[parseInt(selectedValue)]?.elementId || parsed?.[parseInt(selectedValue)]?.elementText || selectedValue, 
+        list: parsed 
+      })
     }
-  }, [selectedValue, onNext])
+  }, [selectedValue])
 
   return (
     <div className="space-y-6 max-w-md mx-auto w-full">
@@ -51,6 +67,11 @@ export function SelectBoxSection({ title, workflow, placeholder, selectedValue, 
           <LoadingCard icon={<span className="text-lg">❌</span>} message={error} />
         )}
       </CenteredSection>
+      
+      <div className="flex justify-end">
+        <Button onClick={() => run()} disabled={loading} variant="outline" className="px-6 py-2">데이터 수집</Button>
+      </div>
+
       {!loading && Array.isArray(parsed) && parsed.length > 0 && (
         <div className="space-y-4">
           <Select value={selectedValue} onValueChange={onSelectedValueChange}>
@@ -69,6 +90,19 @@ export function SelectBoxSection({ title, workflow, placeholder, selectedValue, 
           </Select>
         </div>
       )}
+
+      <div className="flex justify-between pt-2">
+        <div>
+          {hasPrevious && (
+            <Button onClick={onPrevious} variant="outline" className="px-6 py-2">이전</Button>
+              )}
+            </div>
+            <div>
+              {hasNext && (
+                <Button onClick={onNext} disabled={!selectedValue} className="px-8 py-2">다음</Button>
+              )}
+            </div>
+          </div>
     </div>
   )
 }

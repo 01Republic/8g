@@ -1,0 +1,141 @@
+import { useState } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import type { IntegrationAppFormMetadata } from '~/models/integration/apps/IntegrationAppFormMetadata'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
+import { Label } from '~/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
+import { SectionTypePropsMapper } from '~/models/integration/apps/IntegrationAppFormMetadata'
+import { DynamicFormBuilder } from '~/models/integration/apps/DynamicFormBuilder'
+import { Separator } from '~/components/ui/separator'
+import SectionConfigBuilder from '~/models/integration/apps/components/SectionConfigBuilder'
+import Reorderable from '~/components/Reorderable'
+
+const DND_SECTION_TYPE = 'SECTION'
+
+export default function FormBuilder() {
+  const initialMeta: IntegrationAppFormMetadata = {
+    sections: []
+  }
+  const [meta, setMeta] = useState<IntegrationAppFormMetadata>(initialMeta)
+  const [currentSection, setCurrentSection] = useState<number>(0)
+  const [selectedItem, setSelectedItem] = useState<string>('')
+
+  const withMeta = (updater: (draft: IntegrationAppFormMetadata) => void) => {
+    const current = JSON.parse(JSON.stringify(meta)) as IntegrationAppFormMetadata
+    updater(current)
+    setMeta(current)
+    if (current.sections.length === 0) {
+      setCurrentSection(0)
+    } else if (currentSection < 1) {
+      setCurrentSection(1)
+    } else if (currentSection > current.sections.length) {
+      setCurrentSection(current.sections.length)
+    }
+  }
+
+  const moveSection = (dragIndex: number, hoverIndex: number) => {
+    const selectedId = currentSection > 0 ? meta.sections[currentSection - 1]?.id : undefined
+    withMeta((draft) => {
+      const dragged = draft.sections[dragIndex]
+      draft.sections.splice(dragIndex, 1)
+      draft.sections.splice(hoverIndex, 0, dragged)
+      if (selectedId) {
+        const newIndex = draft.sections.findIndex((s) => s.id === selectedId)
+        if (newIndex >= 0) setCurrentSection(newIndex + 1)
+      }
+    })
+  }
+  const sectionProps = {
+    currentSection,
+    selectedItem,
+    onSelectedItemChange: setSelectedItem,
+    onSectionChange: setCurrentSection,
+    onModalClose: () => {},
+    productId: 0
+  }
+  const hasSections = meta.sections.length > 0
+  
+  const formBuilder = DynamicFormBuilder({ meta, onSubmit: () => Promise.resolve() })
+  const preview = hasSections ? formBuilder.buildStepper({ props: sectionProps }) : null
+
+  return (
+    <div style={{ height: '100vh', width: '100vw' }}>
+      <Card>
+        <CardHeader>
+          <CardTitle>No-code Builder</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <DndProvider backend={HTML5Backend}>
+            <div className="flex gap-8">
+              {/* Left: Metadata Form */}
+              <div className="w-full max-w-xl space-y-6">
+                <div className="flex items-center gap-2">
+                  <Label>섹션 추가</Label>
+                  <Select onValueChange={(v) => {
+                    const nextIndex = meta.sections.length + 1
+                    withMeta((draft) => {
+                      const builder = SectionTypePropsMapper[v as keyof typeof SectionTypePropsMapper]
+                      if (!builder) return
+                      draft.sections.push({ id: `section-${draft.sections.length + 1}`, uiSchema: builder() })
+                    })
+                    setCurrentSection(nextIndex)
+                  }}>
+                    <SelectTrigger className="w-[220px]"><SelectValue placeholder="섹션 타입 선택" /></SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(SectionTypePropsMapper).map(([type]) => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Separator />
+
+                <div className="space-y-4">
+                  {meta.sections.map((section, index) => {
+                    const sectionIndex = index + 1
+                    const isActive = currentSection === sectionIndex
+                    return (
+                      <Reorderable
+                        key={section.id}
+                        index={index}
+                        move={moveSection}
+                        isActive={isActive}
+                        onClick={() => setCurrentSection(sectionIndex)}
+                        dndType={DND_SECTION_TYPE}
+                      >
+                        {SectionConfigBuilder({ section, sectionIndex, index, withMeta })}
+                      </Reorderable>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Right: Preview */}
+              <div className="flex-1">
+                <div className="w-full">
+                  <div className="bg-background rounded-lg border p-6 shadow-lg w-full max-w-[90vw] sm:max-w-4xl lg:max-w-4xl">
+                    <div className="flex flex-col gap-4">
+                      <div className="flex flex-col gap-2 text-center sm:text-left">
+                        <div className="text-lg leading-none font-semibold">SaaS 연동 설정</div>
+                      </div>
+                      <div className="flex gap-8 min-h-[500px]">
+                        <div className="w-16 flex justify-center items-center">
+                          {preview?.stepperSection}
+                        </div>
+                        <div className="flex-1 relative px-8">
+                          {preview?.stepSection}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </DndProvider>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}

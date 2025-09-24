@@ -9,44 +9,69 @@ import { setSectionResult } from '../../hooks/sectionResults'
 interface CheckboxSectionProps {
   title: string
   workflow: any
+  loadingMessage: string
+  errorMessage: string
+  successMessage: string
   targetUrl?: string
   onPrevious: () => void
   onNext: () => void
+  hasPrevious?: boolean
+  hasNext?: boolean
 }
 
-export function CheckboxSection({ title, workflow, onPrevious, onNext }: CheckboxSectionProps) {
-  const { loading, error, parsed } = useWorkflowExecution(workflow)
+export function CheckboxSection({ 
+  title, 
+  workflow, 
+  loadingMessage, 
+  errorMessage, 
+  successMessage, 
+  onPrevious, 
+  onNext,
+  hasPrevious,
+  hasNext,
+}: CheckboxSectionProps) {
+  const { loading, error, parsed, run } = useWorkflowExecution(workflow)
 
   useEffect(() => {
     if (parsed === true) {
       setSectionResult('checkbox', { result: true })
-      const t = window.setTimeout(() => onNext(), 600)
-      return () => window.clearTimeout(t)
     }
-  }, [parsed, onNext])
+  }, [parsed])
 
   return (
     <div className="space-y-6 max-w-3xl mx-auto w-full">
       <h3 className="text-lg font-semibold text-center">{title}</h3>
       <CenteredSection>
         {loading && (
-          <LoadingCard icon={<LoaderCircleIcon className="w-4 h-4 animate-spin" />} message="권한 확인 중..." />
+          <LoadingCard icon={<LoaderCircleIcon className="w-4 h-4 animate-spin" />} message={loadingMessage} />
         )}
         {!loading && error && (
           <LoadingCard icon={<span className="text-lg">❌</span>} message={error} />
         )}
         {!loading && !error && parsed === false && (
-          <LoadingCard icon={<span className="text-lg">❌</span>} message="권한 없음: 워크스페이스 관리자만 접근할 수 있습니다." />
+          <LoadingCard icon={<span className="text-lg">❌</span>} message={errorMessage} />
         )}
         {!loading && !error && parsed === true && (
-          <LoadingCard icon={<span className="text-lg">✅</span>} message="관리자 권한 확인됨" />
+          <LoadingCard icon={<span className="text-lg">✅</span>} message={successMessage} />
         )}
       </CenteredSection>
-      {parsed === false && (
-        <div className="flex justify-end">
-          <Button onClick={onPrevious} variant="outline" className="px-6 py-2">워크스페이스 다시 선택</Button>
+
+      <Button onClick={() => run()} disabled={loading} variant="outline" className="px-6 py-2">권한 확인</Button>
+      
+      <div className="flex justify-between">
+        <div>
+          {hasPrevious && (
+            <Button onClick={onPrevious} variant="outline" className="px-6 py-2">이전</Button>
+          )}
         </div>
-      )}
+        <div>
+          {hasNext && (
+            <div className="flex items-center gap-2">
+              <Button onClick={onNext} disabled={parsed !== true} className="px-8 py-2">다음</Button>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

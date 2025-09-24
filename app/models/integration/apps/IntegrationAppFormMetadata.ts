@@ -10,25 +10,35 @@ export interface FormWorkflow {
 
 export type SelectBoxSectionSchema = {
   type: 'select-box'
+  title: string
+  placeholder: string
   workflow: FormWorkflow
 }
 
 export type TableSectionSchema = {
   type: 'table'
+  title: string
   workflow: FormWorkflow
 }
 
 export type CheckboxSectionSchema = {
   type: 'checkbox'
+  title: string
+  placeholder: string
+  loadingMessage: string
+  errorMessage: string
+  successMessage: string
   workflow: FormWorkflow
 }
 
 export type InitialCheckSectionSchema = {
   type: 'initial-check'
+  title: string
 }
 
 export type CompletionSectionSchema = {
   type: 'completion'
+  title: string
 }
 
 export type FormSectionSchema =
@@ -40,7 +50,6 @@ export type FormSectionSchema =
 
 export type AppFormSectionMeta = {
   id: string
-  title: string
   uiSchema: FormSectionSchema
 }
 
@@ -48,20 +57,100 @@ export interface IntegrationAppFormMetadata {
   sections: AppFormSectionMeta[]
 }
 
+const buildInitialCheckSectionSchema = () => {
+  const defaultSchema: InitialCheckSectionSchema = {
+    type: 'initial-check',
+    title: '초기 체크'
+  }
+
+  return defaultSchema
+}
+
+const buildSelectBoxSectionSchema = () => {
+  const defaultSchema: SelectBoxSectionSchema = {
+    type: 'select-box',
+    title: '선택 박스',
+    placeholder: '선택 박스',
+    workflow: {
+      version: '1.0.0',
+      start: 'start',
+      steps: [],
+      parser: () => {},
+      targetUrl: 'https://example.com'
+    }
+  }
+
+  return defaultSchema
+}
+
+const buildCheckboxSectionSchema = () => {
+  const defaultSchema: CheckboxSectionSchema = {
+    type: 'checkbox',
+    title: '체크박스',
+    placeholder: '체크박스',
+    loadingMessage: '체크박스',
+    errorMessage: '체크박스',
+    successMessage: '체크박스',
+    workflow: {
+      version: '1.0.0',
+      start: 'start',
+      steps: [],
+      parser: () => {},
+      targetUrl: 'https://example.com'
+    }
+  }
+
+  return defaultSchema
+}
+
+const buildTableSectionSchema = () => {
+  const defaultSchema: TableSectionSchema = {
+    type: 'table',
+    title: '테이블',
+    workflow: {
+      version: '1.0.0',
+      start: 'start',
+      steps: [],
+      parser: () => {},
+      targetUrl: 'https://example.com'
+    }
+  }
+
+  return defaultSchema
+}
+
+const buildCompletionSectionSchema = () => {
+  const defaultSchema: CompletionSectionSchema = {
+    type: 'completion',
+    title: '완료',
+  }
+
+  return defaultSchema
+}
+
+export const SectionTypePropsMapper = {
+  'initial-check': buildInitialCheckSectionSchema,
+  'select-box': buildSelectBoxSectionSchema,
+  'checkbox': buildCheckboxSectionSchema,
+  'table': buildTableSectionSchema,
+  'completion': buildCompletionSectionSchema,
+}
+
 export const slackMetadata: IntegrationAppFormMetadata = {
     sections: [
       { 
         id: 'initial-check',
-        title: 'Extension 상태 확인',
         uiSchema: {
+          title: 'Extension 상태 확인',
           type: 'initial-check',
         }
       },
       {
         id: 'select-box',
-        title: '워크스페이스 선택',
         uiSchema: {
+          title: '워크스페이스 선택',
           type: 'select-box',
+          placeholder: '워크스페이스를 선택하세요',
           workflow: {
             version: '1.0',
             start: 'collectWorkspaces',
@@ -100,9 +189,12 @@ export const slackMetadata: IntegrationAppFormMetadata = {
       },
       {
         id: 'checkbox',
-        title: '관리자 권한 확인',
         uiSchema: {
+          title: '관리자 권한 확인',
           type: 'checkbox',
+          loadingMessage: '관리자 권한 확인 중...',
+          errorMessage: '관리자 권한 없음: 워크스페이스 관리자만 접근할 수 있습니다.',
+          successMessage: '관리자 권한 확인됨',
           workflow: {
             version: '1.0',
             start: 'checkAdmin',
@@ -135,12 +227,12 @@ export const slackMetadata: IntegrationAppFormMetadata = {
             },
             targetUrl: `https://{{$.select-box.result}}.slack.com/admin`,
           },
-        },
+        } as CheckboxSectionSchema,
       },
       { 
         id: 'table',
-        title: '멤버 연동',
         uiSchema: {
+          title: '멤버 연동',
           type: 'table',
           workflow: {
             version: '1.0',
@@ -181,7 +273,7 @@ export const slackMetadata: IntegrationAppFormMetadata = {
           },
         },
       },
-      { id: 'completion', title: '연동 완료', uiSchema: { type: 'completion' } },
+      { id: 'completion', uiSchema: { type: 'completion', title: '연동 완료' } },
     ],
   }
 

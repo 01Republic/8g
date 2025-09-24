@@ -13,8 +13,10 @@ import { Check, LoaderCircleIcon } from 'lucide-react'
 
 export interface FormComponentProps {
   currentSection: number
-  selectedItem: string
-  onSelectedItemChange: (value: string) => void
+  selectedWorkspace: any
+  onSelectedWorkspaceChange: (value: any) => void
+  selectedMembers: any[]
+  onSelectedMembersChange: (value: any[]) => void
   onSectionChange: (section: number) => void
   onModalClose: () => void
   productId: number
@@ -23,7 +25,7 @@ export interface FormComponentProps {
 // Options to customize builder behavior (e.g., preview mode in form-builder)
 type BuilderOptions = {
   meta: IntegrationAppFormMetadata,
-  onSubmit: (payload: { workspace?: any; members?: any[]; productId: number }) => Promise<void>
+  onSubmit: () => void
 }
 
 // No per-app hooks; everything is metadata-driven now

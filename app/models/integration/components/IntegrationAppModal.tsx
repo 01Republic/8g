@@ -13,7 +13,7 @@ import { type IntegrationAppFormMetadata } from "../apps/IntegrationAppFormMetad
 interface IntegartionAppModalProps {
     open: boolean,
     setOpen: Dispatch<SetStateAction<boolean>>
-    onSubmit: (payload: { workspace?: any; members?: any[]; productId: number }) => Promise<void>
+    onSubmit: (payload: { workspace: any; members: any[]; productId: number }) => void
     meta: IntegrationAppFormMetadata
     productId: number
 }
@@ -26,24 +26,35 @@ export function IntegartionAppModal({
     productId
 }: IntegartionAppModalProps) {
   const [currentSection, setCurrentSection] = useState(0);
-  const [selectedItem, setSelectedItem] = useState<string>("");
+  const [selectedWorkspace, setSelectedWorkspace] = useState<any>(null);
+  const [selectedMembers, setSelectedMembers] = useState<any[]>([]);
   
   const sectionProps = {
     currentSection,
-    selectedItem,
-    onSelectedItemChange: setSelectedItem,
+    selectedWorkspace,
+    onSelectedWorkspaceChange: setSelectedWorkspace,
+    selectedMembers,
+    onSelectedMembersChange: setSelectedMembers,
     onSectionChange: setCurrentSection,
-    onModalClose: () => setOpen(false),
+    onModalClose: () => {
+      setSelectedWorkspace(null);
+      setSelectedMembers([]);
+      setCurrentSection(0);
+      setOpen(false)
+    },
     productId
   };
   
-  const formBuilder = DynamicFormBuilder({ meta, onSubmit })
+  const formBuilder = DynamicFormBuilder({ meta, onSubmit: () => {
+    onSubmit({ workspace: selectedWorkspace, members: selectedMembers, productId })
+  } })
   const { stepperSection, stepSection } = formBuilder.buildStepper({ props: sectionProps })
 
   useEffect(() => {
     if (open) {
       setCurrentSection(1);
-      setSelectedItem("");
+      setSelectedWorkspace(null);
+      setSelectedMembers([]);
     }
   }, [open]);
 
