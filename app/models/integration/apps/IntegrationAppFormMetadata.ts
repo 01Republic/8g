@@ -38,21 +38,11 @@ export type FormSectionSchema =
   | InitialCheckSectionSchema
   | CompletionSectionSchema
 
-// Sections that require a workflow must always provide uiSchema with workflow
-export type RequiredWorkflowSectionMeta = {
+export type AppFormSectionMeta = {
   id: string
   title: string
-  uiSchema: SelectBoxSectionSchema | TableSectionSchema | CheckboxSectionSchema
+  uiSchema: FormSectionSchema
 }
-
-// Sections without workflow can omit uiSchema entirely or provide minimal schema
-export type OptionalWorkflowlessSectionMeta = {
-  id: string
-  title: string
-  uiSchema?: InitialCheckSectionSchema | CompletionSectionSchema
-}
-
-export type AppFormSectionMeta = RequiredWorkflowSectionMeta | OptionalWorkflowlessSectionMeta
 
 export interface IntegrationAppFormMetadata {
   sections: AppFormSectionMeta[]
@@ -191,7 +181,7 @@ export const slackMetadata: IntegrationAppFormMetadata = {
           },
         },
       },
-      { id: 'completion', title: '연동 완료' },
+      { id: 'completion', title: '연동 완료', uiSchema: { type: 'completion' } },
     ],
   }
 
