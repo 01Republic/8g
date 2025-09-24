@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-
 import {
   Dialog,
   DialogContent,
@@ -9,11 +8,13 @@ import {
 import type { Dispatch, SetStateAction } from "react"
 import { DynamicFormBuilder } from "../apps/DynamicFormBuilder";
 import { type IntegrationAppFormMetadata } from "../apps/IntegrationAppFormMetadata";
+import type { SelectedWorkspace } from "../apps/components/sections/SelectBoxSection";
+import type { SelectedMembers } from "../apps/components/sections/TableSection";
 
 interface IntegartionAppModalProps {
     open: boolean,
     setOpen: Dispatch<SetStateAction<boolean>>
-    onSubmit: (payload: { workspace: any; members: any[]; productId: number }) => void
+    onSubmit: (payload: { workspace: SelectedWorkspace; members: SelectedMembers[]; productId: number }) => void
     meta: IntegrationAppFormMetadata
     productId: number
 }
@@ -26,8 +27,8 @@ export function IntegartionAppModal({
     productId
 }: IntegartionAppModalProps) {
   const [currentSection, setCurrentSection] = useState(0);
-  const [selectedWorkspace, setSelectedWorkspace] = useState<any>(null);
-  const [selectedMembers, setSelectedMembers] = useState<any[]>([]);
+  const [selectedWorkspace, setSelectedWorkspace] = useState<SelectedWorkspace | null>(null);
+  const [selectedMembers, setSelectedMembers] = useState<SelectedMembers[]>([]);
   
   const sectionProps = {
     currentSection,
@@ -42,12 +43,15 @@ export function IntegartionAppModal({
       setCurrentSection(0);
       setOpen(false)
     },
-    productId
+    productId,
+    onSubmit: () => {
+      if (!selectedWorkspace) return;
+      onSubmit({ workspace: selectedWorkspace, members: selectedMembers, productId })
+    }
   };
   
-  const formBuilder = DynamicFormBuilder({ meta, onSubmit: () => {
-    onSubmit({ workspace: selectedWorkspace, members: selectedMembers, productId })
-  } })
+  const formBuilder = DynamicFormBuilder({ meta })
+
   const { stepperSection, stepSection } = formBuilder.buildStepper({ props: sectionProps })
 
   useEffect(() => {

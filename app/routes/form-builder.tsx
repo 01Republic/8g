@@ -6,7 +6,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 import { Label } from '~/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { SectionTypePropsMapper } from '~/models/integration/apps/IntegrationAppFormMetadata'
-import { DynamicFormBuilder } from '~/models/integration/apps/DynamicFormBuilder'
+import { DynamicFormBuilder, type FormComponentProps } from '~/models/integration/apps/DynamicFormBuilder'
 import { Separator } from '~/components/ui/separator'
 import SectionConfigBuilder from '~/models/integration/apps/components/SectionConfigBuilder'
 import Reorderable from '~/components/Reorderable'
@@ -52,11 +52,16 @@ export default function FormBuilder() {
     onSelectedItemChange: setSelectedItem,
     onSectionChange: setCurrentSection,
     onModalClose: () => {},
-    productId: 0
-  }
+    productId: 0,
+    onSubmit: () => Promise.resolve(),
+    selectedWorkspace: null,
+    selectedMembers: [],
+    onSelectedWorkspaceChange: () => {},
+    onSelectedMembersChange: () => {}
+  } as FormComponentProps
   const hasSections = meta.sections.length > 0
-  
-  const formBuilder = DynamicFormBuilder({ meta, onSubmit: () => Promise.resolve() })
+
+  const formBuilder = DynamicFormBuilder({ meta })
   const preview = hasSections ? formBuilder.buildStepper({ props: sectionProps }) : null
 
   return (

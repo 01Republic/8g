@@ -7,11 +7,17 @@ import { useWorkflowExecution } from '../../hooks/useWorkflowExecution'
 import { setSectionResult } from '../../hooks/sectionResults'
 import { useEffect } from 'react'
 
+export type SelectedMembers = {
+  email: string
+  status: string
+  joinDate: string
+}
+
 interface TableSectionProps {
   title: string
   workflow: any
-  onSelectedMembersChange: (v: any[]) => void
-  selectedMembers: any[]
+  onSelectedMembersChange: (v: SelectedMembers[]) => void
+  selectedMembers: SelectedMembers[]
   onNext: (rows: any[]) => void
   onPrevious?: () => void
   hasPrevious?: boolean

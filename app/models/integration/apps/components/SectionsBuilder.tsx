@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react'
 import type { IntegrationAppFormMetadata, SelectBoxSectionSchema, TableSectionSchema, CheckboxSectionSchema, FormSectionSchema } from '../IntegrationAppFormMetadata'
 import type { FormComponentProps } from '../DynamicFormBuilder'
-import { SelectBoxSection } from './sections/SelectBoxSection'
+import { SelectBoxSection, type SelectedWorkspace } from './sections/SelectBoxSection'
 import { CheckboxSection } from './sections/CheckboxSection'
-import { TableSection } from './sections/TableSection'
+import { TableSection, type SelectedMembers } from './sections/TableSection'
 import { InitialCheckSection } from './sections/InitialCheckSection'
 import { CompletionSection } from './sections/CompletionSection'
 
-export function buildSections(meta: IntegrationAppFormMetadata, props: FormComponentProps, onSubmit: () => void): ReactNode[] {
+export function buildSections(meta: IntegrationAppFormMetadata, props: FormComponentProps): ReactNode[] {
   return meta.sections.map((sectionMeta, index) => {
     const sectionIndex = index + 1
     const uiSchema = sectionMeta.uiSchema
@@ -22,7 +22,7 @@ export function buildSections(meta: IntegrationAppFormMetadata, props: FormCompo
       uiSchema,
       goNext,
       goPrev,
-      onSubmit,
+      props.onSubmit,
       props.onSelectedWorkspaceChange,
       props.selectedWorkspace,
       props.onSelectedMembersChange,
@@ -40,10 +40,10 @@ export const buildSection = (
   onNext: () => void,
   onPrevious: () => void,
   onSubmit: () => void,
-  onSelectedWorkspaceChange: (v: any) => void,
-  selectedWorkspace: any,
-  onSelectedMembersChange: (v: any[]) => void,
-  selectedMembers: any[],
+  onSelectedWorkspaceChange: (v: SelectedWorkspace) => void,
+  selectedWorkspace: SelectedWorkspace | null,
+  onSelectedMembersChange: (v: SelectedMembers[]) => void,
+  selectedMembers: SelectedMembers[],
   keyId: string | number,
   hasPrevious: boolean,
   hasNext: boolean,
@@ -70,8 +70,8 @@ export const buildSection = (
           title={uiSchema.title}
           workflow={(uiSchema as SelectBoxSectionSchema).workflow}
           placeholder={(uiSchema as SelectBoxSectionSchema).placeholder}
-          selectedValue={selectedWorkspace}
-          onSelectedValueChange={(v) => onSelectedWorkspaceChange(v)}
+          selectedWorkspace={selectedWorkspace}
+          onSelectedWorkspaceChange={onSelectedWorkspaceChange}
           onNext={onNext as () => void}
           onPrevious={onPrevious}
           hasPrevious={hasPrevious}

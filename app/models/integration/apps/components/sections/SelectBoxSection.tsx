@@ -11,14 +11,18 @@ import {
   SelectValue,
 } from '~/components/ui/select'
 import { useWorkflowExecution } from '../../hooks/useWorkflowExecution'
-import { setSectionList, setSectionResult } from '../../hooks/sectionResults'
+
+export type SelectedWorkspace = {
+  elementId: string
+  elementText: string
+}
 
 interface SelectBoxSectionProps {
   title: string
   workflow: any
   placeholder: string
-  selectedValue: string
-  onSelectedValueChange: (v: string) => void
+  selectedWorkspace: SelectedWorkspace | null
+  onSelectedWorkspaceChange: (v: SelectedWorkspace) => void
   onNext: () => void
   onParsed?: (list: any[]) => void
   onPrevious?: () => void
@@ -30,8 +34,8 @@ export function SelectBoxSection({
   title, 
   workflow, 
   placeholder, 
-  selectedValue, 
-  onSelectedValueChange, 
+  selectedWorkspace, 
+  onSelectedWorkspaceChange, 
   onNext, 
   onParsed, 
   onPrevious, 
@@ -43,18 +47,8 @@ export function SelectBoxSection({
   useEffect(() => {
     if (Array.isArray(parsed) && onParsed) {
       onParsed(parsed)
-      setSectionList('select-box', parsed)
     }
   }, [parsed, onParsed])
-
-  useEffect(() => {
-    if (selectedValue) {
-      setSectionResult('select-box', { 
-        result: parsed?.[parseInt(selectedValue)]?.elementId || parsed?.[parseInt(selectedValue)]?.elementText || selectedValue, 
-        list: parsed 
-      })
-    }
-  }, [selectedValue])
 
   return (
     <div className="space-y-6 max-w-md mx-auto w-full">
@@ -74,18 +68,28 @@ export function SelectBoxSection({
 
       {!loading && Array.isArray(parsed) && parsed.length > 0 && (
         <div className="space-y-4">
-          <Select value={selectedValue} onValueChange={onSelectedValueChange}>
+          <Select
+            value={selectedWorkspace?.elementId ?? undefined}
+            onValueChange={(value) => {
+              const list = (parsed as SelectedWorkspace[]) || []
+              const found = list.find((i) => i?.elementId === value)
+              if (found) {
+                onSelectedWorkspaceChange({ elementId: found.elementId, elementText: found.elementText })
+              }
+            }}
+          >
             <SelectTrigger className="w-full mt-2">
               <SelectValue placeholder={placeholder || '항목을 선택하세요'} />
             </SelectTrigger>
             <SelectContent>
-              {parsed.map((item: any, index: number) => {
-                const value = index.toString()
-                const label = (item.label ?? item.elementText ?? item.text ?? JSON.stringify(item)) as string
-                return (
-                  <SelectItem key={value} value={value}>{label}</SelectItem>
-                )
-              })}
+              {(parsed as SelectedWorkspace[])
+                .filter((item) => !!item?.elementId)
+                .map((item) => {
+                  const label = (item.elementText || item.elementId) as string
+                  return (
+                    <SelectItem key={item.elementId} value={item.elementId}>{label}</SelectItem>
+                  )
+                })}
             </SelectContent>
           </Select>
         </div>
@@ -99,7 +103,7 @@ export function SelectBoxSection({
             </div>
             <div>
               {hasNext && (
-                <Button onClick={onNext} disabled={!selectedValue} className="px-8 py-2">다음</Button>
+                <Button onClick={onNext} disabled={!selectedWorkspace?.elementId} className="px-8 py-2">다음</Button>
               )}
             </div>
           </div>

@@ -10,29 +10,31 @@ import {
   StepperTrigger,
 } from '~/components/ui/stepper'
 import { Check, LoaderCircleIcon } from 'lucide-react'
+import type { SelectedWorkspace } from './components/sections/SelectBoxSection'
+import type { SelectedMembers } from './components/sections/TableSection'
 
 export interface FormComponentProps {
   currentSection: number
-  selectedWorkspace: any
-  onSelectedWorkspaceChange: (value: any) => void
-  selectedMembers: any[]
-  onSelectedMembersChange: (value: any[]) => void
+  selectedWorkspace: SelectedWorkspace | null
+  selectedMembers: SelectedMembers[]
+  onSelectedWorkspaceChange: (value: SelectedWorkspace) => void
+  onSelectedMembersChange: (value: SelectedMembers[]) => void
   onSectionChange: (section: number) => void
   onModalClose: () => void
   productId: number
+  onSubmit: () => void
 }
 
 // Options to customize builder behavior (e.g., preview mode in form-builder)
 type BuilderOptions = {
-  meta: IntegrationAppFormMetadata,
-  onSubmit: () => void
+  meta: IntegrationAppFormMetadata
 }
 
 // No per-app hooks; everything is metadata-driven now
 export function DynamicFormBuilder(options: BuilderOptions) {
-  const { meta, onSubmit } = options
+  const { meta } = options
 
-  const renderSections = (props: FormComponentProps): ReactNode[] => buildSections(meta, props, onSubmit)
+  const renderSections = (props: FormComponentProps): ReactNode[] => buildSections(meta, props)
 
   return {
     buildStepper: (args: { props: FormComponentProps; loadingStates?: Record<number, boolean> }) => {
