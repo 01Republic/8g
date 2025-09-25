@@ -12,13 +12,13 @@ export default function LoginPage(props: LoginPageProps) {
 
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
-    <div className="flex flex-col gap-4 p-6 md:p-10">
-      <div className="flex justify-center gap-2 md:justify-start">
-        <a href="#" className="flex items-center gap-2 font-medium">
+      <div className="flex flex-col gap-4 p-6 md:p-10">
+       <div className="flex justify-center gap-2 md:justify-start">
+        <a href="#" className="flex items-center gap-2 font-medium text-base">
           <img 
                 src={orgImage || defaultLogo} 
                 alt={orgName || 'Organization'}
-                className="size-6 object-cover" 
+                className="size-8 object-cover" 
             />
           {orgName||"Organization"}
         </a>
@@ -29,7 +29,7 @@ export default function LoginPage(props: LoginPageProps) {
         </div>
       </div>
     </div>
-    <div className="bg-muted relative lg:flex flex items-center justify-center p-8">
+    <div className="bg-primary-bg relative lg:flex flex items-center justify-center p-8">
         <img
             src={orgImage || defaultLogo} 
             alt="Organization Image"
