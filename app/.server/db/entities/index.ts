@@ -102,6 +102,7 @@ import { GmailItems } from './GmailItems';
 import { GmailQueryPresets } from './GmailQueryPresets';
 import { GoogleSyncHistories } from './GoogleSyncHistories';
 import { GoogleTokenData } from './GoogleTokenData';
+import { IntegrationAppFormMetadata } from './IntegrationAppFormMetadata';
 import { IntegrationGoogleWorkspaceMembers } from './IntegrationGoogleWorkspaceMembers';
 import { IntegrationGoogleWorkspaceOauthTokenActivities } from './IntegrationGoogleWorkspaceOauthTokenActivities';
 import { IntegrationSlackMembers } from './IntegrationSlackMembers';
@@ -171,7 +172,7 @@ export const allEntities = [
   CodefBankAccountParsers, CodefBankAccounts, CodefBillingHistories, CodefCardParsers,
   CodefCards, CodefConnectedIdentities, CreditCard, EmailParsers, ExchangeCurrencies,
   GmailItemBillingInfo, GmailItems, GmailQueryPresets, GoogleSyncHistories,
-  GoogleTokenData, IntegrationGoogleWorkspaceMembers, IntegrationGoogleWorkspaceOauthTokenActivities,
+  GoogleTokenData, IntegrationAppFormMetadata, IntegrationGoogleWorkspaceMembers, IntegrationGoogleWorkspaceOauthTokenActivities,
   IntegrationSlackMembers, IntegrationSlackOauthTokenActivities, IntegrationWorkspaces,
   InvoiceAccountSubscriptions, InvoiceAccounts, InvoiceApps, Memberships, Moneys,
   NewsLetterSubscribers, NotificationMessages, NotificationTemplates, OrganizationBizInfos,

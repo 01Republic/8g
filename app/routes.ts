@@ -6,7 +6,7 @@ export default [
         route("/integration", "routes/integration.tsx"),
         route("/apps", "routes/apps.tsx"),
         route("/workflow", "routes/workflow.tsx"),
-        route("/form-builder", "routes/form-builder.tsx"),
+        route("/apps/:appId/form-builder", "routes/form-builder.tsx"),
     ]),
     layout("layouts/common.tsx", [
         route("/login", "routes/login.tsx")

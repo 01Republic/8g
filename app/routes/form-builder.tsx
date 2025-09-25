@@ -1,25 +1,76 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import type { IntegrationAppFormMetadata } from '~/models/integration/apps/IntegrationAppFormMetadata'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { Label } from '~/components/ui/label'
+import { Button } from '~/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '~/components/ui/alert-dialog'
+import { Switch } from '~/components/ui/switch'
 import { SectionTypePropsMapper } from '~/models/integration/apps/IntegrationAppFormMetadata'
 import { DynamicFormBuilder, type FormComponentProps } from '~/models/integration/apps/DynamicFormBuilder'
 import { Separator } from '~/components/ui/separator'
 import SectionConfigBuilder from '~/models/integration/apps/components/SectionConfigBuilder'
 import Reorderable from '~/components/Reorderable'
+import type { Route } from './+types/form-builder'
+import { useFetcher } from 'react-router'
+import { IntegrationAppFormMetadata as IntegrationAppFormMetadataEntity } from '~/.server/db/entities/IntegrationAppFormMetadata'
+import { initializeDatabase } from '~/.server/db'
 
 const DND_SECTION_TYPE = 'SECTION'
 
-export default function FormBuilder() {
-  const initialMeta: IntegrationAppFormMetadata = {
-    sections: []
+export async function loader({ params }: Route.LoaderArgs) {
+  await initializeDatabase()
+  const integrationAppFormMetadata = await IntegrationAppFormMetadataEntity.findOne({ where: { productId: parseInt(params.appId) } })
+
+  if (!integrationAppFormMetadata) {
+    return { appId: params.appId, meta: { sections: [] } }
   }
-  const [meta, setMeta] = useState<IntegrationAppFormMetadata>(initialMeta)
+  return { appId: params.appId, meta: integrationAppFormMetadata.meta as unknown as IntegrationAppFormMetadata }
+}
+
+export async function action({ request }: Route.ActionArgs) {
+  const formData = await request.formData()
+  const appId = formData.get('appId') as string
+  const meta = formData.get('meta') as string
+  const isActiveStr = formData.get('isActive') as string | null
+  const isActive = isActiveStr === 'true'
+
+  await initializeDatabase()
+  const isUpdate = await IntegrationAppFormMetadataEntity.findOne({ where: { productId: parseInt(appId) } })
+  if (isUpdate) {
+    await IntegrationAppFormMetadataEntity.update({ productId: parseInt(appId) }, { meta: JSON.parse(meta), isActive })
+  } else {
+    await IntegrationAppFormMetadataEntity.save({ productId: parseInt(appId), meta: JSON.parse(meta), isActive })
+  }
+  
+  return {
+    message: 'Success',
+  }
+}
+
+export default function FormBuilder(
+  { loaderData }: Route.ComponentProps
+) {
+  const { appId, meta: initialMeta } = loaderData
+  const [meta, setMeta] = useState<IntegrationAppFormMetadata>(initialMeta as unknown as IntegrationAppFormMetadata)
   const [currentSection, setCurrentSection] = useState<number>(0)
   const [selectedItem, setSelectedItem] = useState<string>('')
+  const [isActive, setIsActive] = useState(false)
+  const fetcher = useFetcher()
+  const isSaving = fetcher.state !== 'idle'
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [dialogTitle, setDialogTitle] = useState('')
+  const [dialogMessage, setDialogMessage] = useState('')
+  const [pendingSave, setPendingSave] = useState(false)
 
   const withMeta = (updater: (draft: IntegrationAppFormMetadata) => void) => {
     const current = JSON.parse(JSON.stringify(meta)) as IntegrationAppFormMetadata
@@ -64,11 +115,45 @@ export default function FormBuilder() {
   const formBuilder = DynamicFormBuilder({ meta })
   const preview = hasSections ? formBuilder.buildStepper({ props: sectionProps }) : null
 
+  const handleSave = () => {
+    setPendingSave(true)
+    const formData = new FormData()
+    formData.append('appId', appId)
+    formData.append('meta', JSON.stringify(meta))
+    formData.append('isActive', String(isActive))
+    fetcher.submit(formData, { method: 'POST' })
+  }
+
+  useEffect(() => {
+    if (!pendingSave) return
+    if (fetcher.state === 'idle') {
+      const data = fetcher.data as any
+      const hasError = data && typeof data === 'object' && 'error' in data
+      setDialogTitle(hasError ? '저장 실패' : '저장 완료')
+      setDialogMessage(
+        hasError
+          ? (data?.error as string) || '저장 중 오류가 발생했습니다.'
+          : '메타데이터가 저장되었습니다.'
+      )
+      setDialogOpen(true)
+      setPendingSave(false)
+    }
+  }, [fetcher.state, fetcher.data, pendingSave])
+
   return (
     <div style={{ height: '100vh', width: '100vw' }}>
       <Card>
-        <CardHeader>
-          <CardTitle>No-code Builder</CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Form Builder</CardTitle>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">{isActive ? 'Active' : 'Deactive'}</span>
+              <Switch id="is-active-switch" checked={isActive} onCheckedChange={setIsActive} />
+            </div>
+            <Button onClick={handleSave} disabled={isSaving} className="px-6">
+              {isSaving ? '저장 중...' : '저장'}
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
           <DndProvider backend={HTML5Backend}>
@@ -141,6 +226,17 @@ export default function FormBuilder() {
           </DndProvider>
         </CardContent>
       </Card>
+      <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{dialogTitle}</AlertDialogTitle>
+            <AlertDialogDescription>{dialogMessage}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex justify-end">
+            <AlertDialogAction onClick={() => setDialogOpen(false)}>확인</AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
