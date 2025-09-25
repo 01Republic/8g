@@ -5,7 +5,6 @@ import { initializeDatabase } from "~/.server/db/config";
 import { Subscriptions } from "~/.server/db/entities/Subscriptions";
 import HomePage from "~/client/private/home/HomePage";
 
-
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "New React Router App" },
@@ -13,57 +12,53 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export const middleware: Route.MiddlewareFunction[] = [
-  authMiddleware,
-];
+export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
 
-export async function loader({
-  context,
-}: Route.LoaderArgs){
+export async function loader({ context }: Route.LoaderArgs) {
   const user = context.get(userContext); // Guaranteed to exist
 
-  await initializeDatabase()
+  await initializeDatabase();
   const subscriptions = await Subscriptions.find({
     where: {
       organization: {
-        id: user!.orgId
-      }
+        id: user!.orgId,
+      },
     },
     order: {
-      registeredAt: 'DESC'
+      registeredAt: "DESC",
     },
     relations: [
-      'product',
-      'currentBillingAmount', 
-      'paymentPlan',
-      'organization'
-    ]
-  })
+      "product",
+      "currentBillingAmount",
+      "paymentPlan",
+      "organization",
+    ],
+  });
 
   // TODO: 나중에 mapper 함수나 따로 빼기
-  return { user, apps: subscriptions.map((subscription: any) => ({
-    id: subscription.id,
-    appLogo: subscription.product?.image || "https://via.placeholder.com/40",
-    appKoreanName: subscription.alias || subscription.product?.nameKo || "Unknown App",
-    appEnglishName: subscription.product?.nameEn || "Unknown App",
-    category: "SaaS",
-    status: subscription.status,
-    paidMemberCount: subscription.paidMemberCount || 0,
-    usedMemberCount: subscription.usedMemberCount || 0,
-    nextBillingDate: subscription.nextBillingDate,
-    nextBillingAmount: subscription.nextBillingAmount || 0,
-    billingCycleType: subscription.billingCycleType,
-    pricingModel: subscription.pricingModel,
-    connectStatus: subscription.connectStatus
-  })) };
+  return {
+    user,
+    apps: subscriptions.map((subscription: any) => ({
+      id: subscription.id,
+      appLogo: subscription.product?.image || "https://via.placeholder.com/40",
+      appKoreanName:
+        subscription.alias || subscription.product?.nameKo || "Unknown App",
+      appEnglishName: subscription.product?.nameEn || "Unknown App",
+      category: "SaaS",
+      status: subscription.status,
+      paidMemberCount: subscription.paidMemberCount || 0,
+      usedMemberCount: subscription.usedMemberCount || 0,
+      nextBillingDate: subscription.nextBillingDate,
+      nextBillingAmount: subscription.nextBillingAmount || 0,
+      billingCycleType: subscription.billingCycleType,
+      pricingModel: subscription.pricingModel,
+      connectStatus: subscription.connectStatus,
+    })),
+  };
 }
 
-export default function Home(
-  { loaderData }: Route.ComponentProps
-) {
-  const { user, apps } = loaderData
+export default function Home({ loaderData }: Route.ComponentProps) {
+  const { apps } = loaderData;
 
-  return (
-    <HomePage userName={user?.name!} apps={apps} />
-  )
+  return <HomePage apps={apps} />;
 }
