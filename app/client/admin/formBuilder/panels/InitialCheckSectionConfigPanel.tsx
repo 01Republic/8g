@@ -1,47 +1,30 @@
 import { Button } from '~/components/ui/button'
 import { Label } from '~/components/ui/label'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion'
-import type { FormWorkflow } from '~/models/integration/types'
-import { useWorkflowConfig } from '~/hooks/use-workflow-config'
-import WorkflowField from './field/WorkflowField'
 import TextField from './field/TextField'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion'
 
-interface TableSectionConfigPanelProps {
+interface InitialCheckSectionConfigPanelProps {
   sectionId: string
   sectionIndex: number
   title?: string
   uiType: string
   index: number
   withMeta: (updater: (draft: any) => void) => void
-  workflow?: FormWorkflow
 }
 
-const TableSectionConfigPanel = ({
-  sectionId,
-  sectionIndex,
-  title,
-  uiType,
-  index,
-  withMeta,
-  workflow,
-}: TableSectionConfigPanelProps) => {
-  const { workflowText, workflowError, handleWorkflowChange } = useWorkflowConfig({
-    index,
-    withMeta,
-    initialWorkflow: workflow,
-  })
-
+const InitialCheckSectionConfigPanel = ({ sectionId, sectionIndex, title, uiType, index, withMeta }: InitialCheckSectionConfigPanelProps) => {
   return (
-    <Accordion type="single" collapsible defaultValue="item">
+    <Accordion type="single" collapsible>
       <AccordionItem value="item">
-      <AccordionTrigger className="px-0">
+          <AccordionTrigger className="px-0">
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 select-none">
-              <Label className="text-sm">섹션 {sectionIndex}</Label>
-              <span className="text-xs text-muted-foreground">{uiType}</span>
+              <Label className="text-sm">{uiType}</Label>
+              <span className="text-xs text-muted-foreground">{title}</span>
             </div>
         </div>
-        </AccordionTrigger>
+          </AccordionTrigger>
+
         <AccordionContent>
           <div className="space-y-3">
             <TextField
@@ -51,14 +34,6 @@ const TableSectionConfigPanel = ({
               placeholder="섹션 제목"
               onChange={(value) => withMeta((draft) => { (draft.sections[index].uiSchema as any).title = value })}
             />
-          <WorkflowField
-            id={`workflow-json-${sectionId}`}
-            value={workflowText}
-            onChange={handleWorkflowChange}
-            error={workflowError}
-            placeholder='{"version":"1.0","start":"start","steps":[...],"targetUrl":"https://..."}'
-          />
-          </div>
           <div className="flex justify-end pt-2">
             <Button
               variant="destructive"
@@ -71,10 +46,11 @@ const TableSectionConfigPanel = ({
               }}
             >삭제</Button>
           </div>
+          </div>
         </AccordionContent>
       </AccordionItem>
     </Accordion>
   )
 }
 
-export default TableSectionConfigPanel
+export default InitialCheckSectionConfigPanel

@@ -1,9 +1,9 @@
 import { Button } from '~/components/ui/button'
 import { Label } from '~/components/ui/label'
-import TextField from './field/TextField'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion'
+import TextField from './field/TextField'
 
-interface InitialCheckSectionConfigPanelProps {
+interface CompletionSectionConfigPanelProps {
   sectionId: string
   sectionIndex: number
   title?: string
@@ -12,19 +12,18 @@ interface InitialCheckSectionConfigPanelProps {
   withMeta: (updater: (draft: any) => void) => void
 }
 
-const InitialCheckSectionConfigPanel = ({ sectionId, sectionIndex, title, uiType, index, withMeta }: InitialCheckSectionConfigPanelProps) => {
+const CompletionSectionConfigPanel = ({ sectionId, sectionIndex, title, uiType, index, withMeta }: CompletionSectionConfigPanelProps) => {
   return (
-    <Accordion type="single" collapsible defaultValue="item">
+    <Accordion type="single" collapsible>
       <AccordionItem value="item">
-          <AccordionTrigger className="px-0">
+      <AccordionTrigger className="px-0">
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 select-none">
-              <Label className="text-sm">섹션 {sectionIndex}</Label>
-              <span className="text-xs text-muted-foreground">{uiType}</span>
+              <Label className="text-sm">{uiType}</Label>
+              <span className="text-xs text-muted-foreground">{title}</span>
             </div>
         </div>
-          </AccordionTrigger>
-
+        </AccordionTrigger>
         <AccordionContent>
           <div className="space-y-3">
             <TextField
@@ -53,4 +52,4 @@ const InitialCheckSectionConfigPanel = ({ sectionId, sectionIndex, title, uiType
   )
 }
 
-export default InitialCheckSectionConfigPanel
+export default CompletionSectionConfigPanel

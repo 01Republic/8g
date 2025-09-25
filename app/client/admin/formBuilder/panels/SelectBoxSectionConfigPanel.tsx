@@ -25,13 +25,13 @@ const SelectBoxSectionConfigPanel = ({ sectionId, sectionIndex, title, placehold
   })
 
   return (
-<Accordion type="single" collapsible defaultValue="item">
+<Accordion type="single" collapsible>
   <AccordionItem value="item">
   <AccordionTrigger className="px-0">
     <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 select-none">
-          <Label className="text-sm">섹션 {sectionIndex}</Label>
-          <span className="text-xs text-muted-foreground">{uiType}</span>
+          <Label className="text-sm">{uiType}</Label>
+          <span className="text-xs text-muted-foreground">{title}</span>
         </div>
     </div>
     </AccordionTrigger>
