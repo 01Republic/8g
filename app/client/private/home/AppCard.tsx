@@ -12,7 +12,7 @@ interface RecentSubscriptionCardProps {
   onClick?: () => void;
 }
 
-export function RecentSubscriptionCard({ appName, appLogo, lastUsedAt, onClick }: RecentSubscriptionCardProps) {
+export function AppCard({ appName, appLogo, lastUsedAt, onClick }: RecentSubscriptionCardProps) {
   const formatTimeAgo = (date: Date) => {
     const now = new Date();
     const diffInMonths = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24 * 30));

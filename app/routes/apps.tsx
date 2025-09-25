@@ -1,8 +1,8 @@
-import { ProductTable } from "~/models/products/components/ProductTable";
 import type { Route } from "./+types/apps";
 import { authMiddleware } from "~/middleware/auth";
 import { useLoaderData } from "react-router";
 import { userContext } from "~/context";
+import AppsPage from "~/client/private/apps/AppsPage";
 
 const { initializeDatabase } = await import("~/.server/db");
 const { Subscriptions } = await import("~/.server/db/entities/Subscriptions");
@@ -60,11 +60,6 @@ export default function Apps() {
     const { apps } = useLoaderData<typeof loader>();
     
     return (
-        <div className="h-full w-full p-8">
-            <div className="max-w-7xl mx-auto">
-                <h1 className="text-2xl font-semibold mb-6">Apps</h1>
-                <ProductTable apps={apps} />
-            </div>
-        </div>
+       <AppsPage apps={apps}/>
     )
 }

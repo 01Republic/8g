@@ -13,7 +13,7 @@ interface SubscriptionSearchCommandProps {
     predictions: string[];
 }
 
-export function SubscriptionSearchCommand({ query, onQueryChange, predictions }: SubscriptionSearchCommandProps) {
+export function AppSearch({ query, onQueryChange, predictions }: SubscriptionSearchCommandProps) {
 
     return (
           <Command className="w-full border-2 rounded-lg">

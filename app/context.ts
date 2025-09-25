@@ -1,6 +1,6 @@
 import { createContext } from "react-router";
 
-type User = {
+export type UserType = {
     id: number;
     name: string;
     phone: string;
@@ -8,4 +8,4 @@ type User = {
     orgId: number
 }
 
-export const userContext = createContext<User | null>(null);
+export const userContext = createContext<UserType | null>(null);

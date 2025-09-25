@@ -7,23 +7,10 @@ import {
     TableHeader,
     TableRow,
   } from "~/components/ui/table"
+import type { AppType } from "~/models/apps/types";
   
   interface ProductTableProps {
-    apps: {
-        id: number;
-        appLogo: string;
-        appKoreanName: string;
-        appEnglishName: string;
-        category: string;
-        status: string;
-        paidMemberCount: number;
-        usedMemberCount: number;
-        nextBillingDate: Date | null;
-        nextBillingAmount: number;
-        billingCycleType: string;
-        pricingModel: string;
-        connectStatus: string;
-    }[];
+    apps: AppType[];
   }
 
   const getStatusBadge = (status: string) => {
@@ -59,7 +46,7 @@ import {
     }).format(new Date(date));
   };
 
-  export function ProductTable({ apps }: ProductTableProps) {
+  export const AppsTable = ({ apps }: ProductTableProps) => {
     return (
       <div className="border rounded-lg overflow-hidden bg-white">
         <Table>
