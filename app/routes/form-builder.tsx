@@ -1,10 +1,10 @@
-import { type IntegrationAppFormMetadata } from '~/models/integration/apps/IntegrationAppFormMetadata'
 import type { Route } from './+types/form-builder'
 import { IntegrationAppFormMetadata as IntegrationAppFormMetadataEntity } from '~/.server/db/entities/IntegrationAppFormMetadata'
 import { initializeDatabase } from '~/.server/db'
 import FormBuilderPage from '~/client/admin/formBuilder/FormBuilderPage'
 import { useEffect, useState } from 'react'
 import { useFetcher } from 'react-router'
+import type { IntegrationAppFormMetadata } from '~/models/integration/types'
 
 export async function loader({ params }: Route.LoaderArgs) {
   await initializeDatabase()

@@ -6,10 +6,10 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog"
 import type { Dispatch, SetStateAction } from "react"
-import { DynamicFormBuilder } from "~/models/integration/apps/DynamicFormBuilder";
-import { type IntegrationAppFormMetadata } from "~/models/integration/apps/IntegrationAppFormMetadata";
-import type { SelectedWorkspace } from "~/models/integration/apps/components/sections/SelectBoxSection";
-import type { SelectedMembers } from "~/models/integration/apps/components/sections/TableSection";
+import { DynamicFormBuilder } from "~/client/private/integration/DynamicFormBuilder";
+import type { SelectedWorkspace } from "~/models/integration/types";
+import type { SelectedMembers } from "~/models/integration/types";
+import type { IntegrationAppFormMetadata } from "~/models/integration/apps/types";
 
 interface IntegartionProductModalProps {
     open: boolean,

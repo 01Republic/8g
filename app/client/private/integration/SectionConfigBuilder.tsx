@@ -1,9 +1,9 @@
-import type { AppFormSectionMeta, CheckboxSectionSchema, CompletionSectionSchema, InitialCheckSectionSchema, SelectBoxSectionSchema, TableSectionSchema } from "~/models/integration/apps/IntegrationAppFormMetadata"
-import SelectBoxSectionConfigPanel from "~/models/integration/apps/components/\bpanels/SelectBoxSectionConfigPanel"
-import TableSectionConfigPanel from "~/models/integration/apps/components/\bpanels/TableSectionConfigPanel"
-import CheckboxSectionConfigPanel from "~/models/integration/apps/components/\bpanels/CheckboxSectionConfigPanel"
-import CompletionSectionConfigPanel from "~/models/integration/apps/components/\bpanels/CompletionSectionConfigPanel"
-import InitialCheckSectionConfigPanel from "~/models/integration/apps/components/\bpanels/InitialCheckSectionConfigPanel"
+import type { AppFormSectionMeta, InitialCheckSectionSchema, SelectBoxSectionSchema, CheckboxSectionSchema, TableSectionSchema, CompletionSectionSchema } from "~/models/integration/types"
+import CheckboxSectionConfigPanel from "./panels/CheckboxSectionConfigPanel"
+import CompletionSectionConfigPanel from "./panels/CompletionSectionConfigPanel"
+import InitialCheckSectionConfigPanel from "./panels/InitialCheckSectionConfigPanel"
+import SelectBoxSectionConfigPanel from "./panels/SelectBoxSectionConfigPanel"
+import TableSectionConfigPanel from "./panels/TableSectionConfigPanel"
 
 interface BuildSectionConfigPanelProps {
   section: AppFormSectionMeta

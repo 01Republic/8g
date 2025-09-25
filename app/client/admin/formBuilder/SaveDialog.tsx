@@ -7,7 +7,7 @@ interface SaveDialogProps {
   onClose: () => void
 }
 
-export default function SaveDialog(props: SaveDialogProps) {
+export const SaveDialog = (props: SaveDialogProps) => {
   const { open, title, message, onClose } = props
 
   return (

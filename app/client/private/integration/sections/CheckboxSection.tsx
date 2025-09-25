@@ -3,8 +3,8 @@ import { Button } from '~/components/ui/button'
 import { CenteredSection } from '~/components/ui/centered-section'
 import { LoadingCard } from '~/components/ui/loading-card'
 import { LoaderCircleIcon } from 'lucide-react'
-import { useWorkflowExecution } from '../../hooks/useWorkflowExecution'
-import { setSectionResult } from '../../hooks/sectionResults'
+import { useWorkflowExecution } from '~/hooks/use-workflow-execution'
+import { setSectionResult } from '~/models/integration/SectionResultManager'
 
 interface CheckboxSectionProps {
   title: string
@@ -19,7 +19,7 @@ interface CheckboxSectionProps {
   hasNext?: boolean
 }
 
-export function CheckboxSection({ 
+export const CheckboxSection = ({ 
   title, 
   workflow, 
   loadingMessage, 
@@ -29,7 +29,7 @@ export function CheckboxSection({
   onNext,
   hasPrevious,
   hasNext,
-}: CheckboxSectionProps) {
+}: CheckboxSectionProps) => {
   const { loading, error, parsed, run } = useWorkflowExecution(workflow)
 
   useEffect(() => {
