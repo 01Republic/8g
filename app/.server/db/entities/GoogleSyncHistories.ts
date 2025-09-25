@@ -34,7 +34,7 @@ export class GoogleSyncHistories extends BaseEntity {
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.googleSyncHistories,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
@@ -42,26 +42,26 @@ export class GoogleSyncHistories extends BaseEntity {
   @ManyToOne(
     () => GoogleTokenData,
     (googleTokenData) => googleTokenData.googleSyncHistories,
-    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
+    { onDelete: "NO ACTION", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "google_token_data_id", referencedColumnName: "id" }])
   googleTokenData: GoogleTokenData;
 
   @OneToMany(
     () => Organizations,
-    (organizations) => organizations.lastGoogleSyncHistory
+    (organizations) => organizations.lastGoogleSyncHistory,
   )
   organizations: Organizations[];
 
   @RelationId(
     (googleSyncHistories: GoogleSyncHistories) =>
-      googleSyncHistories.organization
+      googleSyncHistories.organization,
   )
   organizationId: number;
 
   @RelationId(
     (googleSyncHistories: GoogleSyncHistories) =>
-      googleSyncHistories.googleTokenData
+      googleSyncHistories.googleTokenData,
   )
   googleTokenDataId: number;
 }

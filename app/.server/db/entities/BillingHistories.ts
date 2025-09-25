@@ -23,7 +23,7 @@ import { GmailItems } from "./GmailItems";
 @Index(
   "IDX_2b9f9da89be5f6075f32c36814",
   ["subscriptionId", "invoiceAppId", "emailOriginId"],
-  { unique: true }
+  { unique: true },
 )
 @Index("IDX_e0a2c11070e06d088ba32daec7", ["vatAmountId"], { unique: true })
 @Index("IDX_eba28a7542aa10d69fd1dd8ff1", ["abroadPayAmountId"], {
@@ -129,7 +129,7 @@ export class BillingHistories extends BaseEntity {
   @ManyToOne(
     () => Subscriptions,
     (subscriptions) => subscriptions.billingHistories,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "subscription_id", referencedColumnName: "id" }])
   subscription: Subscriptions;
@@ -137,7 +137,7 @@ export class BillingHistories extends BaseEntity {
   @ManyToOne(
     () => CodefBillingHistories,
     (codefBillingHistories) => codefBillingHistories.billingHistories,
-    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" },
   )
   @JoinColumn([
     { name: "codef_billing_history_id", referencedColumnName: "id" },
@@ -154,7 +154,7 @@ export class BillingHistories extends BaseEntity {
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.billingHistories,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
@@ -169,7 +169,7 @@ export class BillingHistories extends BaseEntity {
   @ManyToOne(
     () => BankAccounts,
     (bankAccounts) => bankAccounts.billingHistories,
-    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "bank_account_id", referencedColumnName: "id" }])
   bankAccount: BankAccounts;
@@ -178,42 +178,43 @@ export class BillingHistories extends BaseEntity {
   gmailItems: GmailItems[];
 
   @RelationId(
-    (billingHistories: BillingHistories) => billingHistories.invoiceApp
+    (billingHistories: BillingHistories) => billingHistories.invoiceApp,
   )
   invoiceAppId2: number | null;
 
   @RelationId(
-    (billingHistories: BillingHistories) => billingHistories.creditCard
+    (billingHistories: BillingHistories) => billingHistories.creditCard,
   )
   creditCardId: number | null;
 
   @RelationId(
-    (billingHistories: BillingHistories) => billingHistories.subscription
+    (billingHistories: BillingHistories) => billingHistories.subscription,
   )
   subscriptionId2: number | null;
 
   @RelationId(
-    (billingHistories: BillingHistories) => billingHistories.codefBillingHistory
+    (billingHistories: BillingHistories) =>
+      billingHistories.codefBillingHistory,
   )
   codefBillingHistoryId: number | null;
 
   @RelationId(
-    (billingHistories: BillingHistories) => billingHistories.vatAmount
+    (billingHistories: BillingHistories) => billingHistories.vatAmount,
   )
   vatAmountId2: number | null;
 
   @RelationId(
-    (billingHistories: BillingHistories) => billingHistories.organization
+    (billingHistories: BillingHistories) => billingHistories.organization,
   )
   organizationId: number;
 
   @RelationId(
-    (billingHistories: BillingHistories) => billingHistories.payAmount
+    (billingHistories: BillingHistories) => billingHistories.payAmount,
   )
   payAmountId2: number | null;
 
   @RelationId(
-    (billingHistories: BillingHistories) => billingHistories.bankAccount
+    (billingHistories: BillingHistories) => billingHistories.bankAccount,
   )
   bankAccountId: number | null;
 }

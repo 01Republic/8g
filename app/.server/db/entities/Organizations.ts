@@ -88,19 +88,19 @@ export class Organizations extends BaseEntity {
 
   @OneToMany(
     () => BillingHistories,
-    (billingHistories) => billingHistories.organization
+    (billingHistories) => billingHistories.organization,
   )
   billingHistories: BillingHistories[];
 
   @OneToMany(
     () => CodefAccounts,
-    (codefAccounts) => codefAccounts.organization_2
+    (codefAccounts) => codefAccounts.organization_2,
   )
   codefAccounts: CodefAccounts[];
 
   @OneToMany(
     () => CodefConnectedIdentities,
-    (codefConnectedIdentities) => codefConnectedIdentities.organization
+    (codefConnectedIdentities) => codefConnectedIdentities.organization,
   )
   codefConnectedIdentities: CodefConnectedIdentities[];
 
@@ -112,19 +112,19 @@ export class Organizations extends BaseEntity {
 
   @OneToMany(
     () => GoogleSyncHistories,
-    (googleSyncHistories) => googleSyncHistories.organization
+    (googleSyncHistories) => googleSyncHistories.organization,
   )
   googleSyncHistories: GoogleSyncHistories[];
 
   @OneToMany(
     () => IntegrationWorkspaces,
-    (integrationWorkspaces) => integrationWorkspaces.organization
+    (integrationWorkspaces) => integrationWorkspaces.organization,
   )
   integrationWorkspaces: IntegrationWorkspaces[];
 
   @OneToMany(
     () => InvoiceAccounts,
-    (invoiceAccounts) => invoiceAccounts.organization
+    (invoiceAccounts) => invoiceAccounts.organization,
   )
   invoiceAccounts: InvoiceAccounts[];
 
@@ -133,14 +133,14 @@ export class Organizations extends BaseEntity {
 
   @OneToMany(
     () => OrganizationBizInfos,
-    (organizationBizInfos) => organizationBizInfos.organization
+    (organizationBizInfos) => organizationBizInfos.organization,
   )
   organizationBizInfos: OrganizationBizInfos[];
 
   @ManyToOne(
     () => GoogleSyncHistories,
     (googleSyncHistories) => googleSyncHistories.organizations,
-    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" },
   )
   @JoinColumn([
     { name: "last_google_sync_history_id", referencedColumnName: "id" },
@@ -149,13 +149,13 @@ export class Organizations extends BaseEntity {
 
   @OneToMany(
     () => ReviewCampaigns,
-    (reviewCampaigns) => reviewCampaigns.organization
+    (reviewCampaigns) => reviewCampaigns.organization,
   )
   reviewCampaigns: ReviewCampaigns[];
 
   @OneToMany(
     () => ReviewResponses,
-    (reviewResponses) => reviewResponses.organization
+    (reviewResponses) => reviewResponses.organization,
   )
   reviewResponses: ReviewResponses[];
 
@@ -164,19 +164,19 @@ export class Organizations extends BaseEntity {
 
   @OneToMany(
     () => ScordiPaymentMethods,
-    (scordiPaymentMethods) => scordiPaymentMethods.organization
+    (scordiPaymentMethods) => scordiPaymentMethods.organization,
   )
   scordiPaymentMethods: ScordiPaymentMethods[];
 
   @OneToMany(
     () => ScordiPayments,
-    (scordiPayments) => scordiPayments.organization
+    (scordiPayments) => scordiPayments.organization,
   )
   scordiPayments: ScordiPayments[];
 
   @OneToMany(
     () => ScordiSubscriptions,
-    (scordiSubscriptions) => scordiSubscriptions.organization
+    (scordiSubscriptions) => scordiSubscriptions.organization,
   )
   scordiSubscriptions: ScordiSubscriptions[];
 
@@ -194,7 +194,7 @@ export class Organizations extends BaseEntity {
 
   @OneToMany(
     () => VendorCompanies,
-    (vendorCompanies) => vendorCompanies.organization
+    (vendorCompanies) => vendorCompanies.organization,
   )
   vendorCompanies: VendorCompanies[];
 
@@ -202,13 +202,13 @@ export class Organizations extends BaseEntity {
   workspaces: Workspaces[];
 
   @RelationId(
-    (organizations: Organizations) => organizations.lastGoogleSyncHistory
+    (organizations: Organizations) => organizations.lastGoogleSyncHistory,
   )
   lastGoogleSyncHistoryId: number | null;
 
   isAdmin(user: Users): boolean {
-    return !!this.memberships?.find(membership => {
-      return membership.user.id === user.id && membership.user.isAdmin
-    })
+    return !!this.memberships?.find((membership) => {
+      return membership.user.id === user.id && membership.user.isAdmin;
+    });
   }
 }

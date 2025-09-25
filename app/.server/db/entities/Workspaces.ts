@@ -70,7 +70,7 @@ export class Workspaces extends BaseEntity {
 
   @OneToMany(
     () => WorkspaceMembers,
-    (workspaceMembers) => workspaceMembers.workspace
+    (workspaceMembers) => workspaceMembers.workspace,
   )
   workspaceMembers: WorkspaceMembers[];
 

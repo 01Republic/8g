@@ -44,7 +44,7 @@ export class ProductBillingCycles extends BaseEntity {
   @ManyToOne(
     () => ProductPaymentPlans,
     (productPaymentPlans) => productPaymentPlans.productBillingCycles,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "payment_plan_id", referencedColumnName: "id" }])
   paymentPlan: ProductPaymentPlans;
@@ -59,7 +59,7 @@ export class ProductBillingCycles extends BaseEntity {
   @ManyToOne(
     () => ProductPaymentPlans,
     (productPaymentPlans) => productPaymentPlans.productBillingCycles2,
-    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
+    { onDelete: "NO ACTION", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "payment_plan_id", referencedColumnName: "id" }])
   paymentPlan_2: ProductPaymentPlans;
@@ -76,24 +76,25 @@ export class ProductBillingCycles extends BaseEntity {
 
   @RelationId(
     (productBillingCycles: ProductBillingCycles) =>
-      productBillingCycles.paymentPlan
+      productBillingCycles.paymentPlan,
   )
   paymentPlanId: number;
 
   @RelationId(
-    (productBillingCycles: ProductBillingCycles) => productBillingCycles.product
+    (productBillingCycles: ProductBillingCycles) =>
+      productBillingCycles.product,
   )
   productId: number;
 
   @RelationId(
     (productBillingCycles: ProductBillingCycles) =>
-      productBillingCycles.paymentPlan_2
+      productBillingCycles.paymentPlan_2,
   )
   paymentPlanId2: number;
 
   @RelationId(
     (productBillingCycles: ProductBillingCycles) =>
-      productBillingCycles.product_2
+      productBillingCycles.product_2,
   )
   productId2: number;
 }

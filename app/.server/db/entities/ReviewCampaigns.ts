@@ -56,7 +56,7 @@ export class ReviewCampaigns extends BaseEntity {
 
   @OneToMany(
     () => ReviewCampaignSubscriptions,
-    (reviewCampaignSubscriptions) => reviewCampaignSubscriptions.campaign
+    (reviewCampaignSubscriptions) => reviewCampaignSubscriptions.campaign,
   )
   reviewCampaignSubscriptions: ReviewCampaignSubscriptions[];
 
@@ -70,14 +70,14 @@ export class ReviewCampaigns extends BaseEntity {
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.reviewCampaigns,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
 
   @OneToMany(
     () => ReviewResponses,
-    (reviewResponses) => reviewResponses.campaign
+    (reviewResponses) => reviewResponses.campaign,
   )
   reviewResponses: ReviewResponses[];
 
@@ -85,7 +85,7 @@ export class ReviewCampaigns extends BaseEntity {
   authorId: number | null;
 
   @RelationId(
-    (reviewCampaigns: ReviewCampaigns) => reviewCampaigns.organization
+    (reviewCampaigns: ReviewCampaigns) => reviewCampaigns.organization,
   )
   organizationId: number;
 }

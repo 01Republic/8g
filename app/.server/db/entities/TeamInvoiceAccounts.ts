@@ -47,19 +47,19 @@ export class TeamInvoiceAccounts extends BaseEntity {
   @ManyToOne(
     () => InvoiceAccounts,
     (invoiceAccounts) => invoiceAccounts.teamInvoiceAccounts,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "invoice_account_id", referencedColumnName: "id" }])
   invoiceAccount: InvoiceAccounts;
 
   @RelationId(
-    (teamInvoiceAccounts: TeamInvoiceAccounts) => teamInvoiceAccounts.team
+    (teamInvoiceAccounts: TeamInvoiceAccounts) => teamInvoiceAccounts.team,
   )
   teamId2: number;
 
   @RelationId(
     (teamInvoiceAccounts: TeamInvoiceAccounts) =>
-      teamInvoiceAccounts.invoiceAccount
+      teamInvoiceAccounts.invoiceAccount,
   )
   invoiceAccountId2: number;
 }

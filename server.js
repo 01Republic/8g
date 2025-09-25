@@ -1,7 +1,7 @@
 import { createRequestHandler } from "@react-router/express";
 import express from "express";
-import { WebSocketServer } from 'ws';
-import { createServer } from 'http';
+import { WebSocketServer } from "ws";
+import { createServer } from "http";
 
 const app = express();
 
@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === "production") {
   app.use(
     createRequestHandler({
       build: await import("./build/server/index.js"),
-    })
+    }),
   );
 } else {
   // 개발: Vite 개발 서버 사용
@@ -19,13 +19,14 @@ if (process.env.NODE_ENV === "production") {
   const viteDevServer = await vite.createServer({
     server: { middlewareMode: true },
   });
-  
+
   app.use(viteDevServer.middlewares);
-  
+
   app.use(
     createRequestHandler({
-      build: () => viteDevServer.ssrLoadModule("virtual:react-router/server-build"),
-    })
+      build: () =>
+        viteDevServer.ssrLoadModule("virtual:react-router/server-build"),
+    }),
   );
 }
 
@@ -43,7 +44,7 @@ function generateClientId() {
 
 function broadcastToClients(message, excludeId) {
   const messageStr = JSON.stringify(message);
-  
+
   clients.forEach((client, id) => {
     if (id !== excludeId && client.socket.readyState === 1) {
       try {
@@ -56,43 +57,50 @@ function broadcastToClients(message, excludeId) {
   });
 }
 
-wss.on('connection', function connection(ws) {
+wss.on("connection", function connection(ws) {
   const clientId = generateClientId();
   const client = {
     id: clientId,
     socket: ws,
-    lastPing: Date.now()
+    lastPing: Date.now(),
   };
-  
+
   clients.set(clientId, client);
-  
-  console.log(`WebSocket Client ${clientId} connected. Total clients: ${clients.size}`);
-  
-  ws.send(JSON.stringify({
-    type: 'connection',
-    clientId,
-    message: 'Connected successfully'
-  }));
-  
-  ws.on('message', function message(data) {
+
+  console.log(
+    `WebSocket Client ${clientId} connected. Total clients: ${clients.size}`,
+  );
+
+  ws.send(
+    JSON.stringify({
+      type: "connection",
+      clientId,
+      message: "Connected successfully",
+    }),
+  );
+
+  ws.on("message", function message(data) {
     try {
       const message = JSON.parse(data.toString());
-      
+
       switch (message.type) {
-        case 'ping':
+        case "ping":
           client.lastPing = Date.now();
-          ws.send(JSON.stringify({ type: 'pong' }));
+          ws.send(JSON.stringify({ type: "pong" }));
           break;
-          
-        case 'broadcast':
-          broadcastToClients({
-            type: 'message',
-            from: clientId,
-            data: message.data,
-            timestamp: new Date().toISOString()
-          }, clientId);
+
+        case "broadcast":
+          broadcastToClients(
+            {
+              type: "message",
+              from: clientId,
+              data: message.data,
+              timestamp: new Date().toISOString(),
+            },
+            clientId,
+          );
           break;
-          
+
         default:
           console.log(`Unknown message type from ${clientId}:`, message.type);
       }
@@ -100,13 +108,15 @@ wss.on('connection', function connection(ws) {
       console.error(`Error parsing message from ${clientId}:`, error);
     }
   });
-  
-  ws.on('close', function close() {
+
+  ws.on("close", function close() {
     clients.delete(clientId);
-    console.log(`WebSocket Client ${clientId} disconnected. Total clients: ${clients.size}`);
+    console.log(
+      `WebSocket Client ${clientId} disconnected. Total clients: ${clients.size}`,
+    );
   });
-  
-  ws.on('error', function error(err) {
+
+  ws.on("error", function error(err) {
     console.error(`WebSocket error for client ${clientId}:`, err);
     clients.delete(clientId);
   });
@@ -116,7 +126,7 @@ wss.on('connection', function connection(ws) {
 setInterval(() => {
   const now = Date.now();
   const timeout = 30000;
-  
+
   clients.forEach((client, id) => {
     if (now - client.lastPing > timeout) {
       console.log(`Client ${id} timed out`);
@@ -133,10 +143,10 @@ server.listen(PORT, async () => {
   console.log(`🔌 WebSocket available on ws://localhost:${PORT}`);
 });
 
-process.on('SIGINT', () => {
-  console.log('\n👋 Shutting down server...');
+process.on("SIGINT", () => {
+  console.log("\n👋 Shutting down server...");
   server.close(() => {
-    console.log('✅ Server closed');
+    console.log("✅ Server closed");
     process.exit(0);
   });
 });

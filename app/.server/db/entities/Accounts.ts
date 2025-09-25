@@ -62,7 +62,7 @@ export class Accounts extends BaseEntity {
 
   @OneToMany(
     () => AccountPermissions,
-    (accountPermissions) => accountPermissions.account
+    (accountPermissions) => accountPermissions.account,
   )
   accountPermissions: AccountPermissions[];
 
@@ -89,7 +89,7 @@ export class Accounts extends BaseEntity {
 
   @OneToMany(
     () => SignedHistories,
-    (signedHistories) => signedHistories.account
+    (signedHistories) => signedHistories.account,
   )
   signedHistories: SignedHistories[];
 

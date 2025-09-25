@@ -1,25 +1,33 @@
-import type { ReactNode } from 'react'
-import type { FormComponentProps } from './DynamicFormBuilder'
-import { SelectBoxSection } from './sections/SelectBoxSection'
-import { CheckboxSection } from './sections/CheckboxSection'
-import { TableSection } from './sections/TableSection'
-import { InitialCheckSection } from './sections/InitialCheckSection'
-import { CompletionSection } from './sections/CompletionSection'
-import type { SelectedWorkspace } from '~/models/integration/types'
-import type { SelectedMembers } from '~/models/integration/types'
-import type { IntegrationAppFormMetadata } from '~/models/integration/types'
-import type { FormSectionSchema, SelectBoxSectionSchema, CheckboxSectionSchema, TableSectionSchema } from '~/models/integration/types'
+import type { ReactNode } from "react";
+import type { FormComponentProps } from "./DynamicFormBuilder";
+import { SelectBoxSection } from "./sections/SelectBoxSection";
+import { CheckboxSection } from "./sections/CheckboxSection";
+import { TableSection } from "./sections/TableSection";
+import { InitialCheckSection } from "./sections/InitialCheckSection";
+import { CompletionSection } from "./sections/CompletionSection";
+import type { SelectedWorkspace } from "~/models/integration/types";
+import type { SelectedMembers } from "~/models/integration/types";
+import type { IntegrationAppFormMetadata } from "~/models/integration/types";
+import type {
+  FormSectionSchema,
+  SelectBoxSectionSchema,
+  CheckboxSectionSchema,
+  TableSectionSchema,
+} from "~/models/integration/types";
 
-export const buildSections = (meta: IntegrationAppFormMetadata, props: FormComponentProps): ReactNode[] => {
+export const buildSections = (
+  meta: IntegrationAppFormMetadata,
+  props: FormComponentProps,
+): ReactNode[] => {
   return meta.sections.map((sectionMeta, index) => {
-    const sectionIndex = index + 1
-    const uiSchema = sectionMeta.uiSchema
-    const sectionCount = meta.sections.length
-    const hasPrevious = sectionIndex > 1
-    const hasNext = sectionIndex < sectionCount
+    const sectionIndex = index + 1;
+    const uiSchema = sectionMeta.uiSchema;
+    const sectionCount = meta.sections.length;
+    const hasPrevious = sectionIndex > 1;
+    const hasNext = sectionIndex < sectionCount;
 
-    const goNext = () => props.onSectionChange(sectionIndex + 1)
-    const goPrev = () => props.onSectionChange(sectionIndex - 1)
+    const goNext = () => props.onSectionChange(sectionIndex + 1);
+    const goPrev = () => props.onSectionChange(sectionIndex - 1);
 
     return buildSection(
       uiSchema,
@@ -33,10 +41,9 @@ export const buildSections = (meta: IntegrationAppFormMetadata, props: FormCompo
       sectionIndex,
       hasPrevious,
       hasNext,
-    )
-  })
-}
-
+    );
+  });
+};
 
 export const buildSection = (
   uiSchema: FormSectionSchema,
@@ -51,10 +58,10 @@ export const buildSection = (
   hasPrevious: boolean,
   hasNext: boolean,
 ) => {
-  const uiType = uiSchema?.type
+  const uiType = uiSchema?.type;
 
   switch (uiType) {
-    case 'initial-check':
+    case "initial-check":
       return (
         <InitialCheckSection
           key={`section-${keyId}`}
@@ -64,9 +71,9 @@ export const buildSection = (
           hasPrevious={hasPrevious}
           hasNext={hasNext}
         />
-      )
+      );
 
-    case 'select-box':
+    case "select-box":
       return (
         <SelectBoxSection
           key={`section-${keyId}`}
@@ -80,9 +87,9 @@ export const buildSection = (
           hasPrevious={hasPrevious}
           hasNext={hasNext}
         />
-      )
+      );
 
-    case 'checkbox':
+    case "checkbox":
       return (
         <CheckboxSection
           key={`section-${keyId}`}
@@ -96,9 +103,9 @@ export const buildSection = (
           hasPrevious={hasPrevious}
           hasNext={hasNext}
         />
-      )
+      );
 
-    case 'table':
+    case "table":
       return (
         <TableSection
           key={`section-${keyId}`}
@@ -111,9 +118,9 @@ export const buildSection = (
           hasPrevious={hasPrevious}
           hasNext={hasNext}
         />
-      )
+      );
 
-    case 'completion':
+    case "completion":
       return (
         <CompletionSection
           key={`section-${keyId}`}
@@ -123,9 +130,9 @@ export const buildSection = (
           onPrevious={onPrevious}
           onSubmit={onSubmit}
         />
-      )
+      );
 
     default:
-      return null
+      return null;
   }
-}
+};

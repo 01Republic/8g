@@ -8,7 +8,7 @@
 
 ```html
 <script type="module">
-  import { EightGClient } from './dist/index.js';
+  import { EightGClient } from "./dist/index.js";
   const client = new EightGClient();
   await client.checkExtension();
   // ...
@@ -25,7 +25,7 @@ yarn add 8g-extension
 
 ```ts
 // ESM
-import { EightGClient } from '8g-extension';
+import { EightGClient } from "8g-extension";
 
 // 타입도 함께 제공됩니다 (types: ./dist/sdk/index.d.ts)
 const client = new EightGClient();
@@ -40,10 +40,10 @@ await client.checkExtension();
 const result = await client.collectData({
   targetUrl: location.href,
   block: {
-    name: 'get-text',
-    selector: '#title',
-    findBy: 'cssSelector',
-    option: {},            // 필수: 비어있어도 {}로 넣어주세요
+    name: "get-text",
+    selector: "#title",
+    findBy: "cssSelector",
+    option: {}, // 필수: 비어있어도 {}로 넣어주세요
     // get-text 옵션 예: includeTags, useTextContent, regex, prefixText, suffixText
   },
   blockDelay: 200,
@@ -56,8 +56,19 @@ const result = await client.collectData({
 const result = await client.collectData({
   targetUrl: location.href,
   block: [
-    { name: 'event-click', selector: '.open-modal-btn', findBy: 'cssSelector', option: { waitForSelector: true } },
-    { name: 'get-text', selector: '.modal.open .modal-content', findBy: 'cssSelector', option: { waitForSelector: true, waitSelectorTimeout: 2000 }, useTextContent: true },
+    {
+      name: "event-click",
+      selector: ".open-modal-btn",
+      findBy: "cssSelector",
+      option: { waitForSelector: true },
+    },
+    {
+      name: "get-text",
+      selector: ".modal.open .modal-content",
+      findBy: "cssSelector",
+      option: { waitForSelector: true, waitSelectorTimeout: 2000 },
+      useTextContent: true,
+    },
   ],
   blockDelay: 500,
 });
@@ -67,24 +78,88 @@ const result = await client.collectData({
 
 ```ts
 const workflow = {
-  version: '1.0',
-  start: 'readStatus',
+  version: "1.0",
+  start: "readStatus",
   steps: [
     {
-      id: 'readStatus',
-      block: { name: 'get-text', selector: '.status', findBy: 'cssSelector', useTextContent: true, option: {} },
+      id: "readStatus",
+      block: {
+        name: "get-text",
+        selector: ".status",
+        findBy: "cssSelector",
+        useTextContent: true,
+        option: {},
+      },
       // 분기: JSON 조건식(권장) 또는 expr 문자열 모두 지원
       switch: [
-        { when: { equals: { left: "$.steps.readStatus.result.data", right: 'OK' } }, next: 'flowOk' },
-        { when: { equals: { left: "$.steps.readStatus.result.data", right: 'PENDING' } }, next: 'flowPending' },
+        {
+          when: {
+            equals: { left: "$.steps.readStatus.result.data", right: "OK" },
+          },
+          next: "flowOk",
+        },
+        {
+          when: {
+            equals: {
+              left: "$.steps.readStatus.result.data",
+              right: "PENDING",
+            },
+          },
+          next: "flowPending",
+        },
       ],
-      next: 'flowError', // 위 조건이 모두 false일 때 사용
+      next: "flowError", // 위 조건이 모두 false일 때 사용
     },
-    { id: 'flowOk',      block: { name: 'event-click', selector: '.go',   findBy: 'cssSelector', option: {} }, next: 'openModal' },
-    { id: 'flowPending', block: { name: 'event-click', selector: '.wait', findBy: 'cssSelector', option: {} }, next: 'openModal' },
-    { id: 'flowError',   block: { name: 'event-click', selector: '.retry',findBy: 'cssSelector', option: {} }, next: 'openModal' },
-    { id: 'openModal',   block: { name: 'event-click', selector: '.open-modal-btn', findBy: 'cssSelector', option: {} }, delayAfterMs: 500, next: 'readModal' },
-    { id: 'readModal',   block: { name: 'get-text', selector: '.modal.open .modal-content', findBy: 'cssSelector', option: { waitForSelector: true, waitSelectorTimeout: 2000 } } },
+    {
+      id: "flowOk",
+      block: {
+        name: "event-click",
+        selector: ".go",
+        findBy: "cssSelector",
+        option: {},
+      },
+      next: "openModal",
+    },
+    {
+      id: "flowPending",
+      block: {
+        name: "event-click",
+        selector: ".wait",
+        findBy: "cssSelector",
+        option: {},
+      },
+      next: "openModal",
+    },
+    {
+      id: "flowError",
+      block: {
+        name: "event-click",
+        selector: ".retry",
+        findBy: "cssSelector",
+        option: {},
+      },
+      next: "openModal",
+    },
+    {
+      id: "openModal",
+      block: {
+        name: "event-click",
+        selector: ".open-modal-btn",
+        findBy: "cssSelector",
+        option: {},
+      },
+      delayAfterMs: 500,
+      next: "readModal",
+    },
+    {
+      id: "readModal",
+      block: {
+        name: "get-text",
+        selector: ".modal.open .modal-content",
+        findBy: "cssSelector",
+        option: { waitForSelector: true, waitSelectorTimeout: 2000 },
+      },
+    },
   ],
 };
 
@@ -139,5 +214,3 @@ const result = await client.collectWorkflow({
 - 블록 검증 에러: `option`이 누락되면 에러가 납니다. 비어있어도 `{}`를 넣으세요.
 - 분기가 항상 첫 케이스로 감: JSON 조건식을 사용하거나, expr에서 문자열 비교 시 따옴표 포함 여부를 확인하세요.
 - steps가 빈 배열로 옴: SDK 1.1.0 이상을 사용하거나, 응답의 `result.result.steps`를 파싱하도록 업데이트하세요.(현재 SDK 반영 완료)
-
-

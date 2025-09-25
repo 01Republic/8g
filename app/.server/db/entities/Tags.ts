@@ -56,13 +56,13 @@ export class Tags extends BaseEntity {
 
   @OneToMany(
     () => Subscriptions,
-    (subscriptions) => subscriptions.recurringTypeTag
+    (subscriptions) => subscriptions.recurringTypeTag,
   )
   subscriptions: Subscriptions[];
 
   @OneToMany(
     () => Subscriptions,
-    (subscriptions) => subscriptions.billingCycleTag
+    (subscriptions) => subscriptions.billingCycleTag,
   )
   subscriptions2: Subscriptions[];
 

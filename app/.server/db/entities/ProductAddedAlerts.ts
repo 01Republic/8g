@@ -59,22 +59,22 @@ export class ProductAddedAlerts extends BaseEntity {
   user_2: Users;
 
   @RelationId(
-    (productAddedAlerts: ProductAddedAlerts) => productAddedAlerts.product
+    (productAddedAlerts: ProductAddedAlerts) => productAddedAlerts.product,
   )
   productId: number;
 
   @RelationId(
-    (productAddedAlerts: ProductAddedAlerts) => productAddedAlerts.product_2
+    (productAddedAlerts: ProductAddedAlerts) => productAddedAlerts.product_2,
   )
   productId2: number;
 
   @RelationId(
-    (productAddedAlerts: ProductAddedAlerts) => productAddedAlerts.user
+    (productAddedAlerts: ProductAddedAlerts) => productAddedAlerts.user,
   )
   userId: number;
 
   @RelationId(
-    (productAddedAlerts: ProductAddedAlerts) => productAddedAlerts.user_2
+    (productAddedAlerts: ProductAddedAlerts) => productAddedAlerts.user_2,
   )
   userId2: number;
 }

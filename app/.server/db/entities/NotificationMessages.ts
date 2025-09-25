@@ -63,7 +63,7 @@ export class NotificationMessages extends BaseEntity {
   @ManyToOne(
     () => NotificationTemplates,
     (notificationTemplates) => notificationTemplates.notificationMessages,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([
     { name: "notification_template_id", referencedColumnName: "id" },
@@ -73,20 +73,20 @@ export class NotificationMessages extends BaseEntity {
   @ManyToOne(
     () => Memberships,
     (memberships) => memberships.notificationMessages,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "membership_id", referencedColumnName: "id" }])
   membership: Memberships;
 
   @RelationId(
     (notificationMessages: NotificationMessages) =>
-      notificationMessages.notificationTemplate
+      notificationMessages.notificationTemplate,
   )
   notificationTemplateId: number;
 
   @RelationId(
     (notificationMessages: NotificationMessages) =>
-      notificationMessages.membership
+      notificationMessages.membership,
   )
   membershipId: number;
 }

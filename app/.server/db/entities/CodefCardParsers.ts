@@ -56,7 +56,7 @@ export class CodefCardParsers extends BaseEntity {
 
   @OneToMany(
     () => CodefBillingHistories,
-    (codefBillingHistories) => codefBillingHistories.codefCardParser
+    (codefBillingHistories) => codefBillingHistories.codefCardParser,
   )
   codefBillingHistories: CodefBillingHistories[];
 

@@ -6,10 +6,10 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
   esbuild: {
-    target: 'es2022',
+    target: "es2022",
   },
   server: {
     cors: true,
-    port: 3000
-  }
+    port: 3000,
+  },
 });

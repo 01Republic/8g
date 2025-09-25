@@ -1,14 +1,14 @@
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 
 interface TextFieldProps {
-  id: string
-  label: string
-  value: string
-  placeholder?: string
-  type?: string
-  description?: string
-  onChange: (value: string) => void
+  id: string;
+  label: string;
+  value: string;
+  placeholder?: string;
+  type?: string;
+  description?: string;
+  onChange: (value: string) => void;
 }
 
 const TextField = ({
@@ -16,7 +16,7 @@ const TextField = ({
   label,
   value,
   placeholder,
-  type = 'text',
+  type = "text",
   description,
   onChange,
 }: TextFieldProps) => {
@@ -30,10 +30,11 @@ const TextField = ({
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
       />
-      {description ? <p className="text-xs text-muted-foreground">{description}</p> : null}
+      {description ? (
+        <p className="text-xs text-muted-foreground">{description}</p>
+      ) : null}
     </div>
-  )
-}
+  );
+};
 
-export default TextField
-
+export default TextField;

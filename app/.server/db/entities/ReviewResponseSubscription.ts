@@ -44,7 +44,7 @@ export class ReviewResponseSubscription extends BaseEntity {
     () => ReviewCampaignSubscriptions,
     (reviewCampaignSubscriptions) =>
       reviewCampaignSubscriptions.reviewResponseSubscriptions,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([
     { name: "campaign_subscription_id", referencedColumnName: "id" },
@@ -54,20 +54,20 @@ export class ReviewResponseSubscription extends BaseEntity {
   @ManyToOne(
     () => ReviewResponses,
     (reviewResponses) => reviewResponses.reviewResponseSubscriptions,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "response_id", referencedColumnName: "id" }])
   response: ReviewResponses;
 
   @RelationId(
     (reviewResponseSubscription: ReviewResponseSubscription) =>
-      reviewResponseSubscription.campaignSubscription
+      reviewResponseSubscription.campaignSubscription,
   )
   campaignSubscriptionId: number;
 
   @RelationId(
     (reviewResponseSubscription: ReviewResponseSubscription) =>
-      reviewResponseSubscription.response
+      reviewResponseSubscription.response,
   )
   responseId: number;
 }

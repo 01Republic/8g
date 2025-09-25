@@ -17,7 +17,7 @@ export function AppSearch({
 
   const items = useMemo(
     () => (query ? predictions.slice(0, 8) : []),
-    [predictions, query]
+    [predictions, query],
   );
 
   useEffect(() => {

@@ -61,7 +61,7 @@ export class GmailItemBillingInfo extends BaseEntity {
 
   @RelationId(
     (gmailItemBillingInfo: GmailItemBillingInfo) =>
-      gmailItemBillingInfo.payAmount
+      gmailItemBillingInfo.payAmount,
   )
   payAmountId: number | null;
 }

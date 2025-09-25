@@ -63,7 +63,7 @@ export class SubscriptionSeats extends BaseEntity {
   @ManyToOne(
     () => Subscriptions,
     (subscriptions) => subscriptions.subscriptionSeats,
-    { onDelete: "SET NULL", onUpdate: "CASCADE" }
+    { onDelete: "SET NULL", onUpdate: "CASCADE" },
   )
   @JoinColumn([{ name: "subscription_id", referencedColumnName: "id" }])
   subscription: Subscriptions;
@@ -71,18 +71,18 @@ export class SubscriptionSeats extends BaseEntity {
   @ManyToOne(
     () => TeamMembers,
     (teamMembers) => teamMembers.subscriptionSeats,
-    { onDelete: "SET NULL", onUpdate: "CASCADE" }
+    { onDelete: "SET NULL", onUpdate: "CASCADE" },
   )
   @JoinColumn([{ name: "team_member_id", referencedColumnName: "id" }])
   teamMember: TeamMembers;
 
   @RelationId(
-    (subscriptionSeats: SubscriptionSeats) => subscriptionSeats.subscription
+    (subscriptionSeats: SubscriptionSeats) => subscriptionSeats.subscription,
   )
   subscriptionId2: number | null;
 
   @RelationId(
-    (subscriptionSeats: SubscriptionSeats) => subscriptionSeats.teamMember
+    (subscriptionSeats: SubscriptionSeats) => subscriptionSeats.teamMember,
   )
   teamMemberId2: number | null;
 }

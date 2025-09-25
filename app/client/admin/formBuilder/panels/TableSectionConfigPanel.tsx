@@ -1,19 +1,24 @@
-import { Button } from '~/components/ui/button'
-import { Label } from '~/components/ui/label'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion'
-import type { FormWorkflow } from '~/models/integration/types'
-import { useWorkflowConfig } from '~/hooks/use-workflow-config'
-import WorkflowField from './field/WorkflowField'
-import TextField from './field/TextField'
+import { Button } from "~/components/ui/button";
+import { Label } from "~/components/ui/label";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "~/components/ui/accordion";
+import type { FormWorkflow } from "~/models/integration/types";
+import { useWorkflowConfig } from "~/hooks/use-workflow-config";
+import WorkflowField from "./field/WorkflowField";
+import TextField from "./field/TextField";
 
 interface TableSectionConfigPanelProps {
-  sectionId: string
-  sectionIndex: number
-  title?: string
-  uiType: string
-  index: number
-  withMeta: (updater: (draft: any) => void) => void
-  workflow?: FormWorkflow
+  sectionId: string;
+  sectionIndex: number;
+  title?: string;
+  uiType: string;
+  index: number;
+  withMeta: (updater: (draft: any) => void) => void;
+  workflow?: FormWorkflow;
 }
 
 const TableSectionConfigPanel = ({
@@ -25,56 +30,63 @@ const TableSectionConfigPanel = ({
   withMeta,
   workflow,
 }: TableSectionConfigPanelProps) => {
-  const { workflowText, workflowError, handleWorkflowChange } = useWorkflowConfig({
-    index,
-    withMeta,
-    initialWorkflow: workflow,
-  })
+  const { workflowText, workflowError, handleWorkflowChange } =
+    useWorkflowConfig({
+      index,
+      withMeta,
+      initialWorkflow: workflow,
+    });
 
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="item">
-      <AccordionTrigger className="px-0">
-        <div className="flex items-center justify-between">
+        <AccordionTrigger className="px-0">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 select-none">
               <Label className="text-sm">{uiType}</Label>
               <span className="text-xs text-muted-foreground">{title}</span>
             </div>
-        </div>
+          </div>
         </AccordionTrigger>
         <AccordionContent>
           <div className="space-y-3">
             <TextField
               id={`title-${sectionId}`}
               label="제목"
-              value={title || ''}
+              value={title || ""}
               placeholder="섹션 제목"
-              onChange={(value) => withMeta((draft) => { (draft.sections[index].uiSchema as any).title = value })}
+              onChange={(value) =>
+                withMeta((draft) => {
+                  (draft.sections[index].uiSchema as any).title = value;
+                })
+              }
             />
-          <WorkflowField
-            id={`workflow-json-${sectionId}`}
-            value={workflowText}
-            onChange={handleWorkflowChange}
-            error={workflowError}
-            placeholder='{"version":"1.0","start":"start","steps":[...],"targetUrl":"https://..."}'
-          />
+            <WorkflowField
+              id={`workflow-json-${sectionId}`}
+              value={workflowText}
+              onChange={handleWorkflowChange}
+              error={workflowError}
+              placeholder='{"version":"1.0","start":"start","steps":[...],"targetUrl":"https://..."}'
+            />
           </div>
           <div className="flex justify-end pt-2">
             <Button
               variant="destructive"
               size="sm"
               onClick={(e) => {
-                e.stopPropagation()
+                e.stopPropagation();
                 withMeta((draft) => {
-                  draft.sections.splice(index, 1)
-                })
+                  draft.sections.splice(index, 1);
+                });
               }}
-            >삭제</Button>
+            >
+              삭제
+            </Button>
           </div>
         </AccordionContent>
       </AccordionItem>
     </Accordion>
-  )
-}
+  );
+};
 
-export default TableSectionConfigPanel
+export default TableSectionConfigPanel;

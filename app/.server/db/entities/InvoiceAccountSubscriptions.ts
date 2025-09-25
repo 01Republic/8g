@@ -5,7 +5,7 @@ import { BaseEntity, Column, Entity, Index } from "typeorm";
 @Index(
   "IDX_b37675525185db5c519d4d2abb",
   ["invoiceAccountId", "subscriptionId"],
-  { unique: true }
+  { unique: true },
 )
 @Entity("invoice_account_subscriptions")
 export class InvoiceAccountSubscriptions extends BaseEntity {

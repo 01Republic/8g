@@ -70,13 +70,13 @@ export class ScordiPlans extends BaseEntity {
 
   @OneToMany(
     () => ScordiPayments,
-    (scordiPayments) => scordiPayments.scordiPlan
+    (scordiPayments) => scordiPayments.scordiPlan,
   )
   scordiPayments: ScordiPayments[];
 
   @OneToMany(
     () => ScordiSubscriptions,
-    (scordiSubscriptions) => scordiSubscriptions.scordiPlan
+    (scordiSubscriptions) => scordiSubscriptions.scordiPlan,
   )
   scordiSubscriptions: ScordiSubscriptions[];
 }

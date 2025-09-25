@@ -110,25 +110,25 @@ export class Moneys extends BaseEntity {
 
   @OneToOne(
     () => BillingHistories,
-    (billingHistories) => billingHistories.vatAmount
+    (billingHistories) => billingHistories.vatAmount,
   )
   billingHistories: BillingHistories;
 
   @OneToOne(
     () => BillingHistories,
-    (billingHistories) => billingHistories.payAmount
+    (billingHistories) => billingHistories.payAmount,
   )
   billingHistories2: BillingHistories;
 
   @OneToOne(
     () => GmailItemBillingInfo,
-    (gmailItemBillingInfo) => gmailItemBillingInfo.payAmount
+    (gmailItemBillingInfo) => gmailItemBillingInfo.payAmount,
   )
   gmailItemBillingInfo: GmailItemBillingInfo;
 
   @OneToOne(
     () => Subscriptions,
-    (subscriptions) => subscriptions.currentBillingAmount
+    (subscriptions) => subscriptions.currentBillingAmount,
   )
   subscriptions: Subscriptions;
 }

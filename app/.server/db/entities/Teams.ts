@@ -53,7 +53,7 @@ export class Teams extends BaseEntity {
 
   @OneToMany(
     () => TeamInvoiceAccounts,
-    (teamInvoiceAccounts) => teamInvoiceAccounts.team
+    (teamInvoiceAccounts) => teamInvoiceAccounts.team,
   )
   teamInvoiceAccounts: TeamInvoiceAccounts[];
 

@@ -52,7 +52,7 @@ export class UsersSocialAccounts extends BaseEntity {
   user: Users;
 
   @RelationId(
-    (usersSocialAccounts: UsersSocialAccounts) => usersSocialAccounts.user
+    (usersSocialAccounts: UsersSocialAccounts) => usersSocialAccounts.user,
   )
   userId: number;
 }

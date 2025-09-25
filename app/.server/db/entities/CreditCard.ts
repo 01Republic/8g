@@ -93,7 +93,7 @@ export class CreditCard extends BaseEntity {
 
   @OneToMany(
     () => BillingHistories,
-    (billingHistories) => billingHistories.creditCard
+    (billingHistories) => billingHistories.creditCard,
   )
   billingHistories: BillingHistories[];
 
@@ -110,7 +110,7 @@ export class CreditCard extends BaseEntity {
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.creditCards,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
@@ -127,7 +127,7 @@ export class CreditCard extends BaseEntity {
 
   @OneToMany(
     () => TeamCreditCards,
-    (teamCreditCards) => teamCreditCards.creditCard
+    (teamCreditCards) => teamCreditCards.creditCard,
   )
   teamCreditCards: TeamCreditCards[];
 

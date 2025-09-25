@@ -52,14 +52,14 @@ export class InvoiceApps extends BaseEntity {
 
   @OneToMany(
     () => BillingHistories,
-    (billingHistories) => billingHistories.invoiceApp
+    (billingHistories) => billingHistories.invoiceApp,
   )
   billingHistories: BillingHistories[];
 
   @ManyToOne(
     () => InvoiceAccounts,
     (invoiceAccounts) => invoiceAccounts.invoiceApps,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "invoice_account_id", referencedColumnName: "id" }])
   invoiceAccount: InvoiceAccounts;

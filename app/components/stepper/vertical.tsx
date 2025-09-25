@@ -7,8 +7,8 @@ import {
   StepperPanel,
   StepperSeparator,
   StepperTrigger,
-} from '~/components/ui/stepper';
-import { Check, LoaderCircleIcon } from 'lucide-react';
+} from "~/components/ui/stepper";
+import { Check, LoaderCircleIcon } from "lucide-react";
 
 const steps = [1, 2, 3];
 
@@ -32,7 +32,9 @@ export default function Component() {
                   {step}
                 </StepperIndicator>
               </StepperTrigger>
-              {steps.length > step && <StepperSeparator className="group-data-[state=completed]/step:bg-green-500" />}
+              {steps.length > step && (
+                <StepperSeparator className="group-data-[state=completed]/step:bg-green-500" />
+              )}
             </StepperItem>
           ))}
         </StepperNav>

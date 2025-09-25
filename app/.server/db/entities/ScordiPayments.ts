@@ -80,14 +80,14 @@ export class ScordiPayments extends BaseEntity {
 
   @OneToMany(
     () => ScordiPaymentRefunds,
-    (scordiPaymentRefunds) => scordiPaymentRefunds.scordiPayment
+    (scordiPaymentRefunds) => scordiPaymentRefunds.scordiPayment,
   )
   scordiPaymentRefunds: ScordiPaymentRefunds[];
 
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.scordiPayments,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
@@ -95,7 +95,7 @@ export class ScordiPayments extends BaseEntity {
   @ManyToOne(
     () => ScordiSubscriptions,
     (scordiSubscriptions) => scordiSubscriptions.scordiPayments,
-    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "scordi_subscription_id", referencedColumnName: "id" }])
   scordiSubscription: ScordiSubscriptions;
@@ -111,7 +111,7 @@ export class ScordiPayments extends BaseEntity {
   organizationId: number | null;
 
   @RelationId(
-    (scordiPayments: ScordiPayments) => scordiPayments.scordiSubscription
+    (scordiPayments: ScordiPayments) => scordiPayments.scordiSubscription,
   )
   scordiSubscriptionId: number | null;
 

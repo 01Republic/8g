@@ -91,14 +91,14 @@ export class Memberships extends BaseEntity {
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.memberships,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
 
   @OneToMany(
     () => NotificationMessages,
-    (notificationMessages) => notificationMessages.membership
+    (notificationMessages) => notificationMessages.membership,
   )
   notificationMessages: NotificationMessages[];
 

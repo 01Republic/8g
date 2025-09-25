@@ -74,7 +74,7 @@ export class InvoiceAccounts extends BaseEntity {
 
   @ManyToMany(
     () => Subscriptions,
-    (subscriptions) => subscriptions.invoiceAccounts
+    (subscriptions) => subscriptions.invoiceAccounts,
   )
   @JoinTable({
     name: "invoice_account_subscriptions",
@@ -89,7 +89,7 @@ export class InvoiceAccounts extends BaseEntity {
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.invoiceAccounts,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
@@ -97,7 +97,7 @@ export class InvoiceAccounts extends BaseEntity {
   @ManyToOne(
     () => GoogleTokenData,
     (googleTokenData) => googleTokenData.invoiceAccounts,
-    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "google_token_data_id", referencedColumnName: "id" }])
   googleTokenData: GoogleTokenData;
@@ -114,22 +114,22 @@ export class InvoiceAccounts extends BaseEntity {
 
   @OneToMany(
     () => TeamInvoiceAccounts,
-    (teamInvoiceAccounts) => teamInvoiceAccounts.invoiceAccount
+    (teamInvoiceAccounts) => teamInvoiceAccounts.invoiceAccount,
   )
   teamInvoiceAccounts: TeamInvoiceAccounts[];
 
   @RelationId(
-    (invoiceAccounts: InvoiceAccounts) => invoiceAccounts.organization
+    (invoiceAccounts: InvoiceAccounts) => invoiceAccounts.organization,
   )
   organizationId: number;
 
   @RelationId(
-    (invoiceAccounts: InvoiceAccounts) => invoiceAccounts.googleTokenData
+    (invoiceAccounts: InvoiceAccounts) => invoiceAccounts.googleTokenData,
   )
   googleTokenDataId: number | null;
 
   @RelationId(
-    (invoiceAccounts: InvoiceAccounts) => invoiceAccounts.holdingMember
+    (invoiceAccounts: InvoiceAccounts) => invoiceAccounts.holdingMember,
   )
   holdingMemberId: number | null;
 }

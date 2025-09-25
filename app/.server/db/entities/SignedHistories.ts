@@ -38,7 +38,7 @@ export class SignedHistories extends BaseEntity {
   @ManyToOne(
     () => Subscriptions,
     (subscriptions) => subscriptions.signedHistories,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "subscription_id", referencedColumnName: "id" }])
   subscription: Subscriptions;
@@ -65,7 +65,7 @@ export class SignedHistories extends BaseEntity {
   account: Accounts;
 
   @RelationId(
-    (signedHistories: SignedHistories) => signedHistories.subscription
+    (signedHistories: SignedHistories) => signedHistories.subscription,
   )
   subscriptionId: number;
 

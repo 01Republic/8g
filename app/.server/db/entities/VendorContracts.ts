@@ -34,7 +34,7 @@ export class VendorContracts extends BaseEntity {
   @ManyToOne(
     () => VendorCompanies,
     (vendorCompanies) => vendorCompanies.vendorContracts,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "vendor_company_id", referencedColumnName: "id" }])
   vendorCompany: VendorCompanies;
@@ -42,7 +42,7 @@ export class VendorContracts extends BaseEntity {
   @ManyToOne(
     () => Subscriptions,
     (subscriptions) => subscriptions.vendorContracts,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "subscription_id", referencedColumnName: "id" }])
   subscription: Subscriptions;
@@ -50,23 +50,23 @@ export class VendorContracts extends BaseEntity {
   @ManyToOne(
     () => VendorManagers,
     (vendorManagers) => vendorManagers.vendorContracts,
-    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "vendor_manager_id", referencedColumnName: "id" }])
   vendorManager: VendorManagers;
 
   @RelationId(
-    (vendorContracts: VendorContracts) => vendorContracts.vendorCompany
+    (vendorContracts: VendorContracts) => vendorContracts.vendorCompany,
   )
   vendorCompanyId: number;
 
   @RelationId(
-    (vendorContracts: VendorContracts) => vendorContracts.subscription
+    (vendorContracts: VendorContracts) => vendorContracts.subscription,
   )
   subscriptionId: number;
 
   @RelationId(
-    (vendorContracts: VendorContracts) => vendorContracts.vendorManager
+    (vendorContracts: VendorContracts) => vendorContracts.vendorManager,
   )
   vendorManagerId: number | null;
 }

@@ -40,28 +40,28 @@ export class ScordiSubscriptions extends BaseEntity {
 
   @OneToMany(
     () => ScordiPayments,
-    (scordiPayments) => scordiPayments.scordiSubscription
+    (scordiPayments) => scordiPayments.scordiSubscription,
   )
   scordiPayments: ScordiPayments[];
 
   @ManyToOne(
     () => ScordiSubscriptions,
     (scordiSubscriptions) => scordiSubscriptions.scordiSubscriptions,
-    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "nextSubscriptionId", referencedColumnName: "id" }])
   nextSubscription: ScordiSubscriptions;
 
   @OneToMany(
     () => ScordiSubscriptions,
-    (scordiSubscriptions) => scordiSubscriptions.nextSubscription
+    (scordiSubscriptions) => scordiSubscriptions.nextSubscription,
   )
   scordiSubscriptions: ScordiSubscriptions[];
 
   @ManyToOne(
     () => ScordiPlans,
     (scordiPlans) => scordiPlans.scordiSubscriptions,
-    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "scordi_plan_id", referencedColumnName: "id" }])
   scordiPlan: ScordiPlans;
@@ -69,25 +69,26 @@ export class ScordiSubscriptions extends BaseEntity {
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.scordiSubscriptions,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
 
   @RelationId(
     (scordiSubscriptions: ScordiSubscriptions) =>
-      scordiSubscriptions.nextSubscription
+      scordiSubscriptions.nextSubscription,
   )
   nextSubscriptionId: number | null;
 
   @RelationId(
-    (scordiSubscriptions: ScordiSubscriptions) => scordiSubscriptions.scordiPlan
+    (scordiSubscriptions: ScordiSubscriptions) =>
+      scordiSubscriptions.scordiPlan,
   )
   scordiPlanId: number | null;
 
   @RelationId(
     (scordiSubscriptions: ScordiSubscriptions) =>
-      scordiSubscriptions.organization
+      scordiSubscriptions.organization,
   )
   organizationId: number;
 }

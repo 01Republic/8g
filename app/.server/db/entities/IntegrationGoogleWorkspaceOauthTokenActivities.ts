@@ -42,7 +42,7 @@ export class IntegrationGoogleWorkspaceOauthTokenActivities extends BaseEntity {
     () => Subscriptions,
     (subscriptions) =>
       subscriptions.integrationGoogleWorkspaceOauthTokenActivities,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "subscription_id", referencedColumnName: "id" }])
   subscription: Subscriptions;
@@ -51,7 +51,7 @@ export class IntegrationGoogleWorkspaceOauthTokenActivities extends BaseEntity {
     () => ProductSimilarNames,
     (productSimilarNames) =>
       productSimilarNames.integrationGoogleWorkspaceOauthTokenActivities,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "product_similar_name_id", referencedColumnName: "id" }])
   productSimilarName: ProductSimilarNames;
@@ -60,7 +60,7 @@ export class IntegrationGoogleWorkspaceOauthTokenActivities extends BaseEntity {
     () => IntegrationGoogleWorkspaceMembers,
     (integrationGoogleWorkspaceMembers) =>
       integrationGoogleWorkspaceMembers.integrationGoogleWorkspaceOauthTokenActivities,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "workspace_member_id", referencedColumnName: "id" }])
   workspaceMember: IntegrationGoogleWorkspaceMembers;
@@ -69,7 +69,7 @@ export class IntegrationGoogleWorkspaceOauthTokenActivities extends BaseEntity {
     () => IntegrationWorkspaces,
     (integrationWorkspaces) =>
       integrationWorkspaces.integrationGoogleWorkspaceOauthTokenActivities,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([
     { name: "integration_workspace_id", referencedColumnName: "id" },
@@ -78,29 +78,29 @@ export class IntegrationGoogleWorkspaceOauthTokenActivities extends BaseEntity {
 
   @RelationId(
     (
-      integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities
-    ) => integrationGoogleWorkspaceOauthTokenActivities.subscription
+      integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities,
+    ) => integrationGoogleWorkspaceOauthTokenActivities.subscription,
   )
   subscriptionId: number | null;
 
   @RelationId(
     (
-      integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities
-    ) => integrationGoogleWorkspaceOauthTokenActivities.productSimilarName
+      integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities,
+    ) => integrationGoogleWorkspaceOauthTokenActivities.productSimilarName,
   )
   productSimilarNameId: number;
 
   @RelationId(
     (
-      integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities
-    ) => integrationGoogleWorkspaceOauthTokenActivities.workspaceMember
+      integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities,
+    ) => integrationGoogleWorkspaceOauthTokenActivities.workspaceMember,
   )
   workspaceMemberId: number;
 
   @RelationId(
     (
-      integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities
-    ) => integrationGoogleWorkspaceOauthTokenActivities.integrationWorkspace
+      integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities,
+    ) => integrationGoogleWorkspaceOauthTokenActivities.integrationWorkspace,
   )
   integrationWorkspaceId: number;
 }

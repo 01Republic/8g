@@ -60,34 +60,34 @@ export class IntegrationWorkspaces extends BaseEntity {
   @OneToMany(
     () => IntegrationGoogleWorkspaceMembers,
     (integrationGoogleWorkspaceMembers) =>
-      integrationGoogleWorkspaceMembers.integrationWorkspace
+      integrationGoogleWorkspaceMembers.integrationWorkspace,
   )
   integrationGoogleWorkspaceMembers: IntegrationGoogleWorkspaceMembers[];
 
   @OneToMany(
     () => IntegrationGoogleWorkspaceOauthTokenActivities,
     (integrationGoogleWorkspaceOauthTokenActivities) =>
-      integrationGoogleWorkspaceOauthTokenActivities.integrationWorkspace
+      integrationGoogleWorkspaceOauthTokenActivities.integrationWorkspace,
   )
   integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities[];
 
   @OneToMany(
     () => IntegrationSlackMembers,
-    (integrationSlackMembers) => integrationSlackMembers.integrationWorkspace
+    (integrationSlackMembers) => integrationSlackMembers.integrationWorkspace,
   )
   integrationSlackMembers: IntegrationSlackMembers[];
 
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.integrationWorkspaces,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
 
   @RelationId(
     (integrationWorkspaces: IntegrationWorkspaces) =>
-      integrationWorkspaces.organization
+      integrationWorkspaces.organization,
   )
   organizationId2: number;
 }

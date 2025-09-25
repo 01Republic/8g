@@ -35,14 +35,14 @@ export class OrganizationBizInfos extends BaseEntity {
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.organizationBizInfos,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
 
   @RelationId(
     (organizationBizInfos: OrganizationBizInfos) =>
-      organizationBizInfos.organization
+      organizationBizInfos.organization,
   )
   organizationId: number;
 }

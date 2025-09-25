@@ -62,13 +62,13 @@ export class GoogleTokenData extends BaseEntity {
 
   @OneToMany(
     () => GoogleSyncHistories,
-    (googleSyncHistories) => googleSyncHistories.googleTokenData
+    (googleSyncHistories) => googleSyncHistories.googleTokenData,
   )
   googleSyncHistories: GoogleSyncHistories[];
 
   @OneToMany(
     () => InvoiceAccounts,
-    (invoiceAccounts) => invoiceAccounts.googleTokenData
+    (invoiceAccounts) => invoiceAccounts.googleTokenData,
   )
   invoiceAccounts: InvoiceAccounts[];
 }

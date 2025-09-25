@@ -78,14 +78,14 @@ export class ScordiPaymentMethods extends BaseEntity {
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.scordiPaymentMethods,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
 
   @RelationId(
     (scordiPaymentMethods: ScordiPaymentMethods) =>
-      scordiPaymentMethods.organization
+      scordiPaymentMethods.organization,
   )
   organizationId: number | null;
 }

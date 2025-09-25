@@ -14,7 +14,7 @@ import { TeamMembers } from "./TeamMembers";
 @Index(
   "IDX_slack_id_uniq_in_workspace",
   ["integrationWorkspaceId", "slackId"],
-  { unique: true }
+  { unique: true },
 )
 @Entity("integration_slack_members")
 export class IntegrationSlackMembers extends BaseEntity {
@@ -78,7 +78,7 @@ export class IntegrationSlackMembers extends BaseEntity {
   @ManyToOne(
     () => IntegrationWorkspaces,
     (integrationWorkspaces) => integrationWorkspaces.integrationSlackMembers,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([
     { name: "integration_workspace_id", referencedColumnName: "id" },
@@ -88,20 +88,20 @@ export class IntegrationSlackMembers extends BaseEntity {
   @ManyToOne(
     () => TeamMembers,
     (teamMembers) => teamMembers.integrationSlackMembers,
-    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "team_member_id", referencedColumnName: "id" }])
   teamMember: TeamMembers;
 
   @RelationId(
     (integrationSlackMembers: IntegrationSlackMembers) =>
-      integrationSlackMembers.integrationWorkspace
+      integrationSlackMembers.integrationWorkspace,
   )
   integrationWorkspaceId2: number;
 
   @RelationId(
     (integrationSlackMembers: IntegrationSlackMembers) =>
-      integrationSlackMembers.teamMember
+      integrationSlackMembers.teamMember,
   )
   teamMemberId: number | null;
 }

@@ -1,5 +1,5 @@
-import { Links, Meta, Outlet } from "react-router"
-  
+import { Links, Meta, Outlet } from "react-router";
+
 export default function CommonLayout() {
   return (
     <html lang="en">
@@ -10,8 +10,8 @@ export default function CommonLayout() {
         <Links />
       </head>
       <body>
-      <Outlet />
+        <Outlet />
       </body>
     </html>
-  )
+  );
 }

@@ -1,17 +1,29 @@
-import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from "~/components/ui/alert-dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
 
 interface SaveDialogProps {
-  open: boolean
-  title: string
-  message: string
-  onClose: () => void
+  open: boolean;
+  title: string;
+  message: string;
+  onClose: () => void;
 }
 
 export const SaveDialog = (props: SaveDialogProps) => {
-  const { open, title, message, onClose } = props
+  const { open, title, message, onClose } = props;
 
   return (
-    <AlertDialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose() }}>
+    <AlertDialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onClose();
+      }}
+    >
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
@@ -22,7 +34,5 @@ export const SaveDialog = (props: SaveDialogProps) => {
         </div>
       </AlertDialogContent>
     </AlertDialog>
-  )
-}
-
-
+  );
+};

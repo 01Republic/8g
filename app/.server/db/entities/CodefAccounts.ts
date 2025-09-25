@@ -123,7 +123,7 @@ export class CodefAccounts extends BaseEntity {
   @ManyToOne(
     () => CodefConnectedIdentities,
     (codefConnectedIdentities) => codefConnectedIdentities.codefAccounts,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([
     { name: "codef_connected_identity_id", referencedColumnName: "id" },
@@ -133,14 +133,14 @@ export class CodefAccounts extends BaseEntity {
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.codefAccounts,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization_2: Organizations;
 
   @OneToMany(
     () => CodefBankAccounts,
-    (codefBankAccounts) => codefBankAccounts.codefAccount
+    (codefBankAccounts) => codefBankAccounts.codefAccount,
   )
   codefBankAccounts: CodefBankAccounts[];
 
@@ -148,7 +148,7 @@ export class CodefAccounts extends BaseEntity {
   codefCards: CodefCards[];
 
   @RelationId(
-    (codefAccounts: CodefAccounts) => codefAccounts.codefConnectedIdentity
+    (codefAccounts: CodefAccounts) => codefAccounts.codefConnectedIdentity,
   )
   codefConnectedIdentityId: number | null;
 

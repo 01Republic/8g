@@ -35,7 +35,7 @@ export class IntegrationSlackOauthTokenActivities extends BaseEntity {
     () => IntegrationWorkspaces,
     (integrationWorkspaces) =>
       integrationWorkspaces.integrationSlackOauthTokenActivities,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([
     { name: "integration_workspace_id", referencedColumnName: "id" },

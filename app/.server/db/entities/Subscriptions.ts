@@ -211,38 +211,38 @@ export class Subscriptions extends BaseEntity {
 
   @OneToMany(
     () => BillingHistories,
-    (billingHistories) => billingHistories.subscription
+    (billingHistories) => billingHistories.subscription,
   )
   billingHistories: BillingHistories[];
 
   @OneToMany(
     () => IntegrationGoogleWorkspaceOauthTokenActivities,
     (integrationGoogleWorkspaceOauthTokenActivities) =>
-      integrationGoogleWorkspaceOauthTokenActivities.subscription
+      integrationGoogleWorkspaceOauthTokenActivities.subscription,
   )
   integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities[];
 
   @ManyToMany(
     () => InvoiceAccounts,
-    (invoiceAccounts) => invoiceAccounts.subscriptions
+    (invoiceAccounts) => invoiceAccounts.subscriptions,
   )
   invoiceAccounts: InvoiceAccounts[];
 
   @OneToMany(
     () => ReviewCampaignSubscriptions,
-    (reviewCampaignSubscriptions) => reviewCampaignSubscriptions.subscription
+    (reviewCampaignSubscriptions) => reviewCampaignSubscriptions.subscription,
   )
   reviewCampaignSubscriptions: ReviewCampaignSubscriptions[];
 
   @OneToMany(
     () => SignedHistories,
-    (signedHistories) => signedHistories.subscription
+    (signedHistories) => signedHistories.subscription,
   )
   signedHistories: SignedHistories[];
 
   @OneToMany(
     () => SubscriptionSeats,
-    (subscriptionSeats) => subscriptionSeats.subscription
+    (subscriptionSeats) => subscriptionSeats.subscription,
   )
   subscriptionSeats: SubscriptionSeats[];
 
@@ -270,7 +270,7 @@ export class Subscriptions extends BaseEntity {
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.subscriptions,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
@@ -278,7 +278,7 @@ export class Subscriptions extends BaseEntity {
   @ManyToOne(
     () => ProductPaymentPlans,
     (productPaymentPlans) => productPaymentPlans.subscriptions,
-    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "payment_plan_id", referencedColumnName: "id" }])
   paymentPlan: ProductPaymentPlans;
@@ -293,7 +293,7 @@ export class Subscriptions extends BaseEntity {
   @ManyToOne(
     () => ProductBillingCycles,
     (productBillingCycles) => productBillingCycles.subscriptions,
-    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "billing_cycle_id", referencedColumnName: "id" }])
   billingCycle: ProductBillingCycles;
@@ -333,7 +333,7 @@ export class Subscriptions extends BaseEntity {
 
   @OneToMany(
     () => VendorContracts,
-    (vendorContracts) => vendorContracts.subscription
+    (vendorContracts) => vendorContracts.subscription,
   )
   vendorContracts: VendorContracts[];
 
@@ -362,7 +362,7 @@ export class Subscriptions extends BaseEntity {
   billingCycleTagId: number | null;
 
   @RelationId(
-    (subscriptions: Subscriptions) => subscriptions.currentBillingAmount
+    (subscriptions: Subscriptions) => subscriptions.currentBillingAmount,
   )
   currentBillingAmountId2: number | null;
 

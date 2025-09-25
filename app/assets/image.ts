@@ -1,1 +1,1 @@
-export const defaultLogo = 'scordi-logo.png'
+export const defaultLogo = "scordi-logo.png";

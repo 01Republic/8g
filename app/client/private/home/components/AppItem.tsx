@@ -12,7 +12,7 @@ export const AppItem = (props: AppItemProps) => {
   const formatTimeAgo = (date: Date) => {
     const now = new Date();
     const diffInMonths = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24 * 30)
+      (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24 * 30),
     );
 
     if (diffInMonths === 0) return "Recently";

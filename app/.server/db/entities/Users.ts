@@ -107,13 +107,13 @@ export class Users extends BaseEntity {
 
   @OneToMany(
     () => ProductAddedAlerts,
-    (productAddedAlerts) => productAddedAlerts.user
+    (productAddedAlerts) => productAddedAlerts.user,
   )
   productAddedAlerts: ProductAddedAlerts[];
 
   @OneToMany(
     () => ProductAddedAlerts,
-    (productAddedAlerts) => productAddedAlerts.user_2
+    (productAddedAlerts) => productAddedAlerts.user_2,
   )
   productAddedAlerts2: ProductAddedAlerts[];
 
@@ -131,7 +131,7 @@ export class Users extends BaseEntity {
 
   @OneToMany(
     () => UsersSocialAccounts,
-    (usersSocialAccounts) => usersSocialAccounts.user
+    (usersSocialAccounts) => usersSocialAccounts.user,
   )
   usersSocialAccounts: UsersSocialAccounts[];
 }

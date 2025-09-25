@@ -63,13 +63,13 @@ export class CodefBankAccountParsers extends BaseEntity {
 
   @OneToMany(
     () => CodefBillingHistories,
-    (codefBillingHistories) => codefBillingHistories.codefBankAccountParser
+    (codefBillingHistories) => codefBillingHistories.codefBankAccountParser,
   )
   codefBillingHistories: CodefBillingHistories[];
 
   @RelationId(
     (codefBankAccountParsers: CodefBankAccountParsers) =>
-      codefBankAccountParsers.product
+      codefBankAccountParsers.product,
   )
   productId: number;
 }

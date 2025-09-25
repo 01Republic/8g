@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react'
-import type { IntegrationAppFormMetadata } from '~/models/integration/types'
-import { buildSections } from './SectionsBuilder'
+import type { ReactNode } from "react";
+import type { IntegrationAppFormMetadata } from "~/models/integration/types";
+import { buildSections } from "./SectionsBuilder";
 import {
   Stepper,
   StepperIndicator,
@@ -8,40 +8,49 @@ import {
   StepperNav,
   StepperSeparator,
   StepperTrigger,
-} from '~/components/ui/stepper'
-import { Check, LoaderCircleIcon } from 'lucide-react'
-import type { SelectedWorkspace } from '~/models/integration/types'
-import type { SelectedMembers } from '~/models/integration/types'
+} from "~/components/ui/stepper";
+import { Check, LoaderCircleIcon } from "lucide-react";
+import type { SelectedWorkspace } from "~/models/integration/types";
+import type { SelectedMembers } from "~/models/integration/types";
 
 export interface FormComponentProps {
-  currentSection: number
-  selectedWorkspace: SelectedWorkspace | null
-  selectedMembers: SelectedMembers[]
-  onSelectedWorkspaceChange: (value: SelectedWorkspace) => void
-  onSelectedMembersChange: (value: SelectedMembers[]) => void
-  onSectionChange: (section: number) => void
-  onModalClose: () => void
-  productId: number
-  onSubmit: () => void
+  currentSection: number;
+  selectedWorkspace: SelectedWorkspace | null;
+  selectedMembers: SelectedMembers[];
+  onSelectedWorkspaceChange: (value: SelectedWorkspace) => void;
+  onSelectedMembersChange: (value: SelectedMembers[]) => void;
+  onSectionChange: (section: number) => void;
+  onModalClose: () => void;
+  productId: number;
+  onSubmit: () => void;
 }
 
 // Options to customize builder behavior (e.g., preview mode in form-builder)
 type BuilderOptions = {
-  meta: IntegrationAppFormMetadata
-}
+  meta: IntegrationAppFormMetadata;
+};
 
 // No per-app hooks; everything is metadata-driven now
 export function DynamicFormBuilder(options: BuilderOptions) {
-  const { meta } = options
+  const { meta } = options;
 
-  const renderSections = (props: FormComponentProps): ReactNode[] => buildSections(meta, props)
+  const renderSections = (props: FormComponentProps): ReactNode[] =>
+    buildSections(meta, props);
 
   return {
-    buildStepper: (args: { props: FormComponentProps; loadingStates?: Record<number, boolean> }) => {
-      const sectionCount = meta.sections.length
-      const sectionNumbers = Array.from({ length: sectionCount }, (_, i) => i + 1)
-      const loadingStates = args.loadingStates || Object.fromEntries(sectionNumbers.map((n) => [n, false]))
-      const sections = renderSections(args.props)
+    buildStepper: (args: {
+      props: FormComponentProps;
+      loadingStates?: Record<number, boolean>;
+    }) => {
+      const sectionCount = meta.sections.length;
+      const sectionNumbers = Array.from(
+        { length: sectionCount },
+        (_, i) => i + 1,
+      );
+      const loadingStates =
+        args.loadingStates ||
+        Object.fromEntries(sectionNumbers.map((n) => [n, false]));
+      const sections = renderSections(args.props);
 
       const stepperSection = (
         <Stepper
@@ -55,7 +64,11 @@ export function DynamicFormBuilder(options: BuilderOptions) {
         >
           <StepperNav>
             {sectionNumbers.map((step) => (
-              <StepperItem key={step} step={step} loading={loadingStates[step] || false}>
+              <StepperItem
+                key={step}
+                step={step}
+                loading={loadingStates[step] || false}
+              >
                 <StepperTrigger onClick={() => {}}>
                   <StepperIndicator className="data-[state=completed]:bg-green-500 data-[state=completed]:text-black data-[state=active]:bg-primary data-[state=active]:text-black data-[state=inactive]:text-gray-500">
                     {step}
@@ -68,17 +81,17 @@ export function DynamicFormBuilder(options: BuilderOptions) {
             ))}
           </StepperNav>
         </Stepper>
-      )
+      );
 
       const stepSection = (
-        <div className="min-h-[420px] flex items-center">{sections[args.props.currentSection - 1]}</div>
-      )
+        <div className="min-h-[420px] flex items-center">
+          {sections[args.props.currentSection - 1]}
+        </div>
+      );
 
-      return { stepperSection, stepSection }
+      return { stepperSection, stepSection };
     },
-    
+
     buildSections: (props: FormComponentProps) => renderSections(props),
-  }
+  };
 }
-
-

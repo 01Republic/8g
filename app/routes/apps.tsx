@@ -7,9 +7,7 @@ import AppsPage from "~/client/private/apps/AppsPage";
 const { initializeDatabase } = await import("~/.server/db");
 const { Subscriptions } = await import("~/.server/db/entities/Subscriptions");
 
-export const middleware: Route.MiddlewareFunction[] = [
-  authMiddleware,
-];
+export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
 
 export async function loader({ context }: Route.LoaderArgs) {
   await initializeDatabase();
@@ -21,26 +19,27 @@ export async function loader({ context }: Route.LoaderArgs) {
     where: {
       isActive: 1,
       organization: {
-        id: organizationId
-      }
+        id: organizationId,
+      },
     },
     relations: [
-      'product',
-      'currentBillingAmount', 
-      'paymentPlan',
-      'organization'
-    ]
+      "product",
+      "currentBillingAmount",
+      "paymentPlan",
+      "organization",
+    ],
   });
 
   // 취소되거나 일시정지된 구독 필터링
-  const filteredSubscriptions = subscriptions.filter(sub => 
-    !['CANCELED', 'PAUSED'].includes(sub.status)
+  const filteredSubscriptions = subscriptions.filter(
+    (sub) => !["CANCELED", "PAUSED"].includes(sub.status),
   );
 
   const appData = filteredSubscriptions.map((subscription: any) => ({
     id: subscription.id,
     appLogo: subscription.product?.image || "https://via.placeholder.com/40",
-    appKoreanName: subscription.alias || subscription.product?.nameKo || "Unknown App",
+    appKoreanName:
+      subscription.alias || subscription.product?.nameKo || "Unknown App",
     appEnglishName: subscription.product?.nameEn || "Unknown App",
     category: "SaaS",
     status: subscription.status,
@@ -50,16 +49,14 @@ export async function loader({ context }: Route.LoaderArgs) {
     nextBillingAmount: subscription.nextBillingAmount || 0,
     billingCycleType: subscription.billingCycleType,
     pricingModel: subscription.pricingModel,
-    connectStatus: subscription.connectStatus
+    connectStatus: subscription.connectStatus,
   }));
 
   return { apps: appData };
 }
-  
+
 export default function Apps() {
-    const { apps } = useLoaderData<typeof loader>();
-    
-    return (
-       <AppsPage apps={apps}/>
-    )
+  const { apps } = useLoaderData<typeof loader>();
+
+  return <AppsPage apps={apps} />;
 }

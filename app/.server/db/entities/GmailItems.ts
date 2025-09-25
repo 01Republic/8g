@@ -87,7 +87,7 @@ export class GmailItems extends BaseEntity {
   @ManyToOne(
     () => BillingHistories,
     (billingHistories) => billingHistories.gmailItems,
-    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "billing_history_id", referencedColumnName: "id" }])
   billingHistory: BillingHistories;
@@ -95,7 +95,7 @@ export class GmailItems extends BaseEntity {
   @OneToOne(
     () => GmailItemBillingInfo,
     (gmailItemBillingInfo) => gmailItemBillingInfo.gmailItems,
-    { onDelete: "NO ACTION", onUpdate: "NO ACTION" }
+    { onDelete: "NO ACTION", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "billingInfoId", referencedColumnName: "id" }])
   billingInfo: GmailItemBillingInfo;
@@ -110,7 +110,7 @@ export class GmailItems extends BaseEntity {
   @ManyToOne(
     () => InvoiceAccounts,
     (invoiceAccounts) => invoiceAccounts.gmailItems,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "invoice_account_id", referencedColumnName: "id" }])
   invoiceAccount: InvoiceAccounts;

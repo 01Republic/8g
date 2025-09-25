@@ -1,35 +1,40 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "~/components/ui/dialog"
-import type { Dispatch, SetStateAction } from "react"
+} from "~/components/ui/dialog";
+import type { Dispatch, SetStateAction } from "react";
 import { DynamicFormBuilder } from "~/client/private/integration/DynamicFormBuilder";
 import type { SelectedWorkspace } from "~/models/integration/types";
 import type { SelectedMembers } from "~/models/integration/types";
 import type { IntegrationAppFormMetadata } from "~/models/integration/types";
 
 interface IntegartionProductModalProps {
-    open: boolean,
-    setOpen: Dispatch<SetStateAction<boolean>>
-    onSubmit: (payload: { workspace: SelectedWorkspace; members: SelectedMembers[]; productId: number }) => void
-    meta: IntegrationAppFormMetadata
-    productId: number
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  onSubmit: (payload: {
+    workspace: SelectedWorkspace;
+    members: SelectedMembers[];
+    productId: number;
+  }) => void;
+  meta: IntegrationAppFormMetadata;
+  productId: number;
 }
 
 export const IntegartionProductModal = ({
-    open, 
-    setOpen,
-    onSubmit,
-    meta,
-    productId
+  open,
+  setOpen,
+  onSubmit,
+  meta,
+  productId,
 }: IntegartionProductModalProps) => {
   const [currentSection, setCurrentSection] = useState(0);
-  const [selectedWorkspace, setSelectedWorkspace] = useState<SelectedWorkspace | null>(null);
+  const [selectedWorkspace, setSelectedWorkspace] =
+    useState<SelectedWorkspace | null>(null);
   const [selectedMembers, setSelectedMembers] = useState<SelectedMembers[]>([]);
-  
+
   const sectionProps = {
     currentSection,
     selectedWorkspace,
@@ -41,18 +46,24 @@ export const IntegartionProductModal = ({
       setSelectedWorkspace(null);
       setSelectedMembers([]);
       setCurrentSection(0);
-      setOpen(false)
+      setOpen(false);
     },
     productId,
     onSubmit: () => {
       if (!selectedWorkspace) return;
-      onSubmit({ workspace: selectedWorkspace, members: selectedMembers, productId })
-    }
+      onSubmit({
+        workspace: selectedWorkspace,
+        members: selectedMembers,
+        productId,
+      });
+    },
   };
-  
-  const formBuilder = DynamicFormBuilder({ meta })
 
-  const { stepperSection, stepSection } = formBuilder.buildStepper({ props: sectionProps })
+  const formBuilder = DynamicFormBuilder({ meta });
+
+  const { stepperSection, stepSection } = formBuilder.buildStepper({
+    props: sectionProps,
+  });
 
   useEffect(() => {
     if (open) {
@@ -68,7 +79,7 @@ export const IntegartionProductModal = ({
         <DialogHeader>
           <DialogTitle>SaaS 연동 설정</DialogTitle>
         </DialogHeader>
-        
+
         <div className="flex gap-8 min-h-[500px]">
           {/* Left Side - Vertical Stepper */}
           <div className="w-16 flex justify-center items-center">
@@ -76,13 +87,9 @@ export const IntegartionProductModal = ({
           </div>
 
           {/* Right Side - Content View */}
-          <div className="flex-1 relative px-8">
-            {stepSection}
-          </div>
+          <div className="flex-1 relative px-8">{stepSection}</div>
         </div>
       </DialogContent>
     </Dialog>
-  )
-}
-
-  
+  );
+};

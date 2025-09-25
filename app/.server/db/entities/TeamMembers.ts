@@ -74,7 +74,7 @@ export class TeamMembers extends BaseEntity {
 
   @OneToMany(
     () => AccountPermissions,
-    (accountPermissions) => accountPermissions.teamMember
+    (accountPermissions) => accountPermissions.teamMember,
   )
   accountPermissions: AccountPermissions[];
 
@@ -87,37 +87,37 @@ export class TeamMembers extends BaseEntity {
   @OneToMany(
     () => IntegrationGoogleWorkspaceMembers,
     (integrationGoogleWorkspaceMembers) =>
-      integrationGoogleWorkspaceMembers.teamMember
+      integrationGoogleWorkspaceMembers.teamMember,
   )
   integrationGoogleWorkspaceMembers: IntegrationGoogleWorkspaceMembers[];
 
   @OneToMany(
     () => IntegrationSlackMembers,
-    (integrationSlackMembers) => integrationSlackMembers.teamMember
+    (integrationSlackMembers) => integrationSlackMembers.teamMember,
   )
   integrationSlackMembers: IntegrationSlackMembers[];
 
   @OneToMany(
     () => InvoiceAccounts,
-    (invoiceAccounts) => invoiceAccounts.holdingMember
+    (invoiceAccounts) => invoiceAccounts.holdingMember,
   )
   invoiceAccounts: InvoiceAccounts[];
 
   @OneToMany(
     () => ReviewResponses,
-    (reviewResponses) => reviewResponses.teamMember
+    (reviewResponses) => reviewResponses.teamMember,
   )
   reviewResponses: ReviewResponses[];
 
   @OneToMany(
     () => SignedHistories,
-    (signedHistories) => signedHistories.teamMember
+    (signedHistories) => signedHistories.teamMember,
   )
   signedHistories: SignedHistories[];
 
   @OneToMany(
     () => SubscriptionSeats,
-    (subscriptionSeats) => subscriptionSeats.teamMember
+    (subscriptionSeats) => subscriptionSeats.teamMember,
   )
   subscriptionSeats: SubscriptionSeats[];
 
@@ -127,7 +127,7 @@ export class TeamMembers extends BaseEntity {
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.teamMembers,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
@@ -150,7 +150,7 @@ export class TeamMembers extends BaseEntity {
 
   @OneToMany(
     () => WorkspaceMembers,
-    (workspaceMembers) => workspaceMembers.teamMember
+    (workspaceMembers) => workspaceMembers.teamMember,
   )
   workspaceMembers: WorkspaceMembers[];
 

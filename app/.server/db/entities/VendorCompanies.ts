@@ -37,26 +37,26 @@ export class VendorCompanies extends BaseEntity {
 
   @OneToMany(
     () => VendorManagers,
-    (vendorManagers) => vendorManagers.vendorCompany
+    (vendorManagers) => vendorManagers.vendorCompany,
   )
   vendorManagers: VendorManagers[];
 
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.vendorCompanies,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
 
   @OneToMany(
     () => VendorContracts,
-    (vendorContracts) => vendorContracts.vendorCompany
+    (vendorContracts) => vendorContracts.vendorCompany,
   )
   vendorContracts: VendorContracts[];
 
   @RelationId(
-    (vendorCompanies: VendorCompanies) => vendorCompanies.organization
+    (vendorCompanies: VendorCompanies) => vendorCompanies.organization,
   )
   organizationId: number;
 }

@@ -34,13 +34,13 @@ export class ProductPaymentPlans extends BaseEntity {
 
   @OneToMany(
     () => ProductBillingCycles,
-    (productBillingCycles) => productBillingCycles.paymentPlan
+    (productBillingCycles) => productBillingCycles.paymentPlan,
   )
   productBillingCycles: ProductBillingCycles[];
 
   @OneToMany(
     () => ProductBillingCycles,
-    (productBillingCycles) => productBillingCycles.paymentPlan_2
+    (productBillingCycles) => productBillingCycles.paymentPlan_2,
   )
   productBillingCycles2: ProductBillingCycles[];
 
@@ -62,12 +62,12 @@ export class ProductPaymentPlans extends BaseEntity {
   subscriptions: Subscriptions[];
 
   @RelationId(
-    (productPaymentPlans: ProductPaymentPlans) => productPaymentPlans.product
+    (productPaymentPlans: ProductPaymentPlans) => productPaymentPlans.product,
   )
   productId: number;
 
   @RelationId(
-    (productPaymentPlans: ProductPaymentPlans) => productPaymentPlans.product_2
+    (productPaymentPlans: ProductPaymentPlans) => productPaymentPlans.product_2,
   )
   productId2: number;
 }

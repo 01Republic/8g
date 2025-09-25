@@ -15,12 +15,12 @@ export class IntegrationAppFormMetadata extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
 
-  @Column({type: 'int', name: "product_id", unique: true })
+  @Column({ type: "int", name: "product_id", unique: true })
   productId: number;
 
-  @Column({ type: 'json', name: 'meta' })
+  @Column({ type: "json", name: "meta" })
   meta: Record<string, unknown>;
 
-  @Column({ type: 'boolean', name: 'is_active', default: false })
+  @Column({ type: "boolean", name: "is_active", default: false })
   isActive: boolean;
 }

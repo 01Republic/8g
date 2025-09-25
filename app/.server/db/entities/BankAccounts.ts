@@ -117,20 +117,20 @@ export class BankAccounts extends BaseEntity {
   @ManyToOne(
     () => Organizations,
     (organizations) => organizations.bankAccounts,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "organization_id", referencedColumnName: "id" }])
   organization: Organizations;
 
   @OneToMany(
     () => BillingHistories,
-    (billingHistories) => billingHistories.bankAccount
+    (billingHistories) => billingHistories.bankAccount,
   )
   billingHistories: BillingHistories[];
 
   @OneToMany(
     () => CodefBankAccounts,
-    (codefBankAccounts) => codefBankAccounts.bankAccount
+    (codefBankAccounts) => codefBankAccounts.bankAccount,
   )
   codefBankAccounts: CodefBankAccounts[];
 

@@ -59,18 +59,18 @@ export class AccountPermissions extends BaseEntity {
   @ManyToOne(
     () => TeamMembers,
     (teamMembers) => teamMembers.accountPermissions,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "team_member_id", referencedColumnName: "id" }])
   teamMember: TeamMembers;
 
   @RelationId(
-    (accountPermissions: AccountPermissions) => accountPermissions.account
+    (accountPermissions: AccountPermissions) => accountPermissions.account,
   )
   accountId2: number;
 
   @RelationId(
-    (accountPermissions: AccountPermissions) => accountPermissions.teamMember
+    (accountPermissions: AccountPermissions) => accountPermissions.teamMember,
   )
   teamMemberId2: number;
 }

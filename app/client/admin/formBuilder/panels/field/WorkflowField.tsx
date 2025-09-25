@@ -1,21 +1,21 @@
-import { Textarea } from '~/components/ui/textarea'
-import { Label } from '~/components/ui/label'
+import { Textarea } from "~/components/ui/textarea";
+import { Label } from "~/components/ui/label";
 
 interface WorkflowFieldProps {
-  id: string
-  value: string
-  onChange: (value: string) => void
-  label?: string
-  placeholder?: string
-  error?: string | null
-  rows?: number
+  id: string;
+  value: string;
+  onChange: (value: string) => void;
+  label?: string;
+  placeholder?: string;
+  error?: string | null;
+  rows?: number;
 }
 
 const WorkflowField = ({
   id,
   value,
   onChange,
-  label = '워크플로 JSON',
+  label = "워크플로 JSON",
   placeholder,
   error,
   rows = 10,
@@ -28,14 +28,12 @@ const WorkflowField = ({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className={error ? 'border-destructive' : ''}
+        className={error ? "border-destructive" : ""}
         rows={rows}
       />
       {error ? <span className="text-xs text-destructive">{error}</span> : null}
     </div>
-  )
-}
+  );
+};
 
-export default WorkflowField
-
-
+export default WorkflowField;

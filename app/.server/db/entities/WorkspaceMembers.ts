@@ -54,12 +54,12 @@ export class WorkspaceMembers extends BaseEntity {
   teamMember: TeamMembers;
 
   @RelationId(
-    (workspaceMembers: WorkspaceMembers) => workspaceMembers.workspace
+    (workspaceMembers: WorkspaceMembers) => workspaceMembers.workspace,
   )
   workspaceId: number;
 
   @RelationId(
-    (workspaceMembers: WorkspaceMembers) => workspaceMembers.teamMember
+    (workspaceMembers: WorkspaceMembers) => workspaceMembers.teamMember,
   )
   teamMemberId: number | null;
 }

@@ -9,7 +9,7 @@ import {
 @Index(
   "IDX_slackUserId_channelId_eventType",
   ["slackUserId", "channelId", "eventType"],
-  {}
+  {},
 )
 @Entity("slack_event_log")
 export class SlackEventLog extends BaseEntity {

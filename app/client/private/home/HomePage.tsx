@@ -17,9 +17,9 @@ export default function HomePage(props: HomePageProps) {
     setPredictions(
       apps
         .filter((app) =>
-          app.appKoreanName.toLowerCase().includes(query.toLowerCase())
+          app.appKoreanName.toLowerCase().includes(query.toLowerCase()),
         )
-        .map((it) => it.appKoreanName)
+        .map((it) => it.appKoreanName),
     );
   }, [query]);
 

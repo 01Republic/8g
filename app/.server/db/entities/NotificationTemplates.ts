@@ -41,7 +41,7 @@ export class NotificationTemplates extends BaseEntity {
 
   @OneToMany(
     () => NotificationMessages,
-    (notificationMessages) => notificationMessages.notificationTemplate
+    (notificationMessages) => notificationMessages.notificationTemplate,
   )
   notificationMessages: NotificationMessages[];
 }

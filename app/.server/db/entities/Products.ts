@@ -113,13 +113,13 @@ export class Products extends BaseEntity {
 
   @OneToMany(
     () => CodefBankAccountParsers,
-    (codefBankAccountParsers) => codefBankAccountParsers.product
+    (codefBankAccountParsers) => codefBankAccountParsers.product,
   )
   codefBankAccountParsers: CodefBankAccountParsers[];
 
   @OneToMany(
     () => CodefCardParsers,
-    (codefCardParsers) => codefCardParsers.product
+    (codefCardParsers) => codefCardParsers.product,
   )
   codefCardParsers: CodefCardParsers[];
 
@@ -137,43 +137,43 @@ export class Products extends BaseEntity {
 
   @OneToMany(
     () => ProductAddedAlerts,
-    (productAddedAlerts) => productAddedAlerts.product
+    (productAddedAlerts) => productAddedAlerts.product,
   )
   productAddedAlerts: ProductAddedAlerts[];
 
   @OneToMany(
     () => ProductAddedAlerts,
-    (productAddedAlerts) => productAddedAlerts.product_2
+    (productAddedAlerts) => productAddedAlerts.product_2,
   )
   productAddedAlerts2: ProductAddedAlerts[];
 
   @OneToMany(
     () => ProductBillingCycles,
-    (productBillingCycles) => productBillingCycles.product
+    (productBillingCycles) => productBillingCycles.product,
   )
   productBillingCycles: ProductBillingCycles[];
 
   @OneToMany(
     () => ProductBillingCycles,
-    (productBillingCycles) => productBillingCycles.product_2
+    (productBillingCycles) => productBillingCycles.product_2,
   )
   productBillingCycles2: ProductBillingCycles[];
 
   @OneToMany(
     () => ProductPaymentPlans,
-    (productPaymentPlans) => productPaymentPlans.product
+    (productPaymentPlans) => productPaymentPlans.product,
   )
   productPaymentPlans: ProductPaymentPlans[];
 
   @OneToMany(
     () => ProductPaymentPlans,
-    (productPaymentPlans) => productPaymentPlans.product_2
+    (productPaymentPlans) => productPaymentPlans.product_2,
   )
   productPaymentPlans2: ProductPaymentPlans[];
 
   @OneToMany(
     () => ProductSimilarNames,
-    (productSimilarNames) => productSimilarNames.product
+    (productSimilarNames) => productSimilarNames.product,
   )
   productSimilarNames: ProductSimilarNames[];
 

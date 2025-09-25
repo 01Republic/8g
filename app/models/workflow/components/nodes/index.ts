@@ -6,5 +6,3 @@ export const getTextNodeTypeKey = "get-text";
 export const workflowNodeTypes: NodeTypes = {
   [getTextNodeTypeKey]: GetTextNode,
 };
-
-

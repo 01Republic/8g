@@ -37,7 +37,7 @@ export class ProductSimilarNames extends BaseEntity {
   @OneToMany(
     () => IntegrationGoogleWorkspaceOauthTokenActivities,
     (integrationGoogleWorkspaceOauthTokenActivities) =>
-      integrationGoogleWorkspaceOauthTokenActivities.productSimilarName
+      integrationGoogleWorkspaceOauthTokenActivities.productSimilarName,
   )
   integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities[];
 
@@ -49,7 +49,7 @@ export class ProductSimilarNames extends BaseEntity {
   product: Products;
 
   @RelationId(
-    (productSimilarNames: ProductSimilarNames) => productSimilarNames.product
+    (productSimilarNames: ProductSimilarNames) => productSimilarNames.product,
   )
   productId: number | null;
 }

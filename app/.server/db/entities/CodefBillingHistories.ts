@@ -181,14 +181,14 @@ export class CodefBillingHistories extends BaseEntity {
 
   @OneToMany(
     () => BillingHistories,
-    (billingHistories) => billingHistories.codefBillingHistory
+    (billingHistories) => billingHistories.codefBillingHistory,
   )
   billingHistories: BillingHistories[];
 
   @ManyToOne(
     () => CodefBankAccountParsers,
     (codefBankAccountParsers) => codefBankAccountParsers.codefBillingHistories,
-    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" },
   )
   @JoinColumn([
     { name: "codef_bank_account_parser_id", referencedColumnName: "id" },
@@ -198,7 +198,7 @@ export class CodefBillingHistories extends BaseEntity {
   @ManyToOne(
     () => CodefBankAccounts,
     (codefBankAccounts) => codefBankAccounts.codefBillingHistories,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "codef_bank_account_id", referencedColumnName: "id" }])
   codefBankAccount: CodefBankAccounts;
@@ -206,7 +206,7 @@ export class CodefBillingHistories extends BaseEntity {
   @ManyToOne(
     () => CodefCardParsers,
     (codefCardParsers) => codefCardParsers.codefBillingHistories,
-    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "codef_card_parser_id", referencedColumnName: "id" }])
   codefCardParser: CodefCardParsers;
@@ -214,32 +214,32 @@ export class CodefBillingHistories extends BaseEntity {
   @ManyToOne(
     () => CodefCards,
     (codefCards) => codefCards.codefBillingHistories,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "codef_card_id", referencedColumnName: "id" }])
   codefCard: CodefCards;
 
   @RelationId(
     (codefBillingHistories: CodefBillingHistories) =>
-      codefBillingHistories.codefBankAccountParser
+      codefBillingHistories.codefBankAccountParser,
   )
   codefBankAccountParserId: number | null;
 
   @RelationId(
     (codefBillingHistories: CodefBillingHistories) =>
-      codefBillingHistories.codefBankAccount
+      codefBillingHistories.codefBankAccount,
   )
   codefBankAccountId: number | null;
 
   @RelationId(
     (codefBillingHistories: CodefBillingHistories) =>
-      codefBillingHistories.codefCardParser
+      codefBillingHistories.codefCardParser,
   )
   codefCardParserId: number | null;
 
   @RelationId(
     (codefBillingHistories: CodefBillingHistories) =>
-      codefBillingHistories.codefCard
+      codefBillingHistories.codefCard,
   )
   codefCardId: number | null;
 }

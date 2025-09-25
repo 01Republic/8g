@@ -16,7 +16,7 @@ import { IntegrationGoogleWorkspaceOauthTokenActivities } from "./IntegrationGoo
 @Index(
   "IDX_google_workspace_id_uniq_in_workspace",
   ["integrationWorkspaceId", "googleWorkspaceId"],
-  { unique: true }
+  { unique: true },
 )
 @Entity("integration_google_workspace_members")
 export class IntegrationGoogleWorkspaceMembers extends BaseEntity {
@@ -83,7 +83,7 @@ export class IntegrationGoogleWorkspaceMembers extends BaseEntity {
   @ManyToOne(
     () => TeamMembers,
     (teamMembers) => teamMembers.integrationGoogleWorkspaceMembers,
-    { onDelete: "SET NULL", onUpdate: "NO ACTION" }
+    { onDelete: "SET NULL", onUpdate: "NO ACTION" },
   )
   @JoinColumn([{ name: "team_member_id", referencedColumnName: "id" }])
   teamMember: TeamMembers;
@@ -92,7 +92,7 @@ export class IntegrationGoogleWorkspaceMembers extends BaseEntity {
     () => IntegrationWorkspaces,
     (integrationWorkspaces) =>
       integrationWorkspaces.integrationGoogleWorkspaceMembers,
-    { onDelete: "CASCADE", onUpdate: "NO ACTION" }
+    { onDelete: "CASCADE", onUpdate: "NO ACTION" },
   )
   @JoinColumn([
     { name: "integration_workspace_id", referencedColumnName: "id" },
@@ -102,19 +102,19 @@ export class IntegrationGoogleWorkspaceMembers extends BaseEntity {
   @OneToMany(
     () => IntegrationGoogleWorkspaceOauthTokenActivities,
     (integrationGoogleWorkspaceOauthTokenActivities) =>
-      integrationGoogleWorkspaceOauthTokenActivities.workspaceMember
+      integrationGoogleWorkspaceOauthTokenActivities.workspaceMember,
   )
   integrationGoogleWorkspaceOauthTokenActivities: IntegrationGoogleWorkspaceOauthTokenActivities[];
 
   @RelationId(
     (integrationGoogleWorkspaceMembers: IntegrationGoogleWorkspaceMembers) =>
-      integrationGoogleWorkspaceMembers.teamMember
+      integrationGoogleWorkspaceMembers.teamMember,
   )
   teamMemberId: number | null;
 
   @RelationId(
     (integrationGoogleWorkspaceMembers: IntegrationGoogleWorkspaceMembers) =>
-      integrationGoogleWorkspaceMembers.integrationWorkspace
+      integrationGoogleWorkspaceMembers.integrationWorkspace,
   )
   integrationWorkspaceId2: number;
 }
