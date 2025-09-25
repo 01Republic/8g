@@ -1,13 +1,16 @@
 import type { ReactNode } from 'react'
-import type { IntegrationAppFormMetadata, SelectBoxSectionSchema, TableSectionSchema, CheckboxSectionSchema, FormSectionSchema } from '../IntegrationAppFormMetadata'
-import type { FormComponentProps } from '../DynamicFormBuilder'
-import { SelectBoxSection, type SelectedWorkspace } from './sections/SelectBoxSection'
+import type { FormComponentProps } from './DynamicFormBuilder'
+import { SelectBoxSection } from './sections/SelectBoxSection'
 import { CheckboxSection } from './sections/CheckboxSection'
-import { TableSection, type SelectedMembers } from './sections/TableSection'
+import { TableSection } from './sections/TableSection'
 import { InitialCheckSection } from './sections/InitialCheckSection'
 import { CompletionSection } from './sections/CompletionSection'
+import type { SelectedWorkspace } from '~/models/integration/types'
+import type { SelectedMembers } from '~/models/integration/types'
+import type { IntegrationAppFormMetadata } from '~/models/integration/apps/types'
+import type { FormSectionSchema, SelectBoxSectionSchema, CheckboxSectionSchema, TableSectionSchema } from '~/models/integration/apps/types'
 
-export function buildSections(meta: IntegrationAppFormMetadata, props: FormComponentProps): ReactNode[] {
+export const buildSections = (meta: IntegrationAppFormMetadata, props: FormComponentProps): ReactNode[] => {
   return meta.sections.map((sectionMeta, index) => {
     const sectionIndex = index + 1
     const uiSchema = sectionMeta.uiSchema

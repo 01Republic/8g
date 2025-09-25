@@ -10,12 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select'
-import { useWorkflowExecution } from '../../hooks/useWorkflowExecution'
-
-export type SelectedWorkspace = {
-  elementId: string
-  elementText: string
-}
+import { useWorkflowExecution } from '~/hooks/use-workflow-execution'
+import type { SelectedWorkspace } from '~/models/integration/types'
 
 interface SelectBoxSectionProps {
   title: string
@@ -30,7 +26,7 @@ interface SelectBoxSectionProps {
   hasNext?: boolean
 }
 
-export function SelectBoxSection({ 
+export const SelectBoxSection = ({ 
   title, 
   workflow, 
   placeholder, 
@@ -41,7 +37,7 @@ export function SelectBoxSection({
   onPrevious, 
   hasPrevious, 
   hasNext 
-}: SelectBoxSectionProps) {
+}: SelectBoxSectionProps) => {
   const { loading, error, parsed, run } = useWorkflowExecution(workflow)
 
   useEffect(() => {

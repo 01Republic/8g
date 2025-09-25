@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
-import type { IntegrationAppFormMetadata, SelectBoxSectionSchema, TableSectionSchema, CheckboxSectionSchema } from './IntegrationAppFormMetadata'
-import { buildSections } from './components/SectionsBuilder'
+import type { IntegrationAppFormMetadata } from '~/models/integration/types'
+import { buildSections } from './SectionsBuilder'
 import {
   Stepper,
   StepperIndicator,
@@ -10,8 +10,8 @@ import {
   StepperTrigger,
 } from '~/components/ui/stepper'
 import { Check, LoaderCircleIcon } from 'lucide-react'
-import type { SelectedWorkspace } from './components/sections/SelectBoxSection'
-import type { SelectedMembers } from './components/sections/TableSection'
+import type { SelectedWorkspace } from '~/models/integration/types'
+import type { SelectedMembers } from '~/models/integration/types'
 
 export interface FormComponentProps {
   currentSection: number

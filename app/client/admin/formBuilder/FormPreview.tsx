@@ -1,5 +1,5 @@
-import { DynamicFormBuilder, type FormComponentProps } from "~/models/integration/apps/DynamicFormBuilder"
-import { type IntegrationAppFormMetadata } from "~/models/integration/apps/IntegrationAppFormMetadata"
+import { DynamicFormBuilder, type FormComponentProps } from "~/client/private/integration/DynamicFormBuilder"
+import type { IntegrationAppFormMetadata } from "~/models/integration/types"
 
 interface FormPreviewProps {
   meta: IntegrationAppFormMetadata
@@ -9,7 +9,7 @@ interface FormPreviewProps {
   onSectionChange: (index: number) => void
 }
 
-export default function FormPreview(props: FormPreviewProps) {
+export const FormPreview = (props: FormPreviewProps) => {
   const {
     meta,
     currentSection,

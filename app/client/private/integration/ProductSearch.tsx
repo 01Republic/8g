@@ -25,7 +25,7 @@ const apps = [
     "Trello",
 ]
 
-export function SearchIntegrationAppCommand() {
+export const ProductSearch = () => {
     const [predictions, setPredictions] = useState<string[]>([]);
     const [query, setQuery] = useState("");
 

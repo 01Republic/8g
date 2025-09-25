@@ -3,15 +3,11 @@ import { LoadingCard } from '~/components/ui/loading-card'
 import { LoaderCircleIcon } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table'
-import { useWorkflowExecution } from '../../hooks/useWorkflowExecution'
-import { setSectionResult } from '../../hooks/sectionResults'
+import { useWorkflowExecution } from '~/hooks/use-workflow-execution'
+import { setSectionResult } from '~/models/integration/SectionResultManager'
 import { useEffect } from 'react'
+import type { SelectedMembers } from '~/models/integration/types'
 
-export type SelectedMembers = {
-  email: string
-  status: string
-  joinDate: string
-}
 
 interface TableSectionProps {
   title: string

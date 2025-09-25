@@ -2,12 +2,12 @@ import { Switch } from "~/components/ui/switch"
 import { useState } from "react"
 import { DndProvider } from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
-import SaveDialog from "./SaveDialog"
+import { SaveDialog } from "./SaveDialog"
 import { Button } from "~/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
-import { type IntegrationAppFormMetadata } from "~/models/integration/apps/IntegrationAppFormMetadata"
-import FormPreview from "./FormPreview"
-import FormSectionList from "./FormSectionList"
+import type { IntegrationAppFormMetadata } from "~/models/integration/types"
+import { FormPreview } from "./FormPreview"
+import { FormSectionList } from "./FormSectionList"
 
 const DND_SECTION_TYPE = 'SECTION'
 

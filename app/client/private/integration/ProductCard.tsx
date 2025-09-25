@@ -1,4 +1,3 @@
-import type { Dispatch, SetStateAction } from "react";
 import { Avatar, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button"
 import {
@@ -8,17 +7,17 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card"
-import type { Product } from "../../products/types/Product";
+import type { Product } from "~/models/integration/types";
 
-interface IntegrationAppCardProps {
+interface ProductCardProps {
   appInfo: Product
   onOpen: (productId: number) => void
 }
 
-export function IntegrationAppCard({ 
+export const ProductCard = ({ 
   appInfo,
   onOpen
-}: IntegrationAppCardProps) {
+}: ProductCardProps) => {
   const { nameEn, nameKo, image, tagline, productTags } = appInfo;
   const category = productTags.map((tag) => tag.tag.name).join(", ") || ""
 

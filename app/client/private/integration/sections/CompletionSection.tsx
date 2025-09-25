@@ -9,7 +9,7 @@ interface CompletionSectionProps {
   onSubmit: () => void
 }
 
-export function CompletionSection({ hasPrevious, onPrevious, onSubmit }: CompletionSectionProps) {
+export const CompletionSection = ({ hasPrevious, onPrevious, onSubmit }: CompletionSectionProps) => {
   const { triggerConfetti, confettiElement } = useConfetti()
   useEffect(() => { triggerConfetti() }, [triggerConfetti])
   useEffect(() => { onSubmit() }, [])

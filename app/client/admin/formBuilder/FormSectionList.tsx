@@ -2,8 +2,87 @@ import { Label } from "~/components/ui/label"
 import Reorderable from "~/components/Reorderable"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { Separator } from "~/components/ui/separator"
-import SectionConfigBuilder from "~/models/integration/apps/components/SectionConfigBuilder"
-import { SectionTypePropsMapper, type IntegrationAppFormMetadata } from "~/models/integration/apps/IntegrationAppFormMetadata"
+import type { CheckboxSectionSchema, CompletionSectionSchema, InitialCheckSectionSchema, IntegrationAppFormMetadata, SelectBoxSectionSchema, TableSectionSchema } from "~/models/integration/types"
+import SectionConfigBuilder from "~/client/private/integration/SectionConfigBuilder"
+
+const buildInitialCheckSectionSchema = () => {
+  const defaultSchema: InitialCheckSectionSchema = {
+    type: 'initial-check',
+    title: '초기 체크'
+  }
+
+  return defaultSchema
+}
+
+const buildSelectBoxSectionSchema = () => {
+  const defaultSchema: SelectBoxSectionSchema = {
+    type: 'select-box',
+    title: '선택 박스',
+    placeholder: '선택 박스',
+    workflow: {
+      version: '1.0.0',
+      start: 'start',
+      steps: [],
+      parser: () => {},
+      targetUrl: 'https://example.com'
+    }
+  }
+
+  return defaultSchema
+}
+
+const buildCheckboxSectionSchema = () => {
+  const defaultSchema: CheckboxSectionSchema = {
+    type: 'checkbox',
+    title: '체크박스',
+    placeholder: '체크박스',
+    loadingMessage: '체크박스',
+    errorMessage: '체크박스',
+    successMessage: '체크박스',
+    workflow: {
+      version: '1.0.0',
+      start: 'start',
+      steps: [],
+      parser: () => {},
+      targetUrl: 'https://example.com'
+    }
+  }
+
+  return defaultSchema
+}
+
+const buildTableSectionSchema = () => {
+  const defaultSchema: TableSectionSchema = {
+    type: 'table',
+    title: '테이블',
+    workflow: {
+      version: '1.0.0',
+      start: 'start',
+      steps: [],
+      parser: () => {},
+      targetUrl: 'https://example.com'
+    }
+  }
+
+  return defaultSchema
+}
+
+const buildCompletionSectionSchema = () => {
+  const defaultSchema: CompletionSectionSchema = {
+    type: 'completion',
+    title: '완료',
+  }
+
+  return defaultSchema
+}
+
+export const SectionTypePropsMapper = {
+  'initial-check': buildInitialCheckSectionSchema,
+  'select-box': buildSelectBoxSectionSchema,
+  'checkbox': buildCheckboxSectionSchema,
+  'table': buildTableSectionSchema,
+  'completion': buildCompletionSectionSchema,
+}
 
 interface FormSectionListProps {
   meta: IntegrationAppFormMetadata
@@ -13,7 +92,7 @@ interface FormSectionListProps {
   dndType: string
 }
 
-export default function FormSectionList(props: FormSectionListProps) {
+export const FormSectionList = (props: FormSectionListProps) => {
   const { meta, withMeta: updateMeta, currentSection, setCurrentSection, dndType } = props
 
   const moveSection = (dragIndex: number, hoverIndex: number) => {

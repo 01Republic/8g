@@ -6,12 +6,12 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog"
 import type { Dispatch, SetStateAction } from "react"
-import { DynamicFormBuilder } from "../apps/DynamicFormBuilder";
-import { type IntegrationAppFormMetadata } from "../apps/IntegrationAppFormMetadata";
-import type { SelectedWorkspace } from "../apps/components/sections/SelectBoxSection";
-import type { SelectedMembers } from "../apps/components/sections/TableSection";
+import { DynamicFormBuilder } from "~/client/private/integration/DynamicFormBuilder";
+import type { SelectedWorkspace } from "~/models/integration/types";
+import type { SelectedMembers } from "~/models/integration/types";
+import type { IntegrationAppFormMetadata } from "~/models/integration/apps/types";
 
-interface IntegartionAppModalProps {
+interface IntegartionProductModalProps {
     open: boolean,
     setOpen: Dispatch<SetStateAction<boolean>>
     onSubmit: (payload: { workspace: SelectedWorkspace; members: SelectedMembers[]; productId: number }) => void
@@ -19,13 +19,13 @@ interface IntegartionAppModalProps {
     productId: number
 }
 
-export function IntegartionAppModal({
+export const IntegartionProductModal = ({
     open, 
     setOpen,
     onSubmit,
     meta,
     productId
-}: IntegartionAppModalProps) {
+}: IntegartionProductModalProps) => {
   const [currentSection, setCurrentSection] = useState(0);
   const [selectedWorkspace, setSelectedWorkspace] = useState<SelectedWorkspace | null>(null);
   const [selectedMembers, setSelectedMembers] = useState<SelectedMembers[]>([]);

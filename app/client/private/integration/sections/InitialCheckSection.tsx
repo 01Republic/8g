@@ -13,7 +13,7 @@ interface InitialCheckSectionProps {
   onPrevious?: () => void
 }
 
-export function InitialCheckSection({ title, onNext, hasPrevious, hasNext, onPrevious }: InitialCheckSectionProps) {
+export const InitialCheckSection = ({ title, onNext, hasPrevious, hasNext, onPrevious }: InitialCheckSectionProps) => {
   const [loading, setLoading] = useState(false)
   const [installed, setInstalled] = useState<boolean | null>(null)
   const [error, setError] = useState<string | null>(null)
