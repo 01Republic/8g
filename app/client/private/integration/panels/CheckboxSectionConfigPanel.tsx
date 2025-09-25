@@ -1,32 +1,45 @@
 import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Textarea } from '~/components/ui/textarea'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion'
+import type { FormWorkflow } from '~/models/integration/types'
+import { useWorkflowConfig } from '~/hooks/use-workflow-config'
+import WorkflowField from './field/WorkflowField'
+import TextField from './field/TextField'
 
 interface CheckboxSectionConfigPanelProps {
   sectionId: string
   sectionIndex: number
+  title?: string
   placeholder: string
   loadingMessage: string
   errorMessage: string
   successMessage: string
-  targetUrl: string
   uiType: string
   index: number
   withMeta: (updater: (draft: any) => void) => void
+  workflow?: FormWorkflow
 }
 
-const CheckboxSectionConfigPanel = ({ 
-  sectionId, 
-  sectionIndex, 
+const CheckboxSectionConfigPanel = ({
+  sectionId,
+  sectionIndex,
+  title,
   placeholder,
-  loadingMessage, 
-  errorMessage, 
-  successMessage, 
-  targetUrl, 
-  uiType, 
-  index, withMeta }: CheckboxSectionConfigPanelProps) => {
+  loadingMessage,
+  errorMessage,
+  successMessage,
+  uiType,
+  index,
+  withMeta,
+  workflow,
+}: CheckboxSectionConfigPanelProps) => {
+  const { workflowText, workflowError, handleWorkflowChange } = useWorkflowConfig({
+    index,
+    withMeta,
+    initialWorkflow: workflow,
+  })
+
   return (
     <Accordion type="single" collapsible defaultValue="item">
       <AccordionItem value="item">
@@ -39,46 +52,42 @@ const CheckboxSectionConfigPanel = ({
         </div>
         </AccordionTrigger>
         <AccordionContent>
-          <div className="space-y-2">
-            <Label htmlFor={`cb-placeholder-${sectionId}`}>플레이스홀더</Label>
-            <Input
-              id={`cb-placeholder-${sectionId}`}
-              value={placeholder || ''}
-              onChange={(e) => withMeta((draft) => { (draft.sections[index].uiSchema as any).placeholder = e.target.value })}
-              placeholder="예: 체크박스"
+          <div className="space-y-3">
+            <TextField
+              id={`title-${sectionId}`}
+              label="제목"
+              value={title || ''}
+              placeholder="섹션 제목"
+              onChange={(value) => withMeta((draft) => { (draft.sections[index].uiSchema as any).title = value })}
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor={`cb-loading-${sectionId}`}>로딩 메시지</Label>
-            <Input
+            <TextField
               id={`cb-loading-${sectionId}`}
+              label="로딩 메시지"
               value={loadingMessage || ''}
-              onChange={(e) => withMeta((draft) => { (draft.sections[index].uiSchema as any).loadingMessage = e.target.value })}
+              onChange={(value) => withMeta((draft) => { (draft.sections[index].uiSchema as any).loadingMessage = value })}
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor={`cb-error-${sectionId}`}>에러 메시지</Label>
-            <Textarea
-              id={`cb-error-${sectionId}`}
-              value={errorMessage || ''}
-              onChange={(e) => withMeta((draft) => { (draft.sections[index].uiSchema as any).errorMessage = e.target.value })}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor={`cb-success-${sectionId}`}>성공 메시지</Label>
-            <Textarea
-              id={`cb-success-${sectionId}`}
-              value={successMessage || ''}
-              onChange={(e) => withMeta((draft) => { (draft.sections[index].uiSchema as any).successMessage = e.target.value })}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor={`cb-target-${sectionId}`}>워크플로 대상 URL</Label>
-            <Input
-              id={`cb-target-${sectionId}`}
-              value={targetUrl || ''}
-              onChange={(e) => withMeta((draft) => { ((draft.sections[index].uiSchema as any).workflow ||= {}).targetUrl = e.target.value })}
-              placeholder="https://example.com"
+            <div className="space-y-2">
+              <Label htmlFor={`cb-error-${sectionId}`}>에러 메시지</Label>
+              <Textarea
+                id={`cb-error-${sectionId}`}
+                value={errorMessage || ''}
+                onChange={(event) => withMeta((draft) => { (draft.sections[index].uiSchema as any).errorMessage = event.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor={`cb-success-${sectionId}`}>성공 메시지</Label>
+              <Textarea
+                id={`cb-success-${sectionId}`}
+                value={successMessage || ''}
+                onChange={(event) => withMeta((draft) => { (draft.sections[index].uiSchema as any).successMessage = event.target.value })}
+              />
+            </div>
+            <WorkflowField
+              id={`workflow-json-${sectionId}`}
+              value={workflowText}
+              onChange={handleWorkflowChange}
+              error={workflowError}
+              placeholder='{"version":"1.0","start":"start","steps":[...],"targetUrl":"https://..."}'
             />
           </div>
           <div className="flex justify-end pt-2">

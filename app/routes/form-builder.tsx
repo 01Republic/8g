@@ -14,7 +14,11 @@ export async function loader({ params }: Route.LoaderArgs) {
     return { appId: params.appId, initialMeta: { sections: [] } as IntegrationAppFormMetadata }
   }
 
-  return { appId: params.appId, initialMeta: integrationAppFormMetadata.meta as unknown as IntegrationAppFormMetadata }
+  return { 
+    appId: params.appId, 
+    initialMeta: integrationAppFormMetadata.meta as unknown as IntegrationAppFormMetadata,
+    isActive: integrationAppFormMetadata.isActive
+  }
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -40,7 +44,7 @@ export async function action({ request }: Route.ActionArgs) {
 export default function FormBuilder(
   { loaderData }: Route.ComponentProps
 ) {
-  const { appId, initialMeta } = loaderData
+  const { appId, initialMeta, isActive } = loaderData
 
   const fetcher = useFetcher()
   const isSaving = fetcher.state !== 'idle'
@@ -76,6 +80,7 @@ export default function FormBuilder(
       isSaving={isSaving}
       saveDialog={saveDialog}
       onCloseDialog={onCloseDialog}
+      isRunning={isActive || false}
     />
   )
 }

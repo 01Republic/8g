@@ -18,13 +18,14 @@ interface FormBuilderPageProps {
     isSaving: boolean
     saveDialog: { open: boolean; title: string; message: string }
     onCloseDialog: () => void
+    isRunning: boolean
 }
 
 export default function FormBuilderPage( props: FormBuilderPageProps ) {
-    const { appId, initialMetadata, onSave, isSaving, saveDialog, onCloseDialog } = props
+    const { appId, initialMetadata, onSave, isSaving, saveDialog, onCloseDialog, isRunning } = props
     
     const [meta, setMeta] = useState<IntegrationAppFormMetadata>(initialMetadata)
-    const [isActive, setIsActive] = useState(false)
+    const [isActive, setIsActive] = useState(isRunning)
     
     const [currentSection, setCurrentSection] = useState<number>(0)
     const [selectedItem, setSelectedItem] = useState<string>('')

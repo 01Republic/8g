@@ -56,8 +56,8 @@ export function DynamicFormBuilder(options: BuilderOptions) {
           <StepperNav>
             {sectionNumbers.map((step) => (
               <StepperItem key={step} step={step} loading={loadingStates[step] || false}>
-                <StepperTrigger onClick={() => args.props.onSectionChange(step)}>
-                  <StepperIndicator className="data-[state=completed]:bg-green-500 data-[state=completed]:text-white data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=inactive]:text-gray-500">
+                <StepperTrigger onClick={() => {}}>
+                  <StepperIndicator className="data-[state=completed]:bg-green-500 data-[state=completed]:text-black data-[state=active]:bg-primary data-[state=active]:text-black data-[state=inactive]:text-gray-500">
                     {step}
                   </StepperIndicator>
                 </StepperTrigger>

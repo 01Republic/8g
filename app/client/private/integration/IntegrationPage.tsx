@@ -1,7 +1,7 @@
 import { ProductCard } from "~/client/private/integration/ProductCard";
 import { IntegartionProductModal } from "~/client/private/integration/IntegrationProductModal";
 
-import type { IntegrationAppFormMetadata } from "~/models/integration/apps/types";
+import type { IntegrationAppFormMetadata } from "~/models/integration/types";
 import { useState } from "react";
 import type { SelectedWorkspace } from "~/models/integration/types";
 import type { SelectedMembers } from "~/models/integration/types";

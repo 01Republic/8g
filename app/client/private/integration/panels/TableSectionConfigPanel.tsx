@@ -1,23 +1,36 @@
 import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion'
+import type { FormWorkflow } from '~/models/integration/types'
+import { useWorkflowConfig } from '~/hooks/use-workflow-config'
+import WorkflowField from './field/WorkflowField'
+import TextField from './field/TextField'
 
 interface TableSectionConfigPanelProps {
   sectionId: string
   sectionIndex: number
-  targetUrl: string
+  title?: string
   uiType: string
   index: number
   withMeta: (updater: (draft: any) => void) => void
+  workflow?: FormWorkflow
 }
 
-const TableSectionConfigPanel = ({ 
-  sectionId, 
-  sectionIndex, 
-  targetUrl, 
-  uiType, 
-  index, withMeta }: TableSectionConfigPanelProps) => {
+const TableSectionConfigPanel = ({
+  sectionId,
+  sectionIndex,
+  title,
+  uiType,
+  index,
+  withMeta,
+  workflow,
+}: TableSectionConfigPanelProps) => {
+  const { workflowText, workflowError, handleWorkflowChange } = useWorkflowConfig({
+    index,
+    withMeta,
+    initialWorkflow: workflow,
+  })
+
   return (
     <Accordion type="single" collapsible defaultValue="item">
       <AccordionItem value="item">
@@ -30,14 +43,21 @@ const TableSectionConfigPanel = ({
         </div>
         </AccordionTrigger>
         <AccordionContent>
-          <div className="space-y-2">
-            <Label htmlFor={`tbl-target-${sectionId}`}>워크플로 대상 URL</Label>
-            <Input
-              id={`tbl-target-${sectionId}`}
-              value={targetUrl}
-              onChange={(e) => withMeta((draft) => { ((draft.sections[index].uiSchema as any).workflow ||= {}).targetUrl = e.target.value })}
-              placeholder="https://example.com"
+          <div className="space-y-3">
+            <TextField
+              id={`title-${sectionId}`}
+              label="제목"
+              value={title || ''}
+              placeholder="섹션 제목"
+              onChange={(value) => withMeta((draft) => { (draft.sections[index].uiSchema as any).title = value })}
             />
+          <WorkflowField
+            id={`workflow-json-${sectionId}`}
+            value={workflowText}
+            onChange={handleWorkflowChange}
+            error={workflowError}
+            placeholder='{"version":"1.0","start":"start","steps":[...],"targetUrl":"https://..."}'
+          />
           </div>
           <div className="flex justify-end pt-2">
             <Button

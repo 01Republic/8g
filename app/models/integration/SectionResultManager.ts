@@ -25,5 +25,3 @@ export function setSectionList(sectionId: string, list: any[]) {
 export function getAllSectionResults(): Record<string, SectionResult> {
   return results
 }
-
-

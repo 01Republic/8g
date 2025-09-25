@@ -3,7 +3,7 @@ import Reorderable from "~/components/Reorderable"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { Separator } from "~/components/ui/separator"
 import type { CheckboxSectionSchema, CompletionSectionSchema, InitialCheckSectionSchema, IntegrationAppFormMetadata, SelectBoxSectionSchema, TableSectionSchema } from "~/models/integration/types"
-import SectionConfigBuilder from "~/client/private/integration/SectionConfigBuilder"
+import SectionConfigPanelBuilder from "~/client/private/integration/SectionConfigPanelBuilder"
 
 const buildInitialCheckSectionSchema = () => {
   const defaultSchema: InitialCheckSectionSchema = {
@@ -145,7 +145,7 @@ export const FormSectionList = (props: FormSectionListProps) => {
               onClick={() => setCurrentSection(sectionIndex)}
               dndType={dndType}
             >
-              {SectionConfigBuilder({ section, sectionIndex, index, withMeta: updateMeta })}
+              {SectionConfigPanelBuilder({ section, sectionIndex, index, withMeta: updateMeta })}
             </Reorderable>
           )
         })}
