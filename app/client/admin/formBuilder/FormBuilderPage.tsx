@@ -18,15 +18,16 @@ interface FormBuilderPageProps {
     isSaving: boolean
     saveDialog: { open: boolean; title: string; message: string }
     onCloseDialog: () => void
+    isRunning: boolean
 }
 
 export default function FormBuilderPage( props: FormBuilderPageProps ) {
-    const { appId, initialMetadata, onSave, isSaving, saveDialog, onCloseDialog } = props
+    const { appId, initialMetadata, onSave, isSaving, saveDialog, onCloseDialog, isRunning } = props
     
     const [meta, setMeta] = useState<IntegrationAppFormMetadata>(initialMetadata)
-    const [isActive, setIsActive] = useState(false)
+    const [isActive, setIsActive] = useState(isRunning)
     
-    const [currentSection, setCurrentSection] = useState<number>(0)
+    const [currentSection, setCurrentSection] = useState<number>(1)
     const [selectedItem, setSelectedItem] = useState<string>('')
     
   
@@ -48,8 +49,8 @@ export default function FormBuilderPage( props: FormBuilderPageProps ) {
     }
   
     return (
-      <div style={{ height: '100vh', width: '100vw' }}>
-        <Card>
+      <div className="h-screen w-screen">
+        <Card className="flex h-full w-full flex-col">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Form Builder</CardTitle>
             <div className="flex items-center gap-3">
@@ -62,26 +63,32 @@ export default function FormBuilderPage( props: FormBuilderPageProps ) {
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="flex-1 overflow-hidden">
             <DndProvider backend={HTML5Backend}>
-              <div className="flex gap-8">
+              <div className="flex h-full gap-4">
                 {/* Left: Metadata Form */}
-                <FormSectionList  
-                  meta={meta}
-                  withMeta={(updater) => updateMeta(updater)}
-                  currentSection={currentSection}
-                  setCurrentSection={setCurrentSection}
-                  dndType={DND_SECTION_TYPE}
-                />
+                <div className="flex h-full w-full max-w-xl flex-col overflow-hidden pr-2">
+                  <div className="flex-1 overflow-y-auto">
+                    <FormSectionList  
+                      meta={meta}
+                      withMeta={(updater) => updateMeta(updater)}
+                      currentSection={currentSection}
+                      setCurrentSection={setCurrentSection}
+                      dndType={DND_SECTION_TYPE}
+                    />
+                  </div>
+                </div>
   
                 {/* Right: Preview */}
-                <FormPreview
-                  meta={meta}
-                  currentSection={currentSection}
-                  selectedItem={selectedItem}
-                  onSelectedItemChange={setSelectedItem}
-                  onSectionChange={setCurrentSection}
-                />
+                <div className="flex flex-1 items-center justify-center overflow-auto">
+                  <FormPreview
+                    meta={meta}
+                    currentSection={currentSection}
+                    selectedItem={selectedItem}
+                    onSelectedItemChange={setSelectedItem}
+                    onSectionChange={setCurrentSection}
+                  />
+                </div>
               </div>
             </DndProvider>
           </CardContent>

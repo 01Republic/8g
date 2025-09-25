@@ -1,9 +1,12 @@
-import { Label } from "~/components/ui/label"
+import { useState } from "react"
+import { Plus } from "lucide-react"
+
 import Reorderable from "~/components/Reorderable"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
+import { Button } from "~/components/ui/button"
+import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover"
 import { Separator } from "~/components/ui/separator"
 import type { CheckboxSectionSchema, CompletionSectionSchema, InitialCheckSectionSchema, IntegrationAppFormMetadata, SelectBoxSectionSchema, TableSectionSchema } from "~/models/integration/types"
-import SectionConfigBuilder from "~/client/private/integration/SectionConfigBuilder"
+import SectionConfigPanelBuilder from "~/client/admin/formBuilder/SectionConfigPanelBuilder"
 
 const buildInitialCheckSectionSchema = () => {
   const defaultSchema: InitialCheckSectionSchema = {
@@ -94,6 +97,19 @@ interface FormSectionListProps {
 
 export const FormSectionList = (props: FormSectionListProps) => {
   const { meta, withMeta: updateMeta, currentSection, setCurrentSection, dndType } = props
+  const [isAddSectionOpen, setIsAddSectionOpen] = useState(false)
+
+  const handleAddSection = (type: keyof typeof SectionTypePropsMapper) => {
+    const builder = SectionTypePropsMapper[type]
+    if (!builder) return
+
+    const nextIndex = meta.sections.length + 1
+    updateMeta((draft) => {
+      draft.sections.push({ id: `section-${draft.sections.length + 1}`, uiSchema: builder() })
+    })
+    setCurrentSection(nextIndex)
+    setIsAddSectionOpen(false)
+  }
 
   const moveSection = (dragIndex: number, hoverIndex: number) => {
     const selectedId = currentSection > 0 ? meta.sections[currentSection - 1]?.id : undefined
@@ -110,28 +126,6 @@ export const FormSectionList = (props: FormSectionListProps) => {
 
   return (
     <div className="w-full max-w-xl space-y-6">
-      <div className="flex items-center gap-2">
-        <Label>섹션 추가</Label>
-        <Select onValueChange={(v) => {
-          const nextIndex = meta.sections.length + 1
-          updateMeta((draft) => {
-            const builder = SectionTypePropsMapper[v as keyof typeof SectionTypePropsMapper]
-            if (!builder) return
-            draft.sections.push({ id: `section-${draft.sections.length + 1}`, uiSchema: builder() })
-          })
-          setCurrentSection(nextIndex)
-        }}>
-          <SelectTrigger className="w-[220px]"><SelectValue placeholder="섹션 타입 선택" /></SelectTrigger>
-          <SelectContent>
-            {Object.entries(SectionTypePropsMapper).map(([type]) => (
-              <SelectItem key={type} value={type}>{type}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <Separator />
-
       <div className="space-y-4">
         {meta.sections.map((section, index) => {
           const sectionIndex = index + 1
@@ -145,11 +139,36 @@ export const FormSectionList = (props: FormSectionListProps) => {
               onClick={() => setCurrentSection(sectionIndex)}
               dndType={dndType}
             >
-              {SectionConfigBuilder({ section, sectionIndex, index, withMeta: updateMeta })}
+              {SectionConfigPanelBuilder({ section, sectionIndex, index, withMeta: updateMeta })}
             </Reorderable>
           )
         })}
       </div>
+
+      <Separator />
+
+      <Popover open={isAddSectionOpen} onOpenChange={setIsAddSectionOpen}>
+        <PopoverTrigger asChild>
+          <Button variant="outline" className="w-full justify-center gap-2">
+            <Plus className="size-4" />
+            섹션 추가
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent align="center" className="w-56 p-2">
+          <div className="grid gap-1">
+            {Object.entries(SectionTypePropsMapper).map(([type]) => (
+              <Button
+                key={type}
+                variant="ghost"
+                className="justify-start"
+                onClick={() => handleAddSection(type as keyof typeof SectionTypePropsMapper)}
+              >
+                {type}
+              </Button>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
     </div>
   )
 }

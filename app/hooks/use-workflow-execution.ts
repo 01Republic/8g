@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { FormWorkflow } from '~/models/integration/types'
 import { getAllSectionResults } from '../models/integration/SectionResultManager'
-import { runWorkflow } from '../models/integration/workflowRunner'
+import { runWorkflow } from '../models/integration/WorkflowRunner'
 
 /*
 이 workflow execution은 8g-extension을 사용하여 워크플로우를 실행하고 결과를 반환합니다.

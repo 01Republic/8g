@@ -12,7 +12,7 @@ interface BuildSectionConfigPanelProps {
   withMeta: (updater: (draft: any) => void) => void
 }
 
-export default function SectionConfigBuilder({ section, sectionIndex, index, withMeta }: BuildSectionConfigPanelProps) {
+export default function SectionConfigPanelBuilder({ section, sectionIndex, index, withMeta }: BuildSectionConfigPanelProps) {
   const ui: any = section.uiSchema as any
   const uiType: string = (ui?.type as string) || ""
 
@@ -20,7 +20,9 @@ export default function SectionConfigBuilder({ section, sectionIndex, index, wit
     const _ui = ui as InitialCheckSectionSchema
     return (
       <InitialCheckSectionConfigPanel
+        sectionId={section.id}
         sectionIndex={sectionIndex}
+        title={_ui.title || ""}
         uiType={_ui.type}
         index={index}
         withMeta={withMeta}
@@ -36,7 +38,6 @@ export default function SectionConfigBuilder({ section, sectionIndex, index, wit
         sectionIndex={sectionIndex}
         title={_ui.title || ""}
         placeholder={_ui.placeholder || ""}
-        targetUrl={_ui.workflow?.targetUrl || ""}
         uiType={_ui.type}
         index={index}
         withMeta={withMeta}
@@ -50,11 +51,11 @@ export default function SectionConfigBuilder({ section, sectionIndex, index, wit
       <CheckboxSectionConfigPanel
         sectionId={section.id}
         sectionIndex={sectionIndex}
+        title={_ui.title || ""}
         placeholder={_ui.placeholder || ""}
         loadingMessage={_ui.loadingMessage || ""}
         errorMessage={_ui.errorMessage || ""}
         successMessage={_ui.successMessage || ""}
-        targetUrl={_ui.workflow?.targetUrl || ""}
         uiType={_ui.type}
         index={index}
         withMeta={withMeta}
@@ -68,7 +69,7 @@ export default function SectionConfigBuilder({ section, sectionIndex, index, wit
       <TableSectionConfigPanel
         sectionId={section.id}
         sectionIndex={sectionIndex}
-        targetUrl={_ui.workflow?.targetUrl || ""}
+        title={_ui.title || ""}
         uiType={_ui.type}
         index={index}
         withMeta={withMeta}
@@ -80,7 +81,9 @@ export default function SectionConfigBuilder({ section, sectionIndex, index, wit
     const _ui = ui as CompletionSectionSchema
     return (
       <CompletionSectionConfigPanel
+        sectionId={section.id}
         sectionIndex={sectionIndex}
+        title={_ui.title || ""}
         uiType={_ui.type}
         index={index}
         withMeta={withMeta}

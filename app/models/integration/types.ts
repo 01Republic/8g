@@ -4,8 +4,8 @@ export type FormWorkflow = {
     version: string
     start: string
     steps: WorkflowStep[]
-    parser: (result: any) => any
-    targetUrl: string
+    parser?: (result: any) => any
+    targetUrl?: string
   }
   
   export type SelectBoxSectionSchema = {

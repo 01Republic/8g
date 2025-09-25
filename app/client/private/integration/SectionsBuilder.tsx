@@ -7,8 +7,8 @@ import { InitialCheckSection } from './sections/InitialCheckSection'
 import { CompletionSection } from './sections/CompletionSection'
 import type { SelectedWorkspace } from '~/models/integration/types'
 import type { SelectedMembers } from '~/models/integration/types'
-import type { IntegrationAppFormMetadata } from '~/models/integration/apps/types'
-import type { FormSectionSchema, SelectBoxSectionSchema, CheckboxSectionSchema, TableSectionSchema } from '~/models/integration/apps/types'
+import type { IntegrationAppFormMetadata } from '~/models/integration/types'
+import type { FormSectionSchema, SelectBoxSectionSchema, CheckboxSectionSchema, TableSectionSchema } from '~/models/integration/types'
 
 export const buildSections = (meta: IntegrationAppFormMetadata, props: FormComponentProps): ReactNode[] => {
   return meta.sections.map((sectionMeta, index) => {
@@ -117,6 +117,7 @@ export const buildSection = (
       return (
         <CompletionSection
           key={`section-${keyId}`}
+          title={uiSchema.title}
           hasPrevious={hasPrevious}
           hasNext={hasNext}
           onPrevious={onPrevious}
