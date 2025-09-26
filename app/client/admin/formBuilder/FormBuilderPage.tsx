@@ -43,9 +43,7 @@ export default function FormBuilderPage(props: FormBuilderPageProps) {
   const [selectedItem, setSelectedItem] = useState<string>("");
 
   const updateMeta = (updater: (draft: AppFormMetadata) => void) => {
-    const current = JSON.parse(
-      JSON.stringify(meta),
-    ) as AppFormMetadata;
+    const current = JSON.parse(JSON.stringify(meta)) as AppFormMetadata;
     updater(current);
     setMeta(current);
     if (current.sections.length === 0) {

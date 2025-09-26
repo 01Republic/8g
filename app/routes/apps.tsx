@@ -3,56 +3,19 @@ import { authMiddleware } from "~/middleware/auth";
 import { useLoaderData } from "react-router";
 import { userContext } from "~/context";
 import AppsPage from "~/client/private/apps/AppsPage";
-
-const { initializeDatabase } = await import("~/.server/db");
-const { Subscriptions } = await import("~/.server/db/entities/Subscriptions");
+import { findAllApp } from "~/.server/services/find-all-app.service";
 
 export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
 
 export async function loader({ context }: Route.LoaderArgs) {
-  await initializeDatabase();
-
   const user = context.get(userContext);
   const organizationId = user!.orgId;
 
-  const subscriptions = await Subscriptions.find({
-    where: {
-      isActive: 1,
-      organization: {
-        id: organizationId,
-      },
-    },
-    relations: [
-      "product",
-      "currentBillingAmount",
-      "paymentPlan",
-      "organization",
-    ],
+  const apps = await findAllApp({
+    orgId: organizationId,
   });
 
-  // 취소되거나 일시정지된 구독 필터링
-  const filteredSubscriptions = subscriptions.filter(
-    (sub) => !["CANCELED", "PAUSED"].includes(sub.status),
-  );
-
-  const appData = filteredSubscriptions.map((subscription: any) => ({
-    id: subscription.id,
-    appLogo: subscription.product?.image || "https://via.placeholder.com/40",
-    appKoreanName:
-      subscription.alias || subscription.product?.nameKo || "Unknown App",
-    appEnglishName: subscription.product?.nameEn || "Unknown App",
-    category: "SaaS",
-    status: subscription.status,
-    paidMemberCount: subscription.paidMemberCount || 0,
-    usedMemberCount: subscription.usedMemberCount || 0,
-    nextBillingDate: subscription.nextBillingDate,
-    nextBillingAmount: subscription.nextBillingAmount || 0,
-    billingCycleType: subscription.billingCycleType,
-    pricingModel: subscription.pricingModel,
-    connectStatus: subscription.connectStatus,
-  }));
-
-  return { apps: appData };
+  return { apps };
 }
 
 export default function Apps() {

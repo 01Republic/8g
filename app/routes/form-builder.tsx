@@ -3,7 +3,7 @@ import FormBuilderPage from "~/client/admin/formBuilder/FormBuilderPage";
 import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 import type { AppFormMetadata } from "~/models/integration/types";
-import { findAllFormMetadata } from "~/.server/services/find-integration-product-form-metadata.service";
+import { findAllFormMetadata } from "~/.server/services/find-form-metadata.service";
 import { upsertFormMetadata } from "~/.server/services/upsert-form-metadata.service";
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -42,7 +42,7 @@ export default function FormBuilder({ loaderData }: Route.ComponentProps) {
     isActive: boolean;
   }) => {
     const { appId, meta, isActive } = payload;
-    
+
     const formData = new FormData();
     formData.append("appId", appId);
     formData.append("meta", JSON.stringify(meta));

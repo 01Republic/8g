@@ -16,10 +16,7 @@ export async function upsertFormMetadata(
   });
 
   if (existing) {
-    await IntegrationAppFormMetadata.update(
-      { productId },
-      { meta, isActive },
-    );
+    await IntegrationAppFormMetadata.update({ productId }, { meta, isActive });
 
     return;
   }

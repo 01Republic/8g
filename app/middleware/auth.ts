@@ -8,6 +8,8 @@ export const authMiddleware = async ({ request, context }) => {
   const userId = session.get("userId");
   const orgId = session.get("orgId");
 
+  console.log(userId, orgId);
+
   if (!userId) {
     throw redirect("/login");
   }

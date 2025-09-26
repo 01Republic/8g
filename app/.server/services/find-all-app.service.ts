@@ -8,6 +8,7 @@ export async function findAllApp({
   orgId,
 }: FindAllAppDto): Promise<AppResponseDto[]> {
   const where = {
+    isActive: 1,
     organization: {
       id: orgId,
     },

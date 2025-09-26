@@ -1,8 +1,5 @@
 import type { ElementData, GetElementDataBlock } from "8g-extension";
-import type {
-  CheckboxSectionSchema,
-  AppFormMetadata,
-} from "./types";
+import type { CheckboxSectionSchema, AppFormMetadata } from "./types";
 
 // TODO: 이 파일을 삭제할 예정입니다.
 // 이 파일은 slack 연동 테스트를 위한 파일입니다.

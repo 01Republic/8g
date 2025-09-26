@@ -14,4 +14,5 @@ export default [
     route("/apps/:appId/form-builder", "routes/form-builder.tsx"),
   ]),
   layout("layouts/common.tsx", [route("/login", "routes/login.tsx")]),
+  route("/not-found", "routes/not-found.tsx"),
 ] satisfies RouteConfig;
