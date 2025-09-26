@@ -36,6 +36,7 @@ export default function FormBuilder({ loaderData }: Route.ComponentProps) {
     message: string;
   }>({ open: false, title: "", message: "" });
 
+  // 이 부분이랑 formData 관련된 부분도 공통으로 뺄 수 있을 듯
   const onSave = (payload: {
     appId: string;
     meta: AppFormMetadata;
