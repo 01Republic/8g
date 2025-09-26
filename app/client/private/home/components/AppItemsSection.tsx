@@ -19,9 +19,9 @@ export const AppItemsSection = (props: AppItemsSectionProps) => {
 
       <div className="relative h-100">
         <div className="absolute inset-0 rounded-2xl">
-          <div className="h-full overflow-y-auto rounded-2xl p-4">
+          <div className="h-full overflow-y-auto rounded-2xl">
             {showItems ? (
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-3">
                 {apps.map((app) => (
                   <AppItem key={app.id} apps={app} />
                 ))}
