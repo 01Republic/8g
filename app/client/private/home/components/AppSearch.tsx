@@ -13,10 +13,7 @@ export function AppSearch({
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
-  const items = useMemo(
-    () => (query ? [] : []),
-    [query],
-  );
+  const items = useMemo(() => (query ? [] : []), [query]);
 
   useEffect(() => {
     setOpen(!!(query && items.length));

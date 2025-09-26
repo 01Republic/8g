@@ -7,11 +7,9 @@ import type { SelectedMembers } from "~/models/integration/types";
 import { IntegrationAppFormMetadata as IntegrationAppFormMetadataEntity } from "~/.server/db/entities/IntegrationAppFormMetadata";
 import type { IntegrationAppFormMetadata } from "~/models/integration/types";
 import IntegrationPage from "~/client/private/integration/IntegrationPage";
+import { integrateApp } from "~/.server/services/integrate-app.service";
 const { initializeDatabase } = await import("~/.server/db");
 const { Products } = await import("~/.server/db/entities/Products");
-const { SubscriptionService } = await import(
-  "~/.server/db/services/subscription.service"
-);
 
 export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
 
@@ -58,8 +56,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   const organizationId = user!.orgId;
   const productId = parseInt(formData.get("productId") as string);
 
-  const subscriptionService = new SubscriptionService();
-  await subscriptionService.saveSubscription({
+  await integrateApp({
     workspace,
     members,
     organizationId,

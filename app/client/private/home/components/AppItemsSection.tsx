@@ -14,7 +14,7 @@ export const AppItemsSection = (props: AppItemsSectionProps) => {
   return (
     <section className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <span className="text-sm text-gray-600 font-light">나의 구독 앱...</span>
+        <span className="text-sm text-gray-600 font-light">나의 구독 앱</span>
       </div>
 
       <div className="relative h-100">

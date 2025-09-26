@@ -31,10 +31,7 @@ export default function HomePage(props: HomePageProps) {
           <h1 className="text-4xl font-bold text-gray-900">
             어떤 앱을 쓰고 계신가요?
           </h1>
-          <AppSearch
-            query={query}
-            onQueryChange={setQuery}
-          />
+          <AppSearch query={query} onQueryChange={setQuery} />
         </section>
 
         <AppItemsSection apps={apps} isLoading={isLoading} />
