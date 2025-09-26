@@ -5,7 +5,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { SaveDialog } from "./SaveDialog";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import type { IntegrationAppFormMetadata } from "~/models/integration/types";
+import type { AppFormMetadata } from "~/models/integration/types";
 import { FormPreview } from "./FormPreview";
 import { FormSectionList } from "./FormSectionList";
 
@@ -13,10 +13,10 @@ const DND_SECTION_TYPE = "SECTION";
 
 interface FormBuilderPageProps {
   appId: string;
-  initialMetadata: IntegrationAppFormMetadata;
+  initialMetadata: AppFormMetadata;
   onSave: (payload: {
     appId: string;
-    meta: IntegrationAppFormMetadata;
+    meta: AppFormMetadata;
     isActive: boolean;
   }) => void;
   isSaving: boolean;
@@ -36,16 +36,16 @@ export default function FormBuilderPage(props: FormBuilderPageProps) {
     isRunning,
   } = props;
 
-  const [meta, setMeta] = useState<IntegrationAppFormMetadata>(initialMetadata);
+  const [meta, setMeta] = useState<AppFormMetadata>(initialMetadata);
   const [isActive, setIsActive] = useState(isRunning);
 
   const [currentSection, setCurrentSection] = useState<number>(1);
   const [selectedItem, setSelectedItem] = useState<string>("");
 
-  const updateMeta = (updater: (draft: IntegrationAppFormMetadata) => void) => {
+  const updateMeta = (updater: (draft: AppFormMetadata) => void) => {
     const current = JSON.parse(
       JSON.stringify(meta),
-    ) as IntegrationAppFormMetadata;
+    ) as AppFormMetadata;
     updater(current);
     setMeta(current);
     if (current.sections.length === 0) {

@@ -2,10 +2,10 @@ import {
   DynamicFormBuilder,
   type FormComponentProps,
 } from "~/client/private/integration/DynamicFormBuilder";
-import type { IntegrationAppFormMetadata } from "~/models/integration/types";
+import type { AppFormMetadata } from "~/models/integration/types";
 
 interface FormPreviewProps {
-  meta: IntegrationAppFormMetadata;
+  meta: AppFormMetadata;
   currentSection: number;
   selectedItem: string;
   onSelectedItemChange: (value: string) => void;

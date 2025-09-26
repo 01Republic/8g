@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { IntegrationAppFormMetadata } from "~/models/integration/types";
+import type { AppFormMetadata } from "~/models/integration/types";
 import { buildSections } from "./SectionsBuilder";
 import {
   Stepper,
@@ -27,7 +27,7 @@ export interface FormComponentProps {
 
 // Options to customize builder behavior (e.g., preview mode in form-builder)
 type BuilderOptions = {
-  meta: IntegrationAppFormMetadata;
+  meta: AppFormMetadata;
 };
 
 // No per-app hooks; everything is metadata-driven now

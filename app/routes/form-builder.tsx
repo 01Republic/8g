@@ -1,59 +1,27 @@
 import type { Route } from "./+types/form-builder";
-import { IntegrationAppFormMetadata as IntegrationAppFormMetadataEntity } from "~/.server/db/entities/IntegrationAppFormMetadata";
-import { initializeDatabase } from "~/.server/db";
 import FormBuilderPage from "~/client/admin/formBuilder/FormBuilderPage";
 import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
-import type { IntegrationAppFormMetadata } from "~/models/integration/types";
+import type { AppFormMetadata } from "~/models/integration/types";
+import { findAllFormMetadata } from "~/.server/services/find-integration-product-form-metadata.service";
+import { upsertFormMetadata } from "~/.server/services/upsert-form-metadata.service";
 
 export async function loader({ params }: Route.LoaderArgs) {
-  await initializeDatabase();
-  const integrationAppFormMetadata =
-    await IntegrationAppFormMetadataEntity.findOne({
-      where: { productId: parseInt(params.appId) },
-    });
-
-  if (!integrationAppFormMetadata) {
-    return {
-      appId: params.appId,
-      initialMeta: { sections: [] } as IntegrationAppFormMetadata,
-    };
-  }
-
-  return {
-    appId: params.appId,
-    initialMeta:
-      integrationAppFormMetadata.meta as unknown as IntegrationAppFormMetadata,
-    isActive: integrationAppFormMetadata.isActive,
-  };
+  return await findAllFormMetadata(params.appId);
 }
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
-  const appId = formData.get("appId") as string;
-  const meta = formData.get("meta") as string;
-  const isActiveStr = formData.get("isActive") as string | null;
-  const isActive = isActiveStr === "true";
+  const appId = formData.get("appId")!.toString();
+  const meta = JSON.parse(formData.get("meta")!.toString());
+  const isActive = formData.get("isActive")!.toString() === "true";
 
-  await initializeDatabase();
-  const isUpdate = await IntegrationAppFormMetadataEntity.findOne({
-    where: { productId: parseInt(appId) },
-  });
-  if (isUpdate) {
-    await IntegrationAppFormMetadataEntity.update(
-      { productId: parseInt(appId) },
-      { meta: JSON.parse(meta), isActive },
-    );
-  } else {
-    await IntegrationAppFormMetadataEntity.save({
-      productId: parseInt(appId),
-      meta: JSON.parse(meta),
-      isActive,
-    });
-  }
+  await upsertFormMetadata(appId, meta, isActive);
 
   return {
-    message: "Success",
+    appId,
+    meta,
+    isActive,
   };
 }
 
@@ -68,15 +36,13 @@ export default function FormBuilder({ loaderData }: Route.ComponentProps) {
     message: string;
   }>({ open: false, title: "", message: "" });
 
-  const onSave = ({
-    appId,
-    meta,
-    isActive,
-  }: {
+  const onSave = (payload: {
     appId: string;
-    meta: IntegrationAppFormMetadata;
+    meta: AppFormMetadata;
     isActive: boolean;
   }) => {
+    const { appId, meta, isActive } = payload;
+    
     const formData = new FormData();
     formData.append("appId", appId);
     formData.append("meta", JSON.stringify(meta));
@@ -84,6 +50,7 @@ export default function FormBuilder({ loaderData }: Route.ComponentProps) {
     fetcher.submit(formData, { method: "POST" });
   };
 
+  // 이 부분은 차후 컴포넌트로 분리할 수 있을 거 같음
   useEffect(() => {
     if (fetcher.state !== "idle") return;
     if (!fetcher.data) return;
@@ -103,7 +70,7 @@ export default function FormBuilder({ loaderData }: Route.ComponentProps) {
   return (
     <FormBuilderPage
       appId={appId}
-      initialMetadata={initialMeta as unknown as IntegrationAppFormMetadata}
+      initialMetadata={initialMeta}
       onSave={onSave}
       isSaving={isSaving}
       saveDialog={saveDialog}

@@ -1,4 +1,5 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import type { AppFormMetadata } from "~/models/integration/types";
 
 /*
 CREATE TABLE IF NOT EXISTS payplo_staging.integration_app_form_metadata (
@@ -19,7 +20,7 @@ export class IntegrationAppFormMetadata extends BaseEntity {
   productId: number;
 
   @Column({ type: "json", name: "meta" })
-  meta: Record<string, unknown>;
+  meta: AppFormMetadata;
 
   @Column({ type: "boolean", name: "is_active", default: false })
   isActive: boolean;

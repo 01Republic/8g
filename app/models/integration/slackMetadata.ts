@@ -1,13 +1,13 @@
 import type { ElementData, GetElementDataBlock } from "8g-extension";
 import type {
   CheckboxSectionSchema,
-  IntegrationAppFormMetadata,
+  AppFormMetadata,
 } from "./types";
 
 // TODO: 이 파일을 삭제할 예정입니다.
 // 이 파일은 slack 연동 테스트를 위한 파일입니다.
 // 이 파일은 삭제할 예정입니다.
-export const slackMetadata: IntegrationAppFormMetadata = {
+export const slackMetadata: AppFormMetadata = {
   sections: [
     {
       id: "initial-check",

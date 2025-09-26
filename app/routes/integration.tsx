@@ -4,7 +4,7 @@ import { useFetcher } from "react-router";
 import type { Route } from "./+types/integration";
 import type { SelectedWorkspace } from "~/models/integration/types";
 import type { SelectedMembers } from "~/models/integration/types";
-import type { IntegrationAppFormMetadata } from "~/models/integration/types";
+import type { AppFormMetadata } from "~/models/integration/types";
 import IntegrationPage from "~/client/private/integration/IntegrationPage";
 import { integrateApp } from "~/.server/services/integrate-app.service";
 import { findActiveIntegrationProducts } from "~/.server/services/find-active-integration-products.service";
@@ -19,10 +19,10 @@ export async function action({ request, context }: Route.ActionArgs) {
   const user = context.get(userContext);
 
   const formData = await request.formData();
-  const workspace = JSON.parse(formData.get("workspace") as string);
-  const members = JSON.parse(formData.get("members") as string);
+  const workspace = JSON.parse(formData.get("workspace")!.toString());
+  const members = JSON.parse(formData.get("members")!.toString());
+  const productId = parseInt(formData.get("productId")!.toString());
   const organizationId = user!.orgId;
-  const productId = parseInt(formData.get("productId") as string);
 
   await integrateApp({
     workspace,
@@ -42,6 +42,7 @@ export default function Integration({ loaderData }: Route.ComponentProps) {
     productId: number;
   }) => {
     const { workspace, members, productId } = payload;
+
     const formData = new FormData();
     formData.append("workspace", JSON.stringify(workspace));
     formData.append("members", JSON.stringify(members));
@@ -50,11 +51,11 @@ export default function Integration({ loaderData }: Route.ComponentProps) {
   };
 
   // 흠 이 부분은 나중에 실시간 반영을 위해서 fetch 하는 방식으로 변경
-  const getMetadata = (productId: number): IntegrationAppFormMetadata => {
+  const getMetadata = (productId: number): AppFormMetadata => {
     const meta = integrationAppFormMetadata.find(
       (it) => it.productId === productId,
     )?.meta;
-    return meta as unknown as IntegrationAppFormMetadata;
+    return meta as unknown as AppFormMetadata;
   };
 
   return (

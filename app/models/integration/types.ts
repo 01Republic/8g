@@ -53,7 +53,7 @@ export type AppFormSectionMeta = {
   uiSchema: FormSectionSchema;
 };
 
-export type IntegrationAppFormMetadata = {
+export type AppFormMetadata = {
   sections: AppFormSectionMeta[];
 };
 

@@ -1,7 +1,7 @@
 import { ProductCard } from "~/client/private/integration/ProductCard";
 import { IntegartionProductModal } from "~/client/private/integration/IntegrationProductModal";
 
-import type { IntegrationAppFormMetadata } from "~/models/integration/types";
+import type { AppFormMetadata } from "~/models/integration/types";
 import { useState } from "react";
 import type { SelectedWorkspace } from "~/models/integration/types";
 import type { SelectedMembers } from "~/models/integration/types";
@@ -9,7 +9,7 @@ import type { Product } from "~/models/integration/types";
 
 interface IntegrationPageProps {
   products: Product[];
-  getMetadata: (productId: number) => IntegrationAppFormMetadata;
+  getMetadata: (productId: number) => AppFormMetadata;
   onSubmit: (payload: {
     workspace: SelectedWorkspace;
     members: SelectedMembers[];

@@ -9,7 +9,7 @@ import type { Dispatch, SetStateAction } from "react";
 import { DynamicFormBuilder } from "~/client/private/integration/DynamicFormBuilder";
 import type { SelectedWorkspace } from "~/models/integration/types";
 import type { SelectedMembers } from "~/models/integration/types";
-import type { IntegrationAppFormMetadata } from "~/models/integration/types";
+import type { AppFormMetadata } from "~/models/integration/types";
 
 interface IntegartionProductModalProps {
   open: boolean;
@@ -19,7 +19,7 @@ interface IntegartionProductModalProps {
     members: SelectedMembers[];
     productId: number;
   }) => void;
-  meta: IntegrationAppFormMetadata;
+  meta: AppFormMetadata;
   productId: number;
 }
 

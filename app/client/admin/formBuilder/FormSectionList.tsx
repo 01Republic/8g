@@ -13,7 +13,7 @@ import type {
   CheckboxSectionSchema,
   CompletionSectionSchema,
   InitialCheckSectionSchema,
-  IntegrationAppFormMetadata,
+  AppFormMetadata,
   SelectBoxSectionSchema,
   TableSectionSchema,
 } from "~/models/integration/types";
@@ -99,8 +99,8 @@ export const SectionTypePropsMapper = {
 };
 
 interface FormSectionListProps {
-  meta: IntegrationAppFormMetadata;
-  withMeta: (updater: (draft: IntegrationAppFormMetadata) => void) => void;
+  meta: AppFormMetadata;
+  withMeta: (updater: (draft: AppFormMetadata) => void) => void;
   currentSection: number;
   setCurrentSection: (index: number) => void;
   dndType: string;
