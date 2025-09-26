@@ -5,22 +5,23 @@ import { AppItemsSection } from "./components/AppItemsSection";
 
 interface HomePageProps {
   apps: AppType[];
+  isLoading: boolean;
+  onSearch: (query: string) => void;
 }
 
 export default function HomePage(props: HomePageProps) {
-  const { apps } = props;
+  const { apps, isLoading, onSearch } = props;
 
-  const [predictions, setPredictions] = useState<string[]>([]);
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    setPredictions(
-      apps
-        .filter((app) =>
-          app.appKoreanName.toLowerCase().includes(query.toLowerCase()),
-        )
-        .map((it) => it.appKoreanName),
-    );
+    const handler = setTimeout(() => {
+      onSearch(query);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
   }, [query]);
 
   return (
@@ -33,11 +34,10 @@ export default function HomePage(props: HomePageProps) {
           <AppSearch
             query={query}
             onQueryChange={setQuery}
-            predictions={predictions}
           />
         </section>
 
-        <AppItemsSection apps={apps} />
+        <AppItemsSection apps={apps} isLoading={isLoading} />
       </div>
     </div>
   );

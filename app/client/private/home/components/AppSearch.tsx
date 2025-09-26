@@ -4,20 +4,18 @@ import { Input } from "~/components/ui/input";
 interface SubscriptionSearchCommandProps {
   query: string;
   onQueryChange: (value: string) => void;
-  predictions: string[];
 }
 
 export function AppSearch({
   query,
   onQueryChange,
-  predictions,
 }: SubscriptionSearchCommandProps) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   const items = useMemo(
-    () => (query ? predictions.slice(0, 8) : []),
-    [predictions, query],
+    () => (query ? [] : []),
+    [query],
   );
 
   useEffect(() => {
@@ -50,11 +48,6 @@ export function AppSearch({
     }
   };
 
-  const select = (val: string) => {
-    onQueryChange(val);
-    setOpen(false);
-  };
-
   return (
     <div ref={wrapRef} className="relative w-full max-w-4xl">
       <Input
@@ -68,30 +61,6 @@ export function AppSearch({
         aria-expanded={open}
         aria-controls="app-search-listbox"
       />
-
-      {open && (
-        <ul
-          id="app-search-listbox"
-          role="listbox"
-          className="absolute z-10 mt-2 w-full rounded-xl border border-gray-200 bg-white shadow-lg overflow-hidden py-2"
-        >
-          {items.map((item, i) => (
-            <li
-              key={item}
-              id={`option-${i}`}
-              role="option"
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => select(item)}
-              className="w-full text-left px-4 py-3 text-sm hover:bg-primary-week cursor-pointer"
-            >
-              {item}
-            </li>
-          ))}
-          {!items.length && (
-            <div className="px-4 py-3 text-sm text-gray-500">No results</div>
-          )}
-        </ul>
-      )}
     </div>
   );
 }

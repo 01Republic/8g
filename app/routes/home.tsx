@@ -4,6 +4,10 @@ import { authMiddleware } from "~/middleware/auth";
 import { initializeDatabase } from "~/.server/db/config";
 import { Subscriptions } from "~/.server/db/entities/Subscriptions";
 import HomePage from "~/client/private/home/HomePage";
+import { Like } from "typeorm";
+import { useFetcher } from "react-router";
+import { useCallback, useEffect, useState } from "react";
+import type { AppType } from "~/models/apps/types";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -14,16 +18,41 @@ export function meta({}: Route.MetaArgs) {
 
 export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
 
-export async function loader({ context }: Route.LoaderArgs) {
-  const user = context.get(userContext); // Guaranteed to exist
+export async function action({ request, context }: Route.ActionArgs) {
+  const user = context.get(userContext);
+  const formData = await request.formData();
+  const query = formData.get("query");
+
+  function isKorean(str: string) {
+    const pattern = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+  
+    return pattern.test(str);
+  }
+  
+  function isEnglish(str: string) {
+    const pattern = /[a-zA-Z]/;
+  
+    return pattern.test(str);
+  }
+
+  const where = {
+    organization: {
+      id: user!.orgId,
+    },
+    product: {},
+  };
+
+  if (query) {
+    where.product = {
+      searchText: Like(`%${query as string}%`),
+      ...(isKorean(query as string) ? { nameKo: Like(`%${query as string}%`) } : {}),
+      ...(isEnglish(query as string) ? { nameEn: Like(`%${query as string}%`) } : {}),
+    };
+  }
 
   await initializeDatabase();
   const subscriptions = await Subscriptions.find({
-    where: {
-      organization: {
-        id: user!.orgId,
-      },
-    },
+    where,
     order: {
       registeredAt: "DESC",
     },
@@ -35,9 +64,7 @@ export async function loader({ context }: Route.LoaderArgs) {
     ],
   });
 
-  // TODO: 나중에 mapper 함수나 따로 빼기
   return {
-    user,
     apps: subscriptions.map((subscription: any) => ({
       id: subscription.id,
       appLogo: subscription.product?.image || "https://via.placeholder.com/40",
@@ -57,8 +84,28 @@ export async function loader({ context }: Route.LoaderArgs) {
   };
 }
 
-export default function Home({ loaderData }: Route.ComponentProps) {
-  const { apps } = loaderData;
+export default function Home() {
+  const [apps, setApps] = useState<AppType[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  return <HomePage apps={apps} />;
+  const fetcher = useFetcher<typeof action>();
+
+  const handleSearch = useCallback(
+    (query: string) => {
+      setIsLoading(true);
+      fetcher.submit({ query }, { method: "POST" });
+    },
+    [fetcher]
+  );
+
+  useEffect(() => {
+    if (fetcher.state === "idle") {
+      setIsLoading(false);
+      setApps(fetcher.data?.apps ?? []);
+    } else {
+      setIsLoading(true);
+    }
+  }, [fetcher.state, fetcher.data]);
+
+  return <HomePage apps={apps} isLoading={isLoading} onSearch={handleSearch} />;
 }
