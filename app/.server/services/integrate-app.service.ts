@@ -1,11 +1,13 @@
-import { AppDataSource, Organizations } from "../db/index";
+import { AppDataSource, initializeDatabase, Organizations } from "../db/index";
 import { Subscriptions } from "../db/entities/Subscriptions";
 import { SubscriptionSeats } from "../db/entities/SubscriptionSeats";
-import type { RegisterAppDto, RegisterAppResponse } from "~/routes/dto/app";
+import type { RegisterAppDto, RegisterAppResponseDto } from "~/routes/dto/app";
 
 export async function integrateApp(
   data: RegisterAppDto,
-): Promise<RegisterAppResponse> {
+): Promise<RegisterAppResponseDto> {
+  await initializeDatabase();
+
   const queryRunner = AppDataSource.createQueryRunner();
   await queryRunner.connect();
   await queryRunner.startTransaction();

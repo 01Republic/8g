@@ -4,53 +4,21 @@ import { useFetcher } from "react-router";
 import type { Route } from "./+types/integration";
 import type { SelectedWorkspace } from "~/models/integration/types";
 import type { SelectedMembers } from "~/models/integration/types";
-import { IntegrationAppFormMetadata as IntegrationAppFormMetadataEntity } from "~/.server/db/entities/IntegrationAppFormMetadata";
 import type { IntegrationAppFormMetadata } from "~/models/integration/types";
 import IntegrationPage from "~/client/private/integration/IntegrationPage";
 import { integrateApp } from "~/.server/services/integrate-app.service";
-const { initializeDatabase } = await import("~/.server/db");
-const { Products } = await import("~/.server/db/entities/Products");
+import { findActiveIntegrationProducts } from "~/.server/services/find-active-integration-products.service";
 
 export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
 
-export async function loader({ request }: Route.LoaderArgs) {
-  await initializeDatabase();
-
-  // 활성화된 통합 앱 메타데이터 조회
-  const integrationAppFormMetadata =
-    await IntegrationAppFormMetadataEntity.find({
-      where: { isActive: true },
-    });
-
-  // 메타데이터가 없으면 빈 결과 반환
-  if (integrationAppFormMetadata.length === 0) {
-    return {
-      products: [],
-      integrationAppFormMetadata: [],
-    };
-  }
-
-  // 제품 조회 쿼리 실행
-  const productIds = integrationAppFormMetadata.map((item) => item.productId);
-
-  const products = await Products.createQueryBuilder("product")
-    .leftJoinAndSelect("product.productTags", "productTag")
-    .leftJoinAndSelect("productTag.tag", "tag")
-    .andWhere("product.id IN (:...productIds)", { productIds })
-    .getMany();
-
-  return {
-    products,
-    integrationAppFormMetadata,
-  };
+export async function loader({}: Route.LoaderArgs) {
+  return await findActiveIntegrationProducts();
 }
 
 export async function action({ request, context }: Route.ActionArgs) {
-  await initializeDatabase();
-
   const user = context.get(userContext);
-  const formData = await request.formData();
 
+  const formData = await request.formData();
   const workspace = JSON.parse(formData.get("workspace") as string);
   const members = JSON.parse(formData.get("members") as string);
   const organizationId = user!.orgId;
@@ -73,11 +41,11 @@ export default function Integration({ loaderData }: Route.ComponentProps) {
     members: SelectedMembers[];
     productId: number;
   }) => {
+    const { workspace, members, productId } = payload;
     const formData = new FormData();
-    if (payload.workspace)
-      formData.append("workspace", JSON.stringify(payload.workspace));
-    formData.append("members", JSON.stringify(payload.members));
-    formData.append("productId", payload.productId.toString());
+    formData.append("workspace", JSON.stringify(workspace));
+    formData.append("members", JSON.stringify(members));
+    formData.append("productId", productId.toString());
     fetcher.submit(formData, { method: "POST" });
   };
 
