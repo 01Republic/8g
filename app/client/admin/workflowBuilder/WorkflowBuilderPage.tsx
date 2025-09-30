@@ -9,13 +9,13 @@ import {
   type Edge,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { workflowNodeTypes } from "~/models/workflow/components/nodes";
-import { getTextNodeTypeKey } from "~/models/workflow/components/nodes";
-import type { GetTextBlock, Workflow, WorkflowStep } from "8g-extension";
-import { EightGClient } from "8g-extension";
+import { workflowNodeTypes } from "~/client/admin/workflowBuilder/nodes";
+import type { GetTextBlock, Workflow, WorkflowStep, Block } from "8g-extension";
+import { EightGClient, AllBlockSchemas } from "8g-extension";
 import { PaletteSheet } from "./PaletteSheet";
 import { ResultPanel } from "./ResultPanel";
 import { WorkflowBuilderHeader } from "./WorkflowBuilderHeader";
+import { blockLabels } from "./nodes";
 
 export default function WorkflowBuilderPage() {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -136,23 +136,38 @@ export default function WorkflowBuilderPage() {
           paletteOpen={paletteOpen}
           setPaletteOpen={setPaletteOpen}
           addNode={addNode}
-          blocks={[
-            {
-              title: "Get Text",
-              description: "CSS/XPath로 요소 텍스트 추출",
-              type: getTextNodeTypeKey,
+          blocks={Object.entries(AllBlockSchemas).map(([blockName, schema]) => {
+            const info = blockLabels[blockName] || { title: blockName, description: "" };
+            
+            // 각 블록의 기본 데이터 생성
+            const defaultBlock: any = {
+              name: blockName,
+              selector: "#selector",
+              findBy: "cssSelector" as const,
+              option: {},
+            };
+
+            // 블록별 특수 필드 추가
+            if (blockName === "attribute-value") {
+              defaultBlock.attributeName = "href";
+            } else if (blockName === "set-value-form") {
+              defaultBlock.setValue = "";
+              defaultBlock.type = "text-field";
+            } else if (blockName === "get-value-form" || blockName === "clear-value-form") {
+              defaultBlock.type = "text-field";
+            }
+
+            return {
+              title: info.title,
+              description: info.description,
+              type: blockName,
               data: {
-                title: "Get Text",
-                block: {
-                  name: "get-text",
-                  selector: "#title",
-                  findBy: "cssSelector",
-                  option: {},
-                  useTextContent: true,
-                } as GetTextBlock,
+                title: info.title,
+                block: defaultBlock as Block,
+                schema,
               },
-            },
-          ]}
+            };
+          })}
         />
       </div>
 
