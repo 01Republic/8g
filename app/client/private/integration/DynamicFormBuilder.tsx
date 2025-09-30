@@ -45,7 +45,7 @@ export function DynamicFormBuilder(options: BuilderOptions) {
       const sectionCount = meta.sections.length;
       const sectionNumbers = Array.from(
         { length: sectionCount },
-        (_, i) => i + 1,
+        (_, i) => i + 1
       );
       const loadingStates =
         args.loadingStates ||
@@ -70,12 +70,12 @@ export function DynamicFormBuilder(options: BuilderOptions) {
                 loading={loadingStates[step] || false}
               >
                 <StepperTrigger onClick={() => {}}>
-                  <StepperIndicator className="data-[state=completed]:bg-green-500 data-[state=completed]:text-black data-[state=active]:bg-primary data-[state=active]:text-black data-[state=inactive]:text-gray-500">
+                  <StepperIndicator className="data-[state=completed]:bg-primary-700 data-[state=completed]:text-white data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:text-gray-500 w-8 h-8 text-base font-semibold">
                     {step}
                   </StepperIndicator>
                 </StepperTrigger>
                 {sectionNumbers.length > step && (
-                  <StepperSeparator className="group-data-[state=completed]/step:bg-green-500" />
+                  <StepperSeparator className="group-data-[state=completed]/step:bg-primary-700" />
                 )}
               </StepperItem>
             ))}
@@ -84,12 +84,19 @@ export function DynamicFormBuilder(options: BuilderOptions) {
       );
 
       const stepSection = (
-        <div className="min-h-[420px] flex items-center">
-          {sections[args.props.currentSection - 1]}
-        </div>
+        <div className="h-full">{sections[args.props.currentSection - 1]}</div>
       );
 
-      return { stepperSection, stepSection };
+      // return { stepperSection, stepSection };
+
+      return (
+        <div className="max-h-150 min-h-110 w-full flex justify-between">
+          <div className="flex gap-8 py-4 w-full">
+            <div className="w-16 flex">{stepperSection}</div>
+            <div className="flex-1 relative px-8">{stepSection}</div>
+          </div>
+        </div>
+      );
     },
 
     buildSections: (props: FormComponentProps) => renderSections(props),

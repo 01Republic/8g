@@ -61,7 +61,7 @@ export const IntegartionProductModal = ({
 
   const formBuilder = DynamicFormBuilder({ meta });
 
-  const { stepperSection, stepSection } = formBuilder.buildStepper({
+  const view = formBuilder.buildStepper({
     props: sectionProps,
   });
 
@@ -79,16 +79,7 @@ export const IntegartionProductModal = ({
         <DialogHeader>
           <DialogTitle>SaaS 연동 설정</DialogTitle>
         </DialogHeader>
-
-        <div className="flex gap-8 min-h-[500px]">
-          {/* Left Side - Vertical Stepper */}
-          <div className="w-16 flex justify-center items-center">
-            {stepperSection}
-          </div>
-
-          {/* Right Side - Content View */}
-          <div className="flex-1 relative px-8">{stepSection}</div>
-        </div>
+        {view}
       </DialogContent>
     </Dialog>
   );

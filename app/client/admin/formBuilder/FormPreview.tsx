@@ -51,22 +51,15 @@ export const FormPreview = (props: FormPreviewProps) => {
     : null;
 
   return (
-    <div className="flex-1">
-      <div className="w-full">
-        <div className="bg-background rounded-lg border p-6 shadow-lg w-full max-w-[90vw] sm:max-w-4xl lg:max-w-4xl">
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2 text-center sm:text-left">
-              <div className="text-lg leading-none font-semibold">
-                SaaS 연동 설정
-              </div>
-            </div>
-            <div className="flex gap-8 min-h-[500px]">
-              <div className="w-16 flex justify-center items-center">
-                {preview?.stepperSection}
-              </div>
-              <div className="flex-1 relative px-8">{preview?.stepSection}</div>
+    <div className="flex-1 w-full">
+      <div className="bg-background rounded-lg border p-6 shadow-lg w-full max-w-[90vw] sm:max-w-4xl lg:max-w-4xl">
+        <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-2 text-center sm:text-left">
+            <div className="text-lg leading-none font-semibold">
+              SaaS 연동 설정
             </div>
           </div>
+          <>{preview}</>
         </div>
       </div>
     </div>
