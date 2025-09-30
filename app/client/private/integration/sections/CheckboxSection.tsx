@@ -5,6 +5,7 @@ import { LoadingCard } from "~/components/ui/loading-card";
 import { LoaderCircleIcon } from "lucide-react";
 import { useWorkflowExecution } from "~/hooks/use-workflow-execution";
 import { setSectionResult } from "~/models/integration/SectionResultManager";
+import { IntegrationSectionContentBox } from "./IntegrationSectionContentBox";
 
 interface CheckboxSectionProps {
   title: string;
@@ -39,70 +40,41 @@ export const CheckboxSection = ({
   }, [parsed]);
 
   return (
-    <div className="space-y-6 max-w-3xl mx-auto w-full">
-      <h3 className="text-lg font-semibold text-center">{title}</h3>
-      <CenteredSection>
-        {loading && (
-          <LoadingCard
-            icon={<LoaderCircleIcon className="w-4 h-4 animate-spin" />}
-            message={loadingMessage}
-          />
-        )}
-        {!loading && error && (
-          <LoadingCard
-            icon={<span className="text-lg">❌</span>}
-            message={error}
-          />
-        )}
-        {!loading && !error && parsed === false && (
-          <LoadingCard
-            icon={<span className="text-lg">❌</span>}
-            message={errorMessage}
-          />
-        )}
-        {!loading && !error && parsed === true && (
-          <LoadingCard
-            icon={<span className="text-lg">✅</span>}
-            message={successMessage}
-          />
-        )}
-      </CenteredSection>
-
-      <Button
-        onClick={() => run()}
-        disabled={loading}
-        variant="outline"
-        className="px-6 py-2"
-      >
-        권한 확인
-      </Button>
-
-      <div className="flex justify-between">
-        <div>
-          {hasPrevious && (
-            <Button
-              onClick={onPrevious}
-              variant="outline"
-              className="px-6 py-2"
-            >
-              이전
-            </Button>
-          )}
-        </div>
-        <div>
-          {hasNext && (
-            <div className="flex items-center gap-2">
-              <Button
-                onClick={onNext}
-                disabled={parsed !== true}
-                className="px-8 py-2"
-              >
-                다음
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+    <IntegrationSectionContentBox
+      title={title}
+      buttonText="권한 확인"
+      onClick={run}
+      isLoading={loading}
+      hasPrevious={hasPrevious}
+      onPrevious={onPrevious}
+      hasNext={hasNext}
+      onNext={onNext}
+      isNextDisabled={parsed !== true}
+    >
+      {loading && (
+        <LoadingCard
+          icon={<LoaderCircleIcon className="w-4 h-4 animate-spin" />}
+          message={loadingMessage}
+        />
+      )}
+      {!loading && error && (
+        <LoadingCard
+          icon={<span className="text-lg">❌</span>}
+          message={error}
+        />
+      )}
+      {!loading && !error && parsed === false && (
+        <LoadingCard
+          icon={<span className="text-lg">❌</span>}
+          message={errorMessage}
+        />
+      )}
+      {!loading && !error && parsed === true && (
+        <LoadingCard
+          icon={<span className="text-lg">✅</span>}
+          message={successMessage}
+        />
+      )}
+    </IntegrationSectionContentBox>
   );
 };
