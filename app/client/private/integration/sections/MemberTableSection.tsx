@@ -12,11 +12,12 @@ import {
 } from "~/components/ui/table";
 import { useWorkflowExecution } from "~/hooks/use-workflow-execution";
 import { setSectionResult } from "~/models/integration/SectionResultManager";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import type { SelectedMembers } from "~/models/integration/types";
 import { IntegrationSectionContentBox } from "./IntegrationSectionContentBox";
+import { generateVariablesFromSectionResults } from "~/models/integration/VariableGenerator";
 
-interface TableSectionProps {
+interface MemberTableSectionProps {
   title: string;
   workflow: any;
   onSelectedMembersChange: (v: SelectedMembers[]) => void;
@@ -27,7 +28,7 @@ interface TableSectionProps {
   hasNext?: boolean;
 }
 
-export function TableSection({
+export function MemberTableSection({
   title,
   workflow,
   onSelectedMembersChange,
@@ -36,13 +37,18 @@ export function TableSection({
   onPrevious,
   hasPrevious,
   hasNext,
-}: TableSectionProps) {
-  const { loading, error, parsed, run } = useWorkflowExecution(workflow);
+}: MemberTableSectionProps) {
+  // 🔥 이전 섹션들의 결과를 자동으로 variables로 변환
+  const variables = useMemo(() => {
+    return generateVariablesFromSectionResults();
+  }, []);
+
+  const { loading, error, parsed, run } = useWorkflowExecution(workflow, variables);
 
   useEffect(() => {
     if (!Array.isArray(parsed)) return;
     onSelectedMembersChange(parsed);
-    setSectionResult("table", { result: parsed });
+    setSectionResult("member-table", { result: parsed });
   }, [parsed]);
 
   return (
@@ -57,7 +63,7 @@ export function TableSection({
       onPrevious={onPrevious}
       hasNext={hasNext}
       onNext={() => {
-        setSectionResult("table", { result: selectedMembers });
+        setSectionResult("member-table", { result: selectedMembers });
         onNext(selectedMembers);
       }}
       isNextDisabled={!selectedMembers.length}

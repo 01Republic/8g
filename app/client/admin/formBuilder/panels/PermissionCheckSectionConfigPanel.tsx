@@ -7,12 +7,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
-import type { FormWorkflow } from "~/models/integration/types";
-import { useWorkflowConfig } from "~/hooks/use-workflow-config";
-import WorkflowField from "./field/WorkflowField";
+import type { IntegrationAppWorkflowMetadata } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
+import type { Workflow } from "8g-extension";
+import type { AppFormSectionMeta } from "~/models/integration/types";
+import WorkflowSelect from "./field/WorkflowSelect";
 import TextField from "./field/TextField";
+import { AvailableVariablesCard } from "../AvailableVariablesCard";
 
-interface CheckboxSectionConfigPanelProps {
+interface PermissionCheckSectionConfigPanelProps {
   sectionId: string;
   sectionIndex: number;
   title?: string;
@@ -23,10 +25,12 @@ interface CheckboxSectionConfigPanelProps {
   uiType: string;
   index: number;
   withMeta: (updater: (draft: any) => void) => void;
-  workflow?: FormWorkflow;
+  workflowId?: number;
+  workflows: IntegrationAppWorkflowMetadata[];
+  allSections: AppFormSectionMeta[];
 }
 
-const CheckboxSectionConfigPanel = ({
+const PermissionCheckSectionConfigPanel = ({
   sectionId,
   sectionIndex,
   title,
@@ -37,14 +41,17 @@ const CheckboxSectionConfigPanel = ({
   uiType,
   index,
   withMeta,
-  workflow,
-}: CheckboxSectionConfigPanelProps) => {
-  const { workflowText, workflowError, handleWorkflowChange } =
-    useWorkflowConfig({
-      index,
-      withMeta,
-      initialWorkflow: workflow,
+  workflowId,
+  workflows,
+  allSections,
+}: PermissionCheckSectionConfigPanelProps) => {
+  const handleWorkflowChange = (selectedWorkflowId: number | undefined) => {
+    const selectedWorkflow = workflows.find(w => w.id === selectedWorkflowId);
+    withMeta((draft) => {
+      (draft.sections[index].uiSchema as any).workflow = selectedWorkflow?.meta as Workflow;
+      (draft.sections[index].uiSchema as any).workflowId = selectedWorkflowId;
     });
+  };
 
   return (
     <Accordion type="single" collapsible>
@@ -59,6 +66,10 @@ const CheckboxSectionConfigPanel = ({
         </AccordionTrigger>
         <AccordionContent>
           <div className="space-y-3">
+            <AvailableVariablesCard 
+              sectionIndex={index}
+              sections={allSections}
+            />
             <TextField
               id={`title-${sectionId}`}
               label="제목"
@@ -107,12 +118,11 @@ const CheckboxSectionConfigPanel = ({
                 }
               />
             </div>
-            <WorkflowField
-              id={`workflow-json-${sectionId}`}
-              value={workflowText}
+            <WorkflowSelect
+              id={`workflow-select-${sectionId}`}
+              value={workflowId}
               onChange={handleWorkflowChange}
-              error={workflowError}
-              placeholder='{"version":"1.0","start":"start","steps":[...],"targetUrl":"https://..."}'
+              workflows={workflows}
             />
           </div>
           <div className="flex justify-end pt-2">
@@ -135,4 +145,4 @@ const CheckboxSectionConfigPanel = ({
   );
 };
 
-export default CheckboxSectionConfigPanel;
+export default PermissionCheckSectionConfigPanel;

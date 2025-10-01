@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Button } from "~/components/ui/button";
 import { CenteredSection } from "~/components/ui/centered-section";
 import { LoadingCard } from "~/components/ui/loading-card";
@@ -6,8 +6,9 @@ import { LoaderCircleIcon } from "lucide-react";
 import { useWorkflowExecution } from "~/hooks/use-workflow-execution";
 import { setSectionResult } from "~/models/integration/SectionResultManager";
 import { IntegrationSectionContentBox } from "./IntegrationSectionContentBox";
+import { generateVariablesFromSectionResults } from "~/models/integration/VariableGenerator";
 
-interface CheckboxSectionProps {
+interface PermissionCheckSectionProps {
   title: string;
   workflow: any;
   loadingMessage: string;
@@ -20,7 +21,7 @@ interface CheckboxSectionProps {
   hasNext?: boolean;
 }
 
-export const CheckboxSection = ({
+export const PermissionCheckSection = ({
   title,
   workflow,
   loadingMessage,
@@ -30,12 +31,17 @@ export const CheckboxSection = ({
   onNext,
   hasPrevious,
   hasNext,
-}: CheckboxSectionProps) => {
-  const { loading, error, parsed, run } = useWorkflowExecution(workflow);
+}: PermissionCheckSectionProps) => {
+  // 🔥 이전 섹션들의 결과를 자동으로 variables로 변환
+  const variables = useMemo(() => {
+    return generateVariablesFromSectionResults();
+  }, []);
+
+  const { loading, error, parsed, run } = useWorkflowExecution(workflow, variables);
 
   useEffect(() => {
     if (parsed === true) {
-      setSectionResult("checkbox", { result: true });
+      setSectionResult("permission-check", { result: true });
     }
   }, [parsed]);
 

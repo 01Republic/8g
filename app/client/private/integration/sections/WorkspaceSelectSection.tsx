@@ -13,8 +13,9 @@ import {
 import { useWorkflowExecution } from "~/hooks/use-workflow-execution";
 import type { SelectedWorkspace } from "~/models/integration/types";
 import { IntegrationSectionContentBox } from "./IntegrationSectionContentBox";
+import { setSectionResult } from "~/models/integration/SectionResultManager";
 
-interface SelectBoxSectionProps {
+interface WorkspaceSelectSectionProps {
   title: string;
   workflow: any;
   placeholder: string;
@@ -27,7 +28,7 @@ interface SelectBoxSectionProps {
   hasNext?: boolean;
 }
 
-export const SelectBoxSection = ({
+export const WorkspaceSelectSection = ({
   title,
   workflow,
   placeholder,
@@ -38,7 +39,7 @@ export const SelectBoxSection = ({
   onPrevious,
   hasPrevious,
   hasNext,
-}: SelectBoxSectionProps) => {
+}: WorkspaceSelectSectionProps) => {
   const { loading, error, parsed, run } = useWorkflowExecution(workflow);
 
   useEffect(() => {
@@ -46,6 +47,13 @@ export const SelectBoxSection = ({
       onParsed(parsed);
     }
   }, [parsed, onParsed]);
+
+  // 🔥 선택한 workspace를 SectionResultManager에 저장
+  useEffect(() => {
+    if (selectedWorkspace) {
+      setSectionResult('workspaceSelect', selectedWorkspace);
+    }
+  }, [selectedWorkspace]);
 
   return (
     <IntegrationSectionContentBox

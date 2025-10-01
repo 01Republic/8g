@@ -147,11 +147,6 @@ function toFormWorkflow(
       ? candidate.targetUrl
       : previous?.targetUrl;
 
-  const parser =
-    typeof candidate.parser === "function"
-      ? (candidate.parser as (result: any) => any)
-      : previous?.parser;
-
   return {
     ...(previous ?? ({} as FormWorkflow)),
     ...(candidate as FormWorkflow),
@@ -159,7 +154,6 @@ function toFormWorkflow(
     start: candidate.start as string,
     steps: candidate.steps as FormWorkflow["steps"],
     targetUrl,
-    parser,
   };
 }
 

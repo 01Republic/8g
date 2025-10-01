@@ -6,38 +6,45 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
-import type { FormWorkflow } from "~/models/integration/types";
-import { useWorkflowConfig } from "~/hooks/use-workflow-config";
-import WorkflowField from "./field/WorkflowField";
+import type { IntegrationAppWorkflowMetadata } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
+import type { Workflow } from "8g-extension";
+import type { AppFormSectionMeta } from "~/models/integration/types";
+import WorkflowSelect from "./field/WorkflowSelect";
 import TextField from "./field/TextField";
+import { AvailableVariablesCard } from "../AvailableVariablesCard";
 
-interface SelectBoxSectionConfigPanelProps {
+interface WorkspaceSelectSectionConfigPanelProps {
   sectionId: string;
   sectionIndex: number;
   title: string;
   placeholder: string;
-  workflow?: FormWorkflow;
+  workflowId?: number;
   uiType: string;
   index: number;
   withMeta: (updater: (draft: any) => void) => void;
+  workflows: IntegrationAppWorkflowMetadata[];
+  allSections: AppFormSectionMeta[];
 }
 
-const SelectBoxSectionConfigPanel = ({
+const WorkspaceSelectSectionConfigPanel = ({
   sectionId,
   sectionIndex,
   title,
   placeholder,
-  workflow,
+  workflowId,
   uiType,
   index,
   withMeta,
-}: SelectBoxSectionConfigPanelProps) => {
-  const { workflowText, workflowError, handleWorkflowChange } =
-    useWorkflowConfig({
-      index,
-      withMeta,
-      initialWorkflow: workflow,
+  workflows,
+  allSections,
+}: WorkspaceSelectSectionConfigPanelProps) => {
+  const handleWorkflowChange = (selectedWorkflowId: number | undefined) => {
+    const selectedWorkflow = workflows.find(w => w.id === selectedWorkflowId);
+    withMeta((draft) => {
+      (draft.sections[index].uiSchema as any).workflow = selectedWorkflow?.meta as Workflow;
+      (draft.sections[index].uiSchema as any).workflowId = selectedWorkflowId;
     });
+  };
 
   return (
     <Accordion type="single" collapsible>
@@ -52,6 +59,10 @@ const SelectBoxSectionConfigPanel = ({
         </AccordionTrigger>
         <AccordionContent>
           <div className="space-y-3">
+            <AvailableVariablesCard 
+              sectionIndex={index}
+              sections={allSections}
+            />
             <TextField
               id={`title-${sectionId}`}
               label="제목"
@@ -74,12 +85,11 @@ const SelectBoxSectionConfigPanel = ({
                 })
               }
             />
-            <WorkflowField
-              id={`workflow-json-${sectionId}`}
-              value={workflowText}
+            <WorkflowSelect
+              id={`workflow-select-${sectionId}`}
+              value={workflowId}
               onChange={handleWorkflowChange}
-              error={workflowError}
-              placeholder='{"version":"1.0","start":"start","steps":[...],"targetUrl":"https://..."}'
+              workflows={workflows}
             />
             <div className="flex justify-end pt-2">
               <Button
@@ -102,4 +112,4 @@ const SelectBoxSectionConfigPanel = ({
   );
 };
 
-export default SelectBoxSectionConfigPanel;
+export default WorkspaceSelectSectionConfigPanel;

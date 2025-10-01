@@ -6,6 +6,7 @@ import { SaveDialog } from "./SaveDialog";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import type { AppFormMetadata } from "~/models/integration/types";
+import type { IntegrationAppWorkflowMetadata } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
 import { FormPreview } from "./FormPreview";
 import { FormSectionList } from "./FormSectionList";
 
@@ -23,6 +24,7 @@ interface FormBuilderPageProps {
   saveDialog: { open: boolean; title: string; message: string };
   onCloseDialog: () => void;
   isRunning: boolean;
+  workflows: IntegrationAppWorkflowMetadata[];
 }
 
 export default function FormBuilderPage(props: FormBuilderPageProps) {
@@ -34,6 +36,7 @@ export default function FormBuilderPage(props: FormBuilderPageProps) {
     saveDialog,
     onCloseDialog,
     isRunning,
+    workflows,
   } = props;
 
   const [meta, setMeta] = useState<AppFormMetadata>(initialMetadata);
@@ -92,6 +95,7 @@ export default function FormBuilderPage(props: FormBuilderPageProps) {
                     currentSection={currentSection}
                     setCurrentSection={setCurrentSection}
                     dndType={DND_SECTION_TYPE}
+                    workflows={workflows}
                   />
                 </div>
               </div>

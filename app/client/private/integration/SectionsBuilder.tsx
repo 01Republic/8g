@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import type { FormComponentProps } from "./DynamicFormBuilder";
-import { SelectBoxSection } from "./sections/SelectBoxSection";
-import { CheckboxSection } from "./sections/CheckboxSection";
-import { TableSection } from "./sections/TableSection";
+import { WorkspaceSelectSection } from "./sections/WorkspaceSelectSection";
+import { PermissionCheckSection } from "./sections/PermissionCheckSection";
+import { MemberTableSection } from "./sections/MemberTableSection";
 import { InitialCheckSection } from "./sections/InitialCheckSection";
 import { CompletionSection } from "./sections/CompletionSection";
 import type { SelectedWorkspace } from "~/models/integration/types";
@@ -10,9 +10,9 @@ import type { SelectedMembers } from "~/models/integration/types";
 import type { AppFormMetadata } from "~/models/integration/types";
 import type {
   FormSectionSchema,
-  SelectBoxSectionSchema,
-  CheckboxSectionSchema,
-  TableSectionSchema,
+  WorkspaceSelectSectionSchema,
+  PermissionCheckSectionSchema,
+  MemberTableSectionSchema,
 } from "~/models/integration/types";
 
 export const buildSections = (
@@ -73,13 +73,13 @@ export const buildSection = (
         />
       );
 
-    case "select-box":
+    case "workspace-select":
       return (
-        <SelectBoxSection
+        <WorkspaceSelectSection
           key={`section-${keyId}`}
           title={uiSchema.title}
-          workflow={(uiSchema as SelectBoxSectionSchema).workflow}
-          placeholder={(uiSchema as SelectBoxSectionSchema).placeholder}
+          workflow={(uiSchema as WorkspaceSelectSectionSchema).workflow}
+          placeholder={(uiSchema as WorkspaceSelectSectionSchema).placeholder}
           selectedWorkspace={selectedWorkspace}
           onSelectedWorkspaceChange={onSelectedWorkspaceChange}
           onNext={onNext as () => void}
@@ -89,15 +89,15 @@ export const buildSection = (
         />
       );
 
-    case "checkbox":
+    case "permission-check":
       return (
-        <CheckboxSection
+        <PermissionCheckSection
           key={`section-${keyId}`}
           title={uiSchema.title}
-          workflow={(uiSchema as CheckboxSectionSchema).workflow}
-          loadingMessage={(uiSchema as CheckboxSectionSchema).loadingMessage}
-          errorMessage={(uiSchema as CheckboxSectionSchema).errorMessage}
-          successMessage={(uiSchema as CheckboxSectionSchema).successMessage}
+          workflow={(uiSchema as PermissionCheckSectionSchema).workflow}
+          loadingMessage={(uiSchema as PermissionCheckSectionSchema).loadingMessage}
+          errorMessage={(uiSchema as PermissionCheckSectionSchema).errorMessage}
+          successMessage={(uiSchema as PermissionCheckSectionSchema).successMessage}
           onPrevious={onPrevious}
           onNext={onNext as () => void}
           hasPrevious={hasPrevious}
@@ -105,12 +105,12 @@ export const buildSection = (
         />
       );
 
-    case "table":
+    case "member-table":
       return (
-        <TableSection
+        <MemberTableSection
           key={`section-${keyId}`}
           title={uiSchema.title}
-          workflow={(uiSchema as TableSectionSchema).workflow}
+          workflow={(uiSchema as MemberTableSectionSchema).workflow}
           onSelectedMembersChange={onSelectedMembersChange}
           selectedMembers={selectedMembers}
           onNext={onNext as (rows: any[]) => void}

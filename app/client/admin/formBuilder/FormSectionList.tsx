@@ -10,13 +10,14 @@ import {
 } from "~/components/ui/popover";
 import { Separator } from "~/components/ui/separator";
 import type {
-  CheckboxSectionSchema,
+  PermissionCheckSectionSchema,
   CompletionSectionSchema,
   InitialCheckSectionSchema,
   AppFormMetadata,
-  SelectBoxSectionSchema,
-  TableSectionSchema,
+  WorkspaceSelectSectionSchema,
+  MemberTableSectionSchema,
 } from "~/models/integration/types";
+import type { IntegrationAppWorkflowMetadata } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
 import SectionConfigPanelBuilder from "~/client/admin/formBuilder/SectionConfigPanelBuilder";
 
 const buildInitialCheckSectionSchema = () => {
@@ -28,16 +29,15 @@ const buildInitialCheckSectionSchema = () => {
   return defaultSchema;
 };
 
-const buildSelectBoxSectionSchema = () => {
-  const defaultSchema: SelectBoxSectionSchema = {
-    type: "select-box",
-    title: "선택 박스",
-    placeholder: "선택 박스",
+const buildWorkspaceSelectSectionSchema = () => {
+  const defaultSchema: WorkspaceSelectSectionSchema = {
+    type: "workspace-select",
+    title: "워크스페이스 선택",
+    placeholder: "워크스페이스를 선택하세요",
     workflow: {
       version: "1.0.0",
       start: "start",
       steps: [],
-      parser: () => {},
       targetUrl: "https://example.com",
     },
   };
@@ -45,19 +45,18 @@ const buildSelectBoxSectionSchema = () => {
   return defaultSchema;
 };
 
-const buildCheckboxSectionSchema = () => {
-  const defaultSchema: CheckboxSectionSchema = {
-    type: "checkbox",
-    title: "체크박스",
-    placeholder: "체크박스",
-    loadingMessage: "체크박스",
-    errorMessage: "체크박스",
-    successMessage: "체크박스",
+const buildPermissionCheckSectionSchema = () => {
+  const defaultSchema: PermissionCheckSectionSchema = {
+    type: "permission-check",
+    title: "권한 확인",
+    placeholder: "권한 확인",
+    loadingMessage: "권한 확인 중...",
+    errorMessage: "권한이 없습니다",
+    successMessage: "권한이 확인되었습니다",
     workflow: {
       version: "1.0.0",
       start: "start",
       steps: [],
-      parser: () => {},
       targetUrl: "https://example.com",
     },
   };
@@ -65,15 +64,14 @@ const buildCheckboxSectionSchema = () => {
   return defaultSchema;
 };
 
-const buildTableSectionSchema = () => {
-  const defaultSchema: TableSectionSchema = {
-    type: "table",
-    title: "테이블",
+const buildMemberTableSectionSchema = () => {
+  const defaultSchema: MemberTableSectionSchema = {
+    type: "member-table",
+    title: "멤버 목록",
     workflow: {
       version: "1.0.0",
       start: "start",
       steps: [],
-      parser: () => {},
       targetUrl: "https://example.com",
     },
   };
@@ -92,9 +90,9 @@ const buildCompletionSectionSchema = () => {
 
 export const SectionTypePropsMapper = {
   "initial-check": buildInitialCheckSectionSchema,
-  "select-box": buildSelectBoxSectionSchema,
-  checkbox: buildCheckboxSectionSchema,
-  table: buildTableSectionSchema,
+  "workspace-select": buildWorkspaceSelectSectionSchema,
+  "permission-check": buildPermissionCheckSectionSchema,
+  "member-table": buildMemberTableSectionSchema,
   completion: buildCompletionSectionSchema,
 };
 
@@ -104,6 +102,7 @@ interface FormSectionListProps {
   currentSection: number;
   setCurrentSection: (index: number) => void;
   dndType: string;
+  workflows: IntegrationAppWorkflowMetadata[];
 }
 
 export const FormSectionList = (props: FormSectionListProps) => {
@@ -113,6 +112,7 @@ export const FormSectionList = (props: FormSectionListProps) => {
     currentSection,
     setCurrentSection,
     dndType,
+    workflows,
   } = props;
   const [isAddSectionOpen, setIsAddSectionOpen] = useState(false);
 
@@ -165,6 +165,8 @@ export const FormSectionList = (props: FormSectionListProps) => {
                 sectionIndex,
                 index,
                 withMeta: updateMeta,
+                workflows,
+                allSections: meta.sections,
               })}
             </Reorderable>
           );

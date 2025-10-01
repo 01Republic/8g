@@ -52,6 +52,7 @@ export const BlockActionHandlerModal = (
   });
 
   const onOpenChange = (next: boolean) => {
+    setOpen(next);
     if (next) {
       // Reset form data from block
       const newFormData: Record<string, any> = {};
@@ -67,7 +68,6 @@ export const BlockActionHandlerModal = (
       });
       setFormData(newFormData);
     }
-    setOpen(next);
   };
 
   const handleSave = () => {

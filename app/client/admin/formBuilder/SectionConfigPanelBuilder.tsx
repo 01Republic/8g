@@ -1,22 +1,25 @@
 import type {
   AppFormSectionMeta,
   InitialCheckSectionSchema,
-  SelectBoxSectionSchema,
-  CheckboxSectionSchema,
-  TableSectionSchema,
+  WorkspaceSelectSectionSchema,
+  PermissionCheckSectionSchema,
+  MemberTableSectionSchema,
   CompletionSectionSchema,
 } from "~/models/integration/types";
-import CheckboxSectionConfigPanel from "./panels/CheckboxSectionConfigPanel";
+import type { IntegrationAppWorkflowMetadata } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
+import PermissionCheckSectionConfigPanel from "./panels/PermissionCheckSectionConfigPanel";
 import CompletionSectionConfigPanel from "./panels/CompletionSectionConfigPanel";
 import InitialCheckSectionConfigPanel from "./panels/InitialCheckSectionConfigPanel";
-import SelectBoxSectionConfigPanel from "./panels/SelectBoxSectionConfigPanel";
-import TableSectionConfigPanel from "./panels/TableSectionConfigPanel";
+import WorkspaceSelectSectionConfigPanel from "./panels/WorkspaceSelectSectionConfigPanel";
+import MemberTableSectionConfigPanel from "./panels/MemberTableSectionConfigPanel";
 
 interface BuildSectionConfigPanelProps {
   section: AppFormSectionMeta;
   sectionIndex: number;
   index: number;
   withMeta: (updater: (draft: any) => void) => void;
+  workflows: IntegrationAppWorkflowMetadata[];
+  allSections: AppFormSectionMeta[];
 }
 
 export default function SectionConfigPanelBuilder({
@@ -24,6 +27,8 @@ export default function SectionConfigPanelBuilder({
   sectionIndex,
   index,
   withMeta,
+  workflows,
+  allSections,
 }: BuildSectionConfigPanelProps) {
   const ui: any = section.uiSchema as any;
   const uiType: string = (ui?.type as string) || "";
@@ -42,25 +47,28 @@ export default function SectionConfigPanelBuilder({
     );
   }
 
-  if (uiType === "select-box") {
-    const _ui = ui as SelectBoxSectionSchema;
+  if (uiType === "workspace-select") {
+    const _ui = ui as WorkspaceSelectSectionSchema;
     return (
-      <SelectBoxSectionConfigPanel
+      <WorkspaceSelectSectionConfigPanel
         sectionId={section.id}
         sectionIndex={sectionIndex}
         title={_ui.title || ""}
         placeholder={_ui.placeholder || ""}
+        workflowId={_ui.workflowId}
         uiType={_ui.type}
         index={index}
         withMeta={withMeta}
+        workflows={workflows}
+        allSections={allSections}
       />
     );
   }
 
-  if (uiType === "checkbox") {
-    const _ui = ui as CheckboxSectionSchema;
+  if (uiType === "permission-check") {
+    const _ui = ui as PermissionCheckSectionSchema;
     return (
-      <CheckboxSectionConfigPanel
+      <PermissionCheckSectionConfigPanel
         sectionId={section.id}
         sectionIndex={sectionIndex}
         title={_ui.title || ""}
@@ -68,23 +76,29 @@ export default function SectionConfigPanelBuilder({
         loadingMessage={_ui.loadingMessage || ""}
         errorMessage={_ui.errorMessage || ""}
         successMessage={_ui.successMessage || ""}
+        workflowId={_ui.workflowId}
         uiType={_ui.type}
         index={index}
         withMeta={withMeta}
+        workflows={workflows}
+        allSections={allSections}
       />
     );
   }
 
-  if (uiType === "table") {
-    const _ui = ui as TableSectionSchema;
+  if (uiType === "member-table") {
+    const _ui = ui as MemberTableSectionSchema;
     return (
-      <TableSectionConfigPanel
+      <MemberTableSectionConfigPanel
         sectionId={section.id}
         sectionIndex={sectionIndex}
         title={_ui.title || ""}
+        workflowId={_ui.workflowId}
         uiType={_ui.type}
         index={index}
         withMeta={withMeta}
+        workflows={workflows}
+        allSections={allSections}
       />
     );
   }
