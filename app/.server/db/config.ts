@@ -4,6 +4,7 @@ import { allEntities } from "./entities/index.js";
 
 // 환경변수 설정
 const config = {
+  type: (process.env.DB_TYPE || "mysql") as "mysql" | "mariadb",
   host: process.env.DB_HOST || "localhost",
   port: parseInt(process.env.DB_PORT || "3306"),
   username: process.env.DB_USER || "root",
@@ -12,7 +13,7 @@ const config = {
 };
 
 export const AppDataSource = new DataSource({
-  type: "mysql",
+  type: config.type,
   host: config.host,
   port: config.port,
   username: config.username,
