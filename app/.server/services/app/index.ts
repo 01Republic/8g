@@ -1,1 +1,1 @@
-export { findAllApp } from './find-all-app.service';
+export { findAllApp, getSubscriptionDetail } from './find-all-app.service';

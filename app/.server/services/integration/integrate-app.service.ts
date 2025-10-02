@@ -43,7 +43,10 @@ export async function integrateApp(
 
     if (paymentHistory && paymentHistory.length > 0) {
       for (const payment of paymentHistory) {
-        const billingHistory = createBillingHistory(payment, savedSubscription.id, organization);
+        const payAmount = createMoneyEntity(payment.amount);
+        const savedPayAmount = await queryRunner.manager.save(payAmount);
+        
+        const billingHistory = createBillingHistory(payment, savedSubscription, organization, savedPayAmount);
         await queryRunner.manager.save(billingHistory);
       }
     }
@@ -108,13 +111,12 @@ function createMoneyEntity(amountString: string): Moneys {
 
 function createBillingHistory(
   paymentHistory: { date: string; amount: string; invoiceUrl: string },
-  subscriptionId: number,
-  organization: Organizations
+  subscription: Subscriptions,
+  organization: Organizations,
+  payAmount: Moneys
 ): BillingHistories {
-  const payAmount = createMoneyEntity(paymentHistory.amount);
-  
   return BillingHistories.create({
-    subscriptionId: subscriptionId,
+    subscription: subscription,
     organization: organization,
     paidAt: new Date(paymentHistory.date),
     invoiceUrl: paymentHistory.invoiceUrl,

@@ -10,6 +10,7 @@ export default [
     index("routes/home.tsx"),
     route("/integration", "routes/integration.tsx"),
     route("/apps", "routes/apps.tsx"),
+    route("/apps/:appId", "routes/app-detail.tsx"),
     route("/workflows", "routes/workflows.tsx"),
     route("/workflow-builder/:workflowId?", "routes/workflow-builder.tsx"),
     route("/apps/:appId/form-builder", "routes/form-builder.tsx"),
