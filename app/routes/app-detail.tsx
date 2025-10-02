@@ -3,7 +3,7 @@ import { useLoaderData } from "react-router";
 import { userContext } from "~/context";
 import { getSubscriptionDetail } from "~/.server/services";
 import AppDetailPage from "~/client/private/apps/AppDetailPage";
-import type { Route } from "./+types/apps.$id";
+import type { Route } from "./+types/app-detail";
 
 export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
 
