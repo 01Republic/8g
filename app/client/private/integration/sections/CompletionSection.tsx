@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useConfetti } from "~/hooks/use-confetti";
 import { Button } from "~/components/ui/button";
+import { IntegrationSectionContentBox } from "./IntegrationSectionContentBox";
 
 interface CompletionSectionProps {
   title: string;
@@ -25,22 +26,12 @@ export const CompletionSection = ({
   }, []);
 
   return (
-    <>
+    <IntegrationSectionContentBox
+      title={title}
+      hasPrevious={hasPrevious}
+      onPrevious={onPrevious}
+    >
       {confettiElement}
-      <div className="space-y-4 max-w-md mx-auto w-full text-center">
-        <h3 className="text-lg font-semibold">{title}</h3>
-        <div className="flex justify-start pt-2">
-          {hasPrevious && (
-            <Button
-              onClick={onPrevious}
-              variant="outline"
-              className="px-6 py-2"
-            >
-              이전
-            </Button>
-          )}
-        </div>
-      </div>
-    </>
+    </IntegrationSectionContentBox>
   );
 };

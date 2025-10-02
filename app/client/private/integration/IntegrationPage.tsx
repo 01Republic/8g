@@ -1,7 +1,7 @@
 import { ProductCard } from "~/client/private/integration/ProductCard";
 import { IntegartionProductModal } from "~/client/private/integration/IntegrationProductModal";
 
-import type { AppFormMetadata } from "~/models/integration/types";
+import type { AppFormMetadata, PaymentHistory, PaymentInfo } from "~/models/integration/types";
 import { useState } from "react";
 import type { SelectedWorkspace } from "~/models/integration/types";
 import type { SelectedMembers } from "~/models/integration/types";
@@ -14,6 +14,8 @@ interface IntegrationPageProps {
     workspace: SelectedWorkspace;
     members: SelectedMembers[];
     productId: number;
+    paymentInfo: PaymentInfo;
+    paymentHistory: PaymentHistory[];
   }) => void;
 }
 

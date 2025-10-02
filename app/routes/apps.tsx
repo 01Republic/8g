@@ -3,7 +3,7 @@ import { authMiddleware } from "~/middleware/auth";
 import { useLoaderData } from "react-router";
 import { userContext } from "~/context";
 import AppsPage from "~/client/private/apps/AppsPage";
-import { findAllApp } from "~/.server/services/find-all-app.service";
+import { findAllApp } from "~/.server/services";
 
 export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
 

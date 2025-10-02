@@ -103,6 +103,7 @@ import { GmailQueryPresets } from "./GmailQueryPresets";
 import { GoogleSyncHistories } from "./GoogleSyncHistories";
 import { GoogleTokenData } from "./GoogleTokenData";
 import { IntegrationAppFormMetadata } from "./IntegrationAppFormMetadata";
+import { IntegrationAppWorkflowMetadata } from "./IntegrationAppWorkflowMetadata";
 import { IntegrationGoogleWorkspaceMembers } from "./IntegrationGoogleWorkspaceMembers";
 import { IntegrationGoogleWorkspaceOauthTokenActivities } from "./IntegrationGoogleWorkspaceOauthTokenActivities";
 import { IntegrationSlackMembers } from "./IntegrationSlackMembers";
@@ -188,6 +189,7 @@ export const allEntities = [
   GoogleSyncHistories,
   GoogleTokenData,
   IntegrationAppFormMetadata,
+  IntegrationAppWorkflowMetadata,
   IntegrationGoogleWorkspaceMembers,
   IntegrationGoogleWorkspaceOauthTokenActivities,
   IntegrationSlackMembers,

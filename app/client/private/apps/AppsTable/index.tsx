@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import type { AppType } from "~/models/apps/types";
+import { useNavigate } from "react-router";
 
 interface ProductTableProps {
   apps: AppType[];
@@ -49,6 +50,12 @@ const formatDate = (date: Date | null) => {
 };
 
 export const AppsTable = ({ apps }: ProductTableProps) => {
+  const navigate = useNavigate();
+
+  const handleRowClick = (appId: number) => {
+    navigate(`/apps/${appId}`);
+  };
+
   return (
     <div className="border rounded-lg overflow-hidden bg-white">
       <Table>
@@ -71,7 +78,11 @@ export const AppsTable = ({ apps }: ProductTableProps) => {
         </TableHeader>
         <TableBody>
           {apps.map((app) => (
-            <TableRow key={app.id} className="hover:bg-gray-50">
+            <TableRow
+              key={app.id}
+              className="hover:bg-gray-50 cursor-pointer"
+              onClick={() => handleRowClick(app.id)}
+            >
               <TableCell className="font-medium">
                 <div className="flex items-center gap-3">
                   <Avatar className="w-8 h-8">

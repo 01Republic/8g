@@ -1,34 +1,55 @@
 import type { WorkflowStep } from "8g-extension";
 
+
 export type FormWorkflow = {
   version: string;
   start: string;
   steps: WorkflowStep[];
-  parser?: (result: any) => any;
   targetUrl?: string;
+  parser?: {
+    expression: string;
+  };
+  variables?: Record<string, any>;
 };
 
-export type SelectBoxSectionSchema = {
-  type: "select-box";
+export type WorkspaceSelectSectionSchema = {
+  type: "workspace-select";
   title: string;
   placeholder: string;
   workflow: FormWorkflow;
+  workflowId?: number;
 };
 
-export type TableSectionSchema = {
-  type: "table";
+export type MemberTableSectionSchema = {
+  type: "member-table";
   title: string;
   workflow: FormWorkflow;
+  workflowId?: number;
 };
 
-export type CheckboxSectionSchema = {
-  type: "checkbox";
+export type PaymentInfoSectionSchema = {
+  type: "payment-info";
+  title: string;
+  workflow: FormWorkflow;
+  workflowId?: number;
+};
+
+export type PaymentHistorySectionSchema = {
+  type: "payment-history";
+  title: string;
+  workflow: FormWorkflow;
+  workflowId?: number;
+};
+
+export type PermissionCheckSectionSchema = {
+  type: "permission-check";
   title: string;
   placeholder: string;
   loadingMessage: string;
   errorMessage: string;
   successMessage: string;
   workflow: FormWorkflow;
+  workflowId?: number;
 };
 
 export type InitialCheckSectionSchema = {
@@ -42,9 +63,11 @@ export type CompletionSectionSchema = {
 };
 
 export type FormSectionSchema =
-  | SelectBoxSectionSchema
-  | TableSectionSchema
-  | CheckboxSectionSchema
+  | WorkspaceSelectSectionSchema
+  | MemberTableSectionSchema
+  | PaymentInfoSectionSchema
+  | PaymentHistorySectionSchema
+  | PermissionCheckSectionSchema
   | InitialCheckSectionSchema
   | CompletionSectionSchema;
 
@@ -79,4 +102,18 @@ export type SelectedMembers = {
   email: string;
   status: string;
   joinDate: string;
+};
+
+export type PaymentInfo = {
+  lastFourDigits: string;
+  billingEmail: string;
+  planName: string;
+  billingCycle: string; // 연간 / 월간
+  price: string;
+};
+
+export type PaymentHistory = {
+  date: string;
+  amount: string;
+  invoiceUrl: string;
 };

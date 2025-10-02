@@ -3,11 +3,18 @@ import FormBuilderPage from "~/client/admin/formBuilder/FormBuilderPage";
 import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 import type { AppFormMetadata } from "~/models/integration/types";
-import { findAllFormMetadata } from "~/.server/services/find-form-metadata.service";
-import { upsertFormMetadata } from "~/.server/services/upsert-form-metadata.service";
+import { findAllFormMetadata, upsertFormMetadata, findAllWorkflows } from "~/.server/services";
 
 export async function loader({ params }: Route.LoaderArgs) {
-  return await findAllFormMetadata(params.appId);
+  const [formMetadata, workflows] = await Promise.all([
+    findAllFormMetadata(params.appId),
+    findAllWorkflows(),
+  ]);
+  
+  return {
+    ...formMetadata,
+    workflows,
+  };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -26,7 +33,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function FormBuilder({ loaderData }: Route.ComponentProps) {
-  const { appId, initialMeta, isActive } = loaderData;
+  const { appId, initialMeta, isActive, workflows } = loaderData;
 
   const fetcher = useFetcher();
   const isSaving = fetcher.state !== "idle";
@@ -77,6 +84,7 @@ export default function FormBuilder({ loaderData }: Route.ComponentProps) {
       saveDialog={saveDialog}
       onCloseDialog={onCloseDialog}
       isRunning={isActive || false}
+      workflows={workflows as any}
     />
   );
 }

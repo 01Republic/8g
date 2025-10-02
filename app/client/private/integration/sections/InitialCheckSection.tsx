@@ -4,6 +4,7 @@ import { Button } from "~/components/ui/button";
 import { CenteredSection } from "~/components/ui/centered-section";
 import { LoadingCard } from "~/components/ui/loading-card";
 import { LoaderCircleIcon } from "lucide-react";
+import { IntegrationSectionContentBox } from "./IntegrationSectionContentBox";
 
 interface InitialCheckSectionProps {
   title: string;
@@ -40,68 +41,41 @@ export const InitialCheckSection = ({
   };
 
   return (
-    <div className="space-y-6 max-w-md mx-auto w-full">
-      <h3 className="text-lg font-semibold text-center">{title}</h3>
-      <CenteredSection>
-        {loading && (
-          <LoadingCard
-            message="8G Extension 확인 중..."
-            icon={<LoaderCircleIcon className="w-4 h-4 animate-spin" />}
-          />
-        )}
-        {!loading && error && (
-          <LoadingCard
-            icon={<span className="text-lg">❌</span>}
-            message={error}
-          />
-        )}
-        {!loading && !error && installed === true && (
-          <LoadingCard
-            icon={<span className="text-lg">✅</span>}
-            message="8G Extension 설치됨"
-          />
-        )}
-        {!loading && !error && installed === false && (
-          <LoadingCard
-            icon={<span className="text-lg">❌</span>}
-            message="8G Extension이 설치되지 않았습니다"
-          />
-        )}
-      </CenteredSection>
-      <Button
-        onClick={run}
-        disabled={loading}
-        variant="outline"
-        className="px-8 py-2"
-      >
-        {installed === null ? "확인하기" : "재시도"}
-      </Button>
-      <div className="flex justify-between pt-2">
-        <div>
-          {hasPrevious && (
-            <Button
-              onClick={onPrevious}
-              variant="outline"
-              className="px-6 py-2"
-            >
-              이전
-            </Button>
-          )}
-        </div>
-        <div>
-          {hasNext && (
-            <div className="flex items-center gap-2">
-              <Button
-                onClick={onNext}
-                disabled={installed !== true}
-                className="px-8 py-2"
-              >
-                다음
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+    <IntegrationSectionContentBox
+      title={title}
+      buttonText="권한 확인"
+      onClick={run}
+      isLoading={loading}
+      hasPrevious={hasPrevious}
+      onPrevious={onPrevious}
+      hasNext={hasNext}
+      onNext={onNext}
+      isNextDisabled={installed !== true}
+    >
+      {loading && (
+        <LoadingCard
+          message="8G Extension 확인 중..."
+          icon={<LoaderCircleIcon className="w-4 h-4 animate-spin" />}
+        />
+      )}
+      {!loading && error && (
+        <LoadingCard
+          icon={<span className="text-lg">❌</span>}
+          message={error}
+        />
+      )}
+      {!loading && !error && installed === true && (
+        <LoadingCard
+          icon={<span className="text-lg">✅</span>}
+          message="8G Extension 설치됨"
+        />
+      )}
+      {!loading && !error && installed === false && (
+        <LoadingCard
+          icon={<span className="text-lg">❌</span>}
+          message="8G Extension이 설치되지 않았습니다"
+        />
+      )}
+    </IntegrationSectionContentBox>
   );
 };

@@ -2,7 +2,7 @@ import {
   DynamicFormBuilder,
   type FormComponentProps,
 } from "~/client/private/integration/DynamicFormBuilder";
-import type { AppFormMetadata } from "~/models/integration/types";
+import type { AppFormMetadata, PaymentHistory, PaymentInfo } from "~/models/integration/types";
 
 interface FormPreviewProps {
   meta: AppFormMetadata;
@@ -29,6 +29,10 @@ export const FormPreview = (props: FormPreviewProps) => {
   const selectedMembers = [] as unknown[];
   const onSelectedWorkspaceChange = (_w: unknown) => {};
   const onSelectedMembersChange = (_members: unknown[]) => {};
+  const paymentInfo = null as PaymentInfo | null;
+  const onPaymentInfoChange = (_paymentInfo: PaymentInfo | null) => {};
+  const paymentHistory = [] as PaymentHistory[];
+  const onPaymentHistoryChange = (_paymentHistory: PaymentHistory[]) => {}; 
 
   const sectionProps = {
     currentSection,
@@ -42,6 +46,10 @@ export const FormPreview = (props: FormPreviewProps) => {
     selectedMembers,
     onSelectedWorkspaceChange,
     onSelectedMembersChange,
+    paymentInfo,
+    onPaymentInfoChange,
+    paymentHistory,
+    onPaymentHistoryChange,
   } as FormComponentProps;
 
   const hasSections = meta.sections.length > 0;
@@ -51,22 +59,15 @@ export const FormPreview = (props: FormPreviewProps) => {
     : null;
 
   return (
-    <div className="flex-1">
-      <div className="w-full">
-        <div className="bg-background rounded-lg border p-6 shadow-lg w-full max-w-[90vw] sm:max-w-4xl lg:max-w-4xl">
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2 text-center sm:text-left">
-              <div className="text-lg leading-none font-semibold">
-                SaaS 연동 설정
-              </div>
-            </div>
-            <div className="flex gap-8 min-h-[500px]">
-              <div className="w-16 flex justify-center items-center">
-                {preview?.stepperSection}
-              </div>
-              <div className="flex-1 relative px-8">{preview?.stepSection}</div>
+    <div className="flex-1 w-full">
+      <div className="bg-background rounded-lg border p-6 shadow-lg w-full max-w-[90vw] sm:max-w-4xl lg:max-w-4xl">
+        <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-2 text-center sm:text-left">
+            <div className="text-lg leading-none font-semibold">
+              SaaS 연동 설정
             </div>
           </div>
+          <>{preview}</>
         </div>
       </div>
     </div>

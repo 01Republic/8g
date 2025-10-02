@@ -2,8 +2,7 @@ import { redirect } from "react-router";
 import type { Route } from "./+types/login";
 import { commitSession, getSession } from "~/session";
 import LoginPage from "~/client/public/login/LoginPage";
-import { getOrganization } from "~/.server/services/get-organization.service";
-import { login } from "~/.server/services/login.service";
+import { getOrganization, login } from "~/.server/services";
 
 function extractSubdomain(request: Request): string | null {
   const host = request.headers.get("host");
