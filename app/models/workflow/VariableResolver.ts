@@ -14,7 +14,7 @@ export function resolveWorkflowVariables(
     ...injectedVars,
   };
 
-  console.log('🔧 Resolving variables:', finalVars);
+  console.log('🔧 Resolving variables:', workflow);
 
   // Workflow 전체를 JSON 문자열로 변환
   let workflowJson = JSON.stringify(workflow);
@@ -26,6 +26,7 @@ export function resolveWorkflowVariables(
     workflowJson = workflowJson.replace(regex, replacement);
   });
 
+  console.log(JSON.parse(workflowJson))
   console.log('✅ Variables resolved');
   return JSON.parse(workflowJson);
 }

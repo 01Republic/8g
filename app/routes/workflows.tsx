@@ -1,8 +1,7 @@
 import type { Route } from "./+types/workflows";
 import { authMiddleware } from "~/middleware/auth";
 import WorkflowsPage from "~/client/admin/workflows/WorkflowsPage";
-import { findAllWorkflows } from "~/.server/services/find-all-workflows.service";
-import { deleteWorkflows } from "~/.server/services/delete-workflows.service";
+import { findAllWorkflows, deleteWorkflows } from "~/.server/services";
 import { useFetcher } from "react-router";
 
 export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
@@ -32,5 +31,3 @@ export default function Workflows({
 
   return <WorkflowsPage workflows={workflows as any} deleteWorkflows={onDelete} />;
 }
-
-// /html/body/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div/div[3]/div/div[2]/div[2]/div/div[1]/div/div[2]/div/div/div[2]/div

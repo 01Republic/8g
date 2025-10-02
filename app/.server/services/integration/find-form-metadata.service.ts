@@ -1,5 +1,5 @@
-import { initializeDatabase } from "../db";
-import { IntegrationAppFormMetadata } from "../db/entities/IntegrationAppFormMetadata";
+import { initializeDatabase } from "~/.server/db";
+import { IntegrationAppFormMetadata } from "~/.server/db/entities/IntegrationAppFormMetadata";
 
 export async function findAllFormMetadata(appId: string) {
   await initializeDatabase();

@@ -26,7 +26,7 @@ export async function runWorkflow(
     : workflow;
 
   const result = await client.collectWorkflow({
-    targetUrl: evaluatedUrl,
+    targetUrl: resolvedWorkflow.targetUrl ?? evaluatedUrl,
     workflow: {
       version: "1.0",
       start: resolvedWorkflow.start,

@@ -21,10 +21,12 @@ export function ParserDialog({
 }: ParserDialogProps) {
   const [previewResult, setPreviewResult] = useState<any>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
+  const [hasResult, setHasResult] = useState(false);
 
   const handlePreview = async () => {
     if (!sampleResult) {
       setPreviewError('워크플로우를 먼저 실행해주세요');
+      setHasResult(false);
       return;
     }
 
@@ -36,13 +38,15 @@ export function ParserDialog({
       console.log('✅ Parsed Result:', result);
       setPreviewResult(result);
       setPreviewError(null);
+      setHasResult(true);
     } catch (error: any) {
       console.error('❌ Parse Error:', error);
       setPreviewError(error.message);
       setPreviewResult(null);
+      setHasResult(false);
     }
   };
-
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
@@ -77,7 +81,7 @@ result.result.steps[0].result.data[attributes.id != null].{
             <div className="flex-1 border rounded p-3 overflow-auto bg-gray-50 min-h-0">
               {previewError ? (
                 <div className="text-red-500 text-sm">{previewError}</div>
-              ) : previewResult ? (
+              ) : hasResult ? (
                 <pre className="text-xs whitespace-pre-wrap break-words">
                   {JSON.stringify(previewResult, null, 2)}
                 </pre>

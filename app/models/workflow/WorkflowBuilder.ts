@@ -1,7 +1,8 @@
 import type { Workflow, WorkflowStep, Block } from "8g-extension";
 import type { WorkflowEdge } from "./types";
+import type { FormWorkflow } from "../integration/types";
 
-export const buildWorkflowJson = (nodes: any[], edges: WorkflowEdge[], targetUrl: string): Workflow => {
+export const buildWorkflowJson = (nodes: any[], edges: WorkflowEdge[], targetUrl: string): FormWorkflow => {
     const outgoingEdges = new Map<string, WorkflowEdge[]>();
     const incomingCount = new Map<string, number>();
 
@@ -60,5 +61,5 @@ export const buildWorkflowJson = (nodes: any[], edges: WorkflowEdge[], targetUrl
       start: startNode?.id ?? (nodes[0]?.id || ""),
       steps,
       targetUrl,
-    } as Workflow;
+    } as FormWorkflow;
   };

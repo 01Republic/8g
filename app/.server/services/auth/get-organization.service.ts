@@ -1,4 +1,4 @@
-import { initializeDatabase, Organizations } from "../db";
+import { initializeDatabase, Organizations } from "~/.server/db";
 
 interface GetOrganizationRequest {
   subdomain: string;

@@ -1,5 +1,5 @@
-import { initializeDatabase } from "../db";
-import { IntegrationAppFormMetadata } from "../db/entities/IntegrationAppFormMetadata";
+import { initializeDatabase } from "~/.server/db";
+import { IntegrationAppFormMetadata } from "~/.server/db/entities/IntegrationAppFormMetadata";
 import type { AppFormMetadata } from "~/models/integration/types";
 
 export async function upsertFormMetadata(

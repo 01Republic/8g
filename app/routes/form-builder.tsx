@@ -3,9 +3,7 @@ import FormBuilderPage from "~/client/admin/formBuilder/FormBuilderPage";
 import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 import type { AppFormMetadata } from "~/models/integration/types";
-import { findAllFormMetadata } from "~/.server/services/find-form-metadata.service";
-import { upsertFormMetadata } from "~/.server/services/upsert-form-metadata.service";
-import { findAllWorkflows } from "~/.server/services/find-all-workflows.service";
+import { findAllFormMetadata, upsertFormMetadata, findAllWorkflows } from "~/.server/services";
 
 export async function loader({ params }: Route.LoaderArgs) {
   const [formMetadata, workflows] = await Promise.all([

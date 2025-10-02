@@ -1,7 +1,7 @@
 import type { FindActiveIntegrationProductsResponseDto } from "~/routes/dto/product";
-import { initializeDatabase } from "../db";
-import { IntegrationAppFormMetadata } from "../db/entities/IntegrationAppFormMetadata";
-import { Products } from "../db/entities/Products";
+import { initializeDatabase } from "~/.server/db";
+import { IntegrationAppFormMetadata } from "~/.server/db/entities/IntegrationAppFormMetadata";
+import { Products } from "~/.server/db/entities/Products";
 
 export async function findActiveIntegrationProducts(): Promise<FindActiveIntegrationProductsResponseDto> {
   await initializeDatabase();

@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       8g-extension:
-        specifier: 1.7.2
-        version: 1.7.2
+        specifier: 1.7.4
+        version: 1.7.4
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -174,8 +174,8 @@ importers:
 
 packages:
 
-  8g-extension@1.7.2:
-    resolution: {integrity: sha512-oLuiJfJAmSphUoaBJG705fxUKoKVmPP2CNOqi0mfbmp6UGmajfMBM8mhp49AyoVwlvn7eMKbofokG3Yja8r9SQ==}
+  8g-extension@1.7.4:
+    resolution: {integrity: sha512-Y53nVZE4Ylbng+DjtYARL4oyJtX3Vjq0Gxz1HsQDN05IoFemGek7LTQ2TOrAjYYtOB9GtGSjGaQqcQ3jyHd+7A==}
 
   '@azure/abort-controller@2.1.2':
     resolution: {integrity: sha512-nBrLsEWm4J2u5LpAPjxADTlq3trDgVZZXHNKabeXZtpq3d3AbN/KGO82R87rdDz5/lYB024rtEf10/q0urNgsA==}
@@ -3612,7 +3612,7 @@ packages:
 
 snapshots:
 
-  8g-extension@1.7.2:
+  8g-extension@1.7.4:
     dependencies:
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)

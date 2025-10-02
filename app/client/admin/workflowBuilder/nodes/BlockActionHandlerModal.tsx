@@ -139,6 +139,10 @@ export const BlockActionHandlerModal = (
           <DialogTitle className="text-xl">{title} 편집</DialogTitle>
         </DialogHeader>
         <div className="mt-2 flex flex-col gap-4">
+          {(() => {
+            console.log('🔍 Parsed Schema Fields:', parsedSchema.fields);
+            return null;
+          })()}
           {parsedSchema.fields.map((field) => {
             if (field.name === "name") return null;
 

@@ -32,7 +32,6 @@ export const PermissionCheckSection = ({
   hasPrevious,
   hasNext,
 }: PermissionCheckSectionProps) => {
-  // 🔥 이전 섹션들의 결과를 자동으로 variables로 변환
   const variables = useMemo(() => {
     return generateVariablesFromSectionResults();
   }, []);

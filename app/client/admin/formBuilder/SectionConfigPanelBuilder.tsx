@@ -4,6 +4,8 @@ import type {
   WorkspaceSelectSectionSchema,
   PermissionCheckSectionSchema,
   MemberTableSectionSchema,
+  PaymentInfoSectionSchema,
+  PaymentHistorySectionSchema,
   CompletionSectionSchema,
 } from "~/models/integration/types";
 import type { IntegrationAppWorkflowMetadata } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
@@ -12,6 +14,8 @@ import CompletionSectionConfigPanel from "./panels/CompletionSectionConfigPanel"
 import InitialCheckSectionConfigPanel from "./panels/InitialCheckSectionConfigPanel";
 import WorkspaceSelectSectionConfigPanel from "./panels/WorkspaceSelectSectionConfigPanel";
 import MemberTableSectionConfigPanel from "./panels/MemberTableSectionConfigPanel";
+import PaymentInfoSectionConfigPanel from "./panels/PaymentInfoSectionConfigPanel";
+import PaymentHistorySectionConfigPanel from "./panels/PaymentHistorySectionConfigPanel";
 
 interface BuildSectionConfigPanelProps {
   section: AppFormSectionMeta;
@@ -90,6 +94,40 @@ export default function SectionConfigPanelBuilder({
     const _ui = ui as MemberTableSectionSchema;
     return (
       <MemberTableSectionConfigPanel
+        sectionId={section.id}
+        sectionIndex={sectionIndex}
+        title={_ui.title || ""}
+        workflowId={_ui.workflowId}
+        uiType={_ui.type}
+        index={index}
+        withMeta={withMeta}
+        workflows={workflows}
+        allSections={allSections}
+      />
+    );
+  }
+
+  if (uiType === "payment-info") {
+    const _ui = ui as PaymentInfoSectionSchema;
+    return (
+      <PaymentInfoSectionConfigPanel
+        sectionId={section.id}
+        sectionIndex={sectionIndex}
+        title={_ui.title || ""}
+        workflowId={_ui.workflowId}
+        uiType={_ui.type}
+        index={index}
+        withMeta={withMeta}
+        workflows={workflows}
+        allSections={allSections}
+      />
+    );
+  }
+
+  if (uiType === "payment-history") {
+    const _ui = ui as PaymentHistorySectionSchema;
+    return (
+      <PaymentHistorySectionConfigPanel
         sectionId={section.id}
         sectionIndex={sectionIndex}
         title={_ui.title || ""}

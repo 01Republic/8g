@@ -83,13 +83,15 @@ export function useWorkflowExecution(
       if (cancelledRef.current) return;
       setRaw(workflowResult.result);
       
-      // Parser 적용 (WorkflowBuilder와 동일한 구조로 전달)
       if (workflow.parser?.expression) {
         try {
+          console.log(workflow.parser?.expression)
+          console.log(workflowResult)
           const parsed = await ResultParser.parse(
             workflowResult,  // { result: {...} } 형태로 전달
             workflow.parser.expression
           );
+          console.log(parsed)
           setParsed(parsed);
           
         } catch (parseError: any) {

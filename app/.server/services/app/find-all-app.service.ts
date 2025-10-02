@@ -1,7 +1,7 @@
 import { Like } from "typeorm";
 import type { AppResponseDto, FindAllAppDto } from "~/routes/dto/app";
-import { initializeDatabase, Subscriptions } from "../db";
-import { isKorean, isEnglish } from "../utils";
+import { initializeDatabase, Subscriptions } from "~/.server/db";
+import { isKorean, isEnglish } from "~/.server/utils";
 
 export async function findAllApp({
   query,

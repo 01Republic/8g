@@ -1,5 +1,5 @@
 import { compare } from "bcryptjs";
-import { initializeDatabase, Organizations, Users } from "../db";
+import { initializeDatabase, Organizations, Users } from "~/.server/db";
 
 interface LoginRequest {
   email: string;

@@ -12,14 +12,6 @@ export type FormWorkflow = {
   variables?: Record<string, any>;
 };
 
-
-
-
-
-
-
-
-
 export type WorkspaceSelectSectionSchema = {
   type: "workspace-select";
   title: string;
@@ -30,6 +22,20 @@ export type WorkspaceSelectSectionSchema = {
 
 export type MemberTableSectionSchema = {
   type: "member-table";
+  title: string;
+  workflow: FormWorkflow;
+  workflowId?: number;
+};
+
+export type PaymentInfoSectionSchema = {
+  type: "payment-info";
+  title: string;
+  workflow: FormWorkflow;
+  workflowId?: number;
+};
+
+export type PaymentHistorySectionSchema = {
+  type: "payment-history";
   title: string;
   workflow: FormWorkflow;
   workflowId?: number;
@@ -59,6 +65,8 @@ export type CompletionSectionSchema = {
 export type FormSectionSchema =
   | WorkspaceSelectSectionSchema
   | MemberTableSectionSchema
+  | PaymentInfoSectionSchema
+  | PaymentHistorySectionSchema
   | PermissionCheckSectionSchema
   | InitialCheckSectionSchema
   | CompletionSectionSchema;
@@ -94,4 +102,18 @@ export type SelectedMembers = {
   email: string;
   status: string;
   joinDate: string;
+};
+
+export type PaymentInfo = {
+  lastFourDigits: string;
+  billingEmail: string;
+  planName: string;
+  billingCycle: string; // 연간 / 월간
+  price: string;
+};
+
+export type PaymentHistory = {
+  date: string;
+  amount: string;
+  invoiceUrl: string;
 };

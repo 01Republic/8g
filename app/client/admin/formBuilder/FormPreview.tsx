@@ -2,7 +2,7 @@ import {
   DynamicFormBuilder,
   type FormComponentProps,
 } from "~/client/private/integration/DynamicFormBuilder";
-import type { AppFormMetadata } from "~/models/integration/types";
+import type { AppFormMetadata, PaymentHistory, PaymentInfo } from "~/models/integration/types";
 
 interface FormPreviewProps {
   meta: AppFormMetadata;
@@ -29,6 +29,10 @@ export const FormPreview = (props: FormPreviewProps) => {
   const selectedMembers = [] as unknown[];
   const onSelectedWorkspaceChange = (_w: unknown) => {};
   const onSelectedMembersChange = (_members: unknown[]) => {};
+  const paymentInfo = null as PaymentInfo | null;
+  const onPaymentInfoChange = (_paymentInfo: PaymentInfo | null) => {};
+  const paymentHistory = [] as PaymentHistory[];
+  const onPaymentHistoryChange = (_paymentHistory: PaymentHistory[]) => {}; 
 
   const sectionProps = {
     currentSection,
@@ -42,6 +46,10 @@ export const FormPreview = (props: FormPreviewProps) => {
     selectedMembers,
     onSelectedWorkspaceChange,
     onSelectedMembersChange,
+    paymentInfo,
+    onPaymentInfoChange,
+    paymentHistory,
+    onPaymentHistoryChange,
   } as FormComponentProps;
 
   const hasSections = meta.sections.length > 0;

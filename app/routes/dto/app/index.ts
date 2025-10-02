@@ -10,9 +10,25 @@ export interface MemberDto {
   joinDate: string;
 }
 
+export interface PaymentInfoDto {
+  lastFourDigits: string;
+  billingEmail: string;
+  planName: string;
+  billingCycle: string;
+  price: string;
+}
+
+export interface PaymentHistoryDto {
+  date: string;
+  amount: string;
+  invoiceUrl: string;
+}
+
 export interface RegisterAppDto {
   workspace: WorkspaceDto;
   members: MemberDto[];
+  paymentInfo: PaymentInfoDto;
+  paymentHistory: PaymentHistoryDto[];
   organizationId: number;
   productId: number;
 }

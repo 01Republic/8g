@@ -1,5 +1,5 @@
-import { initializeDatabase } from "../db";
-import { IntegrationAppWorkflowMetadata } from "../db/entities/IntegrationAppWorkflowMetadata";
+import { initializeDatabase } from "~/.server/db";
+import { IntegrationAppWorkflowMetadata } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
 
 export async function findWorkflowMetadata(workflowId: number) {
   await initializeDatabase();

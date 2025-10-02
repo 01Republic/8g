@@ -1,7 +1,6 @@
 import { CenteredSection } from "~/components/ui/centered-section";
 import { LoadingCard } from "~/components/ui/loading-card";
-import { LoaderCircleIcon } from "lucide-react";
-import { Button } from "~/components/ui/button";
+import { LoaderCircleIcon, ExternalLink } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -13,31 +12,31 @@ import {
 import { useWorkflowExecution } from "~/hooks/use-workflow-execution";
 import { setSectionResult } from "~/models/integration/SectionResultManager";
 import { useEffect, useMemo } from "react";
-import type { SelectedMembers } from "~/models/integration/types";
+import type { PaymentHistory } from "~/models/integration/types";
 import { IntegrationSectionContentBox } from "./IntegrationSectionContentBox";
 import { generateVariablesFromSectionResults } from "~/models/integration/VariableGenerator";
 
-interface MemberTableSectionProps {
+interface PaymentHistorySectionProps {
   title: string;
   workflow: any;
-  onSelectedMembersChange: (v: SelectedMembers[]) => void;
-  selectedMembers: SelectedMembers[];
+  onPaymentHistoryChange: (v: PaymentHistory[]) => void;
+  paymentHistory: PaymentHistory[];
   onNext: (rows: any[]) => void;
   onPrevious?: () => void;
   hasPrevious?: boolean;
   hasNext?: boolean;
 }
 
-export function MemberTableSection({
+export function PaymentHistorySection({
   title,
   workflow,
-  onSelectedMembersChange,
-  selectedMembers,
+  onPaymentHistoryChange,
+  paymentHistory,
   onNext,
   onPrevious,
   hasPrevious,
   hasNext,
-}: MemberTableSectionProps) {
+}: PaymentHistorySectionProps) {
   const variables = useMemo(() => {
     return generateVariablesFromSectionResults();
   }, []);
@@ -46,10 +45,9 @@ export function MemberTableSection({
 
   useEffect(() => {
     if (!Array.isArray(parsed)) return;
-    console.log(parsed)
-    onSelectedMembersChange(parsed);
-    console.log(selectedMembers)
-    setSectionResult("member-table", { result: parsed });
+    console.log('Payment History:', parsed);
+    onPaymentHistoryChange(parsed);
+    setSectionResult("payment-history", { result: parsed });
   }, [parsed]);
 
   return (
@@ -64,16 +62,16 @@ export function MemberTableSection({
       onPrevious={onPrevious}
       hasNext={hasNext}
       onNext={() => {
-        setSectionResult("member-table", { result: selectedMembers });
-        onNext(selectedMembers);
+        setSectionResult("payment-history", { result: paymentHistory });
+        onNext(paymentHistory);
       }}
-      isNextDisabled={!selectedMembers.length}
+      isNextDisabled={!paymentHistory.length}
     >
       {!Array.isArray(parsed) || parsed.length === 0 ? (
         <CenteredSection className="space-y-4">
           <LoadingCard
             icon={<LoaderCircleIcon className="w-4 h-4 animate-spin" />}
-            message={loading ? "멤버 수집 중..." : error || "멤버 수집 준비됨"}
+            message={loading ? "결제 내역 수집 중..." : error || "결제 내역 수집 준비됨"}
           />
         </CenteredSection>
       ) : (
@@ -82,23 +80,35 @@ export function MemberTableSection({
             <TableHeader className="sticky top-0">
               <TableRow>
                 <TableHead className="w-16">#</TableHead>
-                <TableHead>이메일</TableHead>
-                <TableHead>상태</TableHead>
-                <TableHead>가입일</TableHead>
+                <TableHead>결제 일자</TableHead>
+                <TableHead className="text-right">금액</TableHead>
+                <TableHead className="w-24 text-center">인보이스</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {selectedMembers.map((member: any, index: number) => (
+              {paymentHistory.map((history: any, index: number) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
                   <TableCell className="text-sm">
-                    {member.email ?? ""}
+                    {history.date ?? "N/A"}
                   </TableCell>
-                  <TableCell className="text-sm">
-                    {member.status ?? ""}
+                  <TableCell className="text-sm text-right font-semibold">
+                    {history.amount ?? "N/A"}
                   </TableCell>
-                  <TableCell className="text-sm">
-                    {member.joinDate ?? "N/A"}
+                  <TableCell className="text-center">
+                    {history.invoiceUrl ? (
+                      <a
+                        href={history.invoiceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-primary hover:underline text-sm"
+                      >
+                        링크
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    ) : (
+                      <span className="text-gray-400 text-sm">N/A</span>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -109,3 +119,4 @@ export function MemberTableSection({
     </IntegrationSectionContentBox>
   );
 }
+

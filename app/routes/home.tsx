@@ -5,7 +5,7 @@ import HomePage from "~/client/private/home/HomePage";
 import { useFetcher } from "react-router";
 import { useCallback, useEffect, useState } from "react";
 import type { AppType } from "~/models/apps/types";
-import { findAllApp } from "~/.server/services/find-all-app.service";
+import { findAllApp } from "~/.server/services";
 
 export function meta({}: Route.MetaArgs) {
   return [

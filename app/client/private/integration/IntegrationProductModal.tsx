@@ -7,7 +7,7 @@ import {
 } from "~/components/ui/dialog";
 import type { Dispatch, SetStateAction } from "react";
 import { DynamicFormBuilder } from "~/client/private/integration/DynamicFormBuilder";
-import type { SelectedWorkspace } from "~/models/integration/types";
+import type { PaymentInfo, PaymentHistory, SelectedWorkspace } from "~/models/integration/types";
 import type { SelectedMembers } from "~/models/integration/types";
 import type { AppFormMetadata } from "~/models/integration/types";
 
@@ -17,6 +17,8 @@ interface IntegartionProductModalProps {
   onSubmit: (payload: {
     workspace: SelectedWorkspace;
     members: SelectedMembers[];
+    paymentInfo: PaymentInfo;
+    paymentHistory: PaymentHistory[];
     productId: number;
   }) => void;
   meta: AppFormMetadata;
@@ -34,10 +36,16 @@ export const IntegartionProductModal = ({
   const [selectedWorkspace, setSelectedWorkspace] =
     useState<SelectedWorkspace | null>(null);
   const [selectedMembers, setSelectedMembers] = useState<SelectedMembers[]>([]);
+  const [paymentInfo, setPaymentInfo] = useState<PaymentInfo | null>(null);
+  const [paymentHistory, setPaymentHistory] = useState<PaymentHistory[]>([]);
 
   const sectionProps = {
     currentSection,
     selectedWorkspace,
+    paymentInfo,
+    paymentHistory,
+    onPaymentInfoChange: setPaymentInfo,
+    onPaymentHistoryChange: setPaymentHistory,
     onSelectedWorkspaceChange: setSelectedWorkspace,
     selectedMembers,
     onSelectedMembersChange: setSelectedMembers,
@@ -45,15 +53,19 @@ export const IntegartionProductModal = ({
     onModalClose: () => {
       setSelectedWorkspace(null);
       setSelectedMembers([]);
+      setPaymentInfo(null);
+      setPaymentHistory([]);
       setCurrentSection(0);
       setOpen(false);
     },
     productId,
     onSubmit: () => {
-      if (!selectedWorkspace) return;
+      if (!selectedWorkspace || !paymentInfo) return;
       onSubmit({
         workspace: selectedWorkspace,
         members: selectedMembers,
+        paymentInfo,
+        paymentHistory,
         productId,
       });
     },
@@ -70,6 +82,8 @@ export const IntegartionProductModal = ({
       setCurrentSection(1);
       setSelectedWorkspace(null);
       setSelectedMembers([]);
+      setPaymentInfo(null);
+      setPaymentHistory([]);
     }
   }, [open]);
 

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { AppFormMetadata } from "~/models/integration/types";
+import type { AppFormMetadata, PaymentInfo, PaymentHistory } from "~/models/integration/types";
 import { buildSections } from "./SectionsBuilder";
 import {
   Stepper,
@@ -17,8 +17,12 @@ export interface FormComponentProps {
   currentSection: number;
   selectedWorkspace: SelectedWorkspace | null;
   selectedMembers: SelectedMembers[];
+  paymentInfo: PaymentInfo | null;
+  paymentHistory: PaymentHistory[];
   onSelectedWorkspaceChange: (value: SelectedWorkspace) => void;
   onSelectedMembersChange: (value: SelectedMembers[]) => void;
+  onPaymentInfoChange: (value: PaymentInfo | null) => void;
+  onPaymentHistoryChange: (value: PaymentHistory[]) => void;
   onSectionChange: (section: number) => void;
   onModalClose: () => void;
   productId: number;

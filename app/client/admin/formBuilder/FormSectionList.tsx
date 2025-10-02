@@ -16,6 +16,8 @@ import type {
   AppFormMetadata,
   WorkspaceSelectSectionSchema,
   MemberTableSectionSchema,
+  PaymentInfoSectionSchema,
+  PaymentHistorySectionSchema,
 } from "~/models/integration/types";
 import type { IntegrationAppWorkflowMetadata } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
 import SectionConfigPanelBuilder from "~/client/admin/formBuilder/SectionConfigPanelBuilder";
@@ -79,6 +81,36 @@ const buildMemberTableSectionSchema = () => {
   return defaultSchema;
 };
 
+const buildPaymentInfoSectionSchema = () => {
+  const defaultSchema: PaymentInfoSectionSchema = {
+    type: "payment-info",
+    title: "결제 정보",
+    workflow: {
+      version: "1.0.0",
+      start: "start",
+      steps: [],
+      targetUrl: "https://example.com",
+    },
+  };
+
+  return defaultSchema;
+};
+
+const buildPaymentHistorySectionSchema = () => {
+  const defaultSchema: PaymentHistorySectionSchema = {
+    type: "payment-history",
+    title: "결제 내역",
+    workflow: {
+      version: "1.0.0",
+      start: "start",
+      steps: [],
+      targetUrl: "https://example.com",
+    },
+  };
+
+  return defaultSchema;
+};
+
 const buildCompletionSectionSchema = () => {
   const defaultSchema: CompletionSectionSchema = {
     type: "completion",
@@ -93,6 +125,8 @@ export const SectionTypePropsMapper = {
   "workspace-select": buildWorkspaceSelectSectionSchema,
   "permission-check": buildPermissionCheckSectionSchema,
   "member-table": buildMemberTableSectionSchema,
+  "payment-info": buildPaymentInfoSectionSchema,
+  "payment-history": buildPaymentHistorySectionSchema,
   completion: buildCompletionSectionSchema,
 };
 

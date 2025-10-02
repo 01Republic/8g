@@ -5,7 +5,7 @@ import { PermissionCheckSection } from "./sections/PermissionCheckSection";
 import { MemberTableSection } from "./sections/MemberTableSection";
 import { InitialCheckSection } from "./sections/InitialCheckSection";
 import { CompletionSection } from "./sections/CompletionSection";
-import type { SelectedWorkspace } from "~/models/integration/types";
+import type { PaymentInfo, PaymentInfoSectionSchema, PaymentHistory, PaymentHistorySectionSchema, SelectedWorkspace } from "~/models/integration/types";
 import type { SelectedMembers } from "~/models/integration/types";
 import type { AppFormMetadata } from "~/models/integration/types";
 import type {
@@ -14,6 +14,8 @@ import type {
   PermissionCheckSectionSchema,
   MemberTableSectionSchema,
 } from "~/models/integration/types";
+import { PaymentInfoSection } from "./sections/PaymentInfoSection";
+import { PaymentHistorySection } from "./sections/PaymentHistorySection";
 
 export const buildSections = (
   meta: AppFormMetadata,
@@ -38,6 +40,10 @@ export const buildSections = (
       props.selectedWorkspace,
       props.onSelectedMembersChange,
       props.selectedMembers,
+      props.onPaymentInfoChange,
+      props.paymentInfo,
+      props.onPaymentHistoryChange,
+      props.paymentHistory,
       sectionIndex,
       hasPrevious,
       hasNext,
@@ -54,6 +60,10 @@ export const buildSection = (
   selectedWorkspace: SelectedWorkspace | null,
   onSelectedMembersChange: (v: SelectedMembers[]) => void,
   selectedMembers: SelectedMembers[],
+  onPaymentInfoChange: (v: PaymentInfo | null) => void,
+  paymentInfo: PaymentInfo | null,
+  onPaymentHistoryChange: (v: PaymentHistory[]) => void,
+  paymentHistory: PaymentHistory[],
   keyId: string | number,
   hasPrevious: boolean,
   hasNext: boolean,
@@ -113,6 +123,36 @@ export const buildSection = (
           workflow={(uiSchema as MemberTableSectionSchema).workflow}
           onSelectedMembersChange={onSelectedMembersChange}
           selectedMembers={selectedMembers}
+          onNext={onNext as (rows: any[]) => void}
+          onPrevious={onPrevious}
+          hasPrevious={hasPrevious}
+          hasNext={hasNext}
+        />
+      );
+
+    case "payment-info":
+      return (
+        <PaymentInfoSection
+          key={`section-${keyId}`}
+          title={uiSchema.title}
+          workflow={(uiSchema as PaymentInfoSectionSchema).workflow}
+          onPaymentInfoChange={onPaymentInfoChange}
+          paymentInfo={paymentInfo}
+          onNext={onNext as () => void}
+          onPrevious={onPrevious}
+          hasPrevious={hasPrevious}
+          hasNext={hasNext}
+        />
+      );
+
+    case "payment-history":
+      return (
+        <PaymentHistorySection
+          key={`section-${keyId}`}
+          title={uiSchema.title}
+          workflow={(uiSchema as PaymentHistorySectionSchema).workflow}
+          onPaymentHistoryChange={onPaymentHistoryChange}
+          paymentHistory={paymentHistory}
           onNext={onNext as (rows: any[]) => void}
           onPrevious={onPrevious}
           hasPrevious={hasPrevious}
