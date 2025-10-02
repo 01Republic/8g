@@ -80,6 +80,9 @@ importers:
       isbot:
         specifier: ^5.1.27
         version: 5.1.30
+      jsonata:
+        specifier: ^2.1.0
+        version: 2.1.0
       lucide-react:
         specifier: ^0.544.0
         version: 0.544.0(react@19.1.1)
@@ -132,6 +135,9 @@ importers:
       '@types/dagre':
         specifier: ^0.7.53
         version: 0.7.53
+      '@types/jsonata':
+        specifier: ^1.3.1
+        version: 1.5.1
       '@types/node':
         specifier: ^20
         version: 20.19.15
@@ -1251,6 +1257,10 @@ packages:
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
+  '@types/jsonata@1.5.1':
+    resolution: {integrity: sha512-zBVjNYS7FUUIZ4Ckq3p7xOkJKndT6h+kHUeKiud1E6h/OLPkQOagzq8UJYN07QvtkA03XFadQER1zSIWSJj2EA==}
+    deprecated: This is a stub types definition. jsonata provides its own type definitions, so you do not need this installed.
+
   '@types/node@12.20.55':
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
 
@@ -2194,6 +2204,10 @@ packages:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
     hasBin: true
+
+  jsonata@2.1.0:
+    resolution: {integrity: sha512-OCzaRMK8HobtX8fp37uIVmL8CY1IGc/a6gLsDqz3quExFR09/U78HUzWYr7T31UEB6+Eu0/8dkVD5fFDOl9a8w==}
+    engines: {node: '>= 8'}
 
   jsonfile@6.2.0:
     resolution: {integrity: sha512-FGuPw30AdOIUTRMC2OMRtQV+jkVj2cfPqSeWXv1NEAJ1qZ5zb1X6z1mFhbfOB/iy3ssJCD+3KuZ8r8C3uVFlAg==}
@@ -4682,6 +4696,10 @@ snapshots:
 
   '@types/estree@1.0.8': {}
 
+  '@types/jsonata@1.5.1':
+    dependencies:
+      jsonata: 2.1.0
+
   '@types/node@12.20.55': {}
 
   '@types/node@20.19.15':
@@ -5804,6 +5822,8 @@ snapshots:
   json-parse-even-better-errors@3.0.2: {}
 
   json5@2.2.3: {}
+
+  jsonata@2.1.0: {}
 
   jsonfile@6.2.0:
     dependencies:

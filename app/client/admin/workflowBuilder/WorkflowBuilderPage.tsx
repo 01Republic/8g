@@ -20,7 +20,7 @@ import { runWorkflow } from "~/models/workflow/WorkflowRunner";
 import { buildWorkflowJson } from "~/models/workflow/WorkflowBuilder";
 import type { WorkflowEdge, SwitchEdgeData } from "~/models/workflow/types";
 import { ConditionalEdge } from "./edges/ConditionalEdge";
-import { EdgeConfigDialog } from "./edges/EdgeConfigDialog";
+
 import { getLayoutedElements } from "./utils/autoLayout";
 import type { FormWorkflow } from "~/models/integration/types";
 import { SaveDialog } from "./SaveDialog";
@@ -29,10 +29,15 @@ import { useNodesState } from "@xyflow/react";
 import { ParserDialog } from "./ParserDialog";
 import { VariablesDialog } from "./VariablesDialog";
 import { VariablesPreviewPanel } from "./VariablesPreviewPanel";
+import { EdgeConfigDialog } from "./edges/EdgeConfigDialog";
 
 interface WorkflowBuilderPageProps {
   workflowId?: number;
-  initialWorkflow?: { id: number; description: string; meta: FormWorkflow } | null;
+  initialWorkflow?: {
+    id: number;
+    description: string;
+    meta: FormWorkflow;
+  } | null;
   onSave: (payload: {
     workflowId?: number;
     description: string;
@@ -41,11 +46,11 @@ interface WorkflowBuilderPageProps {
   isSaving: boolean;
 }
 
-export default function WorkflowBuilderPage({ 
+export default function WorkflowBuilderPage({
   workflowId,
   initialWorkflow,
-  onSave, 
-  isSaving 
+  onSave,
+  isSaving,
 }: WorkflowBuilderPageProps) {
   // 초기 노드/엣지 변환
   const initialData = React.useMemo(() => {
@@ -56,15 +61,21 @@ export default function WorkflowBuilderPage({
   }, [initialWorkflow]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialData.nodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<WorkflowEdge>(initialData.edges);
-  const [selectedEdge, setSelectedEdge] = React.useState<WorkflowEdge | null>(null);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<WorkflowEdge>(
+    initialData.edges
+  );
+  const [selectedEdge, setSelectedEdge] = React.useState<WorkflowEdge | null>(
+    null
+  );
   const [edgeDialogOpen, setEdgeDialogOpen] = React.useState(false);
   const [saveDialogOpen, setSaveDialogOpen] = React.useState(false);
-  const [description, setDescription] = React.useState(initialWorkflow?.description || "");
-  
+  const [description, setDescription] = React.useState(
+    initialWorkflow?.description || ""
+  );
+
   // Parser 관리
   const [parserExpression, setParserExpression] = React.useState(
-    initialWorkflow?.meta?.parser?.expression || ''
+    initialWorkflow?.meta?.parser?.expression || ""
   );
   const [parserDialogOpen, setParserDialogOpen] = React.useState(false);
 
@@ -87,11 +98,12 @@ export default function WorkflowBuilderPage({
       };
       setEdges((eds) => addEdge(newEdge, eds));
     },
-    [setEdges],
+    [setEdges]
   );
 
   const [targetUrl, setTargetUrl] = React.useState<string>(
-    initialWorkflow?.meta?.targetUrl || (typeof window !== "undefined" ? window.location.href : ""),
+    initialWorkflow?.meta?.targetUrl ||
+      (typeof window !== "undefined" ? window.location.href : "")
   );
   const [isRunning, setIsRunning] = React.useState(false);
   const [result, setResult] = React.useState<any>(null);
@@ -100,7 +112,7 @@ export default function WorkflowBuilderPage({
 
   const buildWorkflow = React.useCallback((): FormWorkflow => {
     const workflow = buildWorkflowJson(nodes, edges, targetUrl);
-    
+
     const formWorkflow: FormWorkflow = {
       version: workflow.version,
       start: workflow.start,
@@ -108,13 +120,13 @@ export default function WorkflowBuilderPage({
       targetUrl: workflow.targetUrl,
       variables,
     };
-    
+
     if (parserExpression.trim()) {
       formWorkflow.parser = {
         expression: parserExpression,
       };
     }
-    
+
     return formWorkflow;
   }, [nodes, edges, targetUrl, parserExpression, variables]);
 
@@ -123,23 +135,26 @@ export default function WorkflowBuilderPage({
     setResult(null);
     try {
       const workflow = buildWorkflow();
-      
+
       // targetUrl에서 variables 치환
-      let evaluatedUrl = targetUrl || (typeof window !== "undefined" ? window.location.href : "");
+      let evaluatedUrl =
+        targetUrl ||
+        (typeof window !== "undefined" ? window.location.href : "");
       if (variables) {
         Object.entries(variables).forEach(([key, value]) => {
-          const regex = new RegExp(`\\$\\{vars\\.${key}\\}`, 'g');
-          const replacement = typeof value === 'string' ? value : JSON.stringify(value);
+          const regex = new RegExp(`\\$\\{vars\\.${key}\\}`, "g");
+          const replacement =
+            typeof value === "string" ? value : JSON.stringify(value);
           evaluatedUrl = evaluatedUrl.replace(regex, replacement);
         });
       }
-      
+
       const res = await runWorkflow({
         evaluatedUrl,
         workflow,
         closeTabAfterCollection: false,
         activateTab: true,
-        variables  // variables 전달
+        variables, // variables 전달
       });
       setResult(res);
     } catch (err) {
@@ -149,73 +164,80 @@ export default function WorkflowBuilderPage({
     }
   };
 
-  const addNode = React.useCallback((type: string, data: any) => {
-    const inst: any = rfRef.current as any;
-    const vp = inst?.getViewport?.();
-    const position = vp
-      ? { x: -vp.x / vp.zoom + 120, y: -vp.y / vp.zoom + 80 }
-      : { x: 120, y: 80 };
-    const id = `node_${Date.now()}`;
-    const newNode = { id, type, position, data };
-    setNodes((nds) => nds.concat(newNode));
-    setPaletteOpen(false);
-  }, [setNodes]);
+  const addNode = React.useCallback(
+    (type: string, data: any) => {
+      const inst: any = rfRef.current as any;
+      const vp = inst?.getViewport?.();
+      const position = vp
+        ? { x: -vp.x / vp.zoom + 120, y: -vp.y / vp.zoom + 80 }
+        : { x: 120, y: 80 };
+      const id = `node_${Date.now()}`;
+      const newNode = { id, type, position, data };
+      setNodes((nds) => nds.concat(newNode));
+      setPaletteOpen(false);
+    },
+    [setNodes]
+  );
 
   const onEdgeDoubleClick = React.useCallback(
     (_event: React.MouseEvent, edge: Edge) => {
       setSelectedEdge(edge as WorkflowEdge);
       setEdgeDialogOpen(true);
     },
-    [],
+    []
   );
 
   const handleEdgeSave = React.useCallback(
     (data: SwitchEdgeData) => {
       if (selectedEdge) {
         setEdges((eds) =>
-          eds.map((e) =>
-            e.id === selectedEdge.id ? { ...e, data } : e
-          )
+          eds.map((e) => (e.id === selectedEdge.id ? { ...e, data } : e))
         );
       }
     },
-    [selectedEdge, setEdges],
+    [selectedEdge, setEdges]
   );
 
   const edgeTypes = React.useMemo(
     () => ({
       conditional: ConditionalEdge,
     }),
-    [],
+    []
   );
 
   const onAutoLayout = React.useCallback(() => {
-    const { nodes: layoutedNodes, edges: layoutedEdges } = 
-      getLayoutedElements(nodes, edges, 'TB');
-    
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+      nodes,
+      edges,
+      "TB"
+    );
+
     setNodes(layoutedNodes);
     setEdges(layoutedEdges);
-    
+
     // 레이아웃 후 자동 fit
     setTimeout(() => {
       (rfRef.current as any)?.fitView({ padding: 0.2 });
     }, 0);
   }, [nodes, edges, setNodes, setEdges]);
 
-  const handleSave = React.useCallback((desc: string) => {
-    const workflow = buildWorkflow();
-    const workflowWithUrl = {
-      ...workflow,
-      targetUrl: targetUrl || undefined,
-    } as FormWorkflow;
-    
-    onSave({
-      workflowId,
-      description: desc,
-      meta: workflowWithUrl,
-    });
-    setDescription(desc);
-  }, [workflowId, buildWorkflow, onSave, targetUrl]);
+  const handleSave = React.useCallback(
+    (desc: string) => {
+      const workflow = buildWorkflow();
+      const workflowWithUrl = {
+        ...workflow,
+        targetUrl: targetUrl || undefined,
+      } as FormWorkflow;
+
+      onSave({
+        workflowId,
+        description: desc,
+        meta: workflowWithUrl,
+      });
+      setDescription(desc);
+    },
+    [workflowId, buildWorkflow, onSave, targetUrl]
+  );
 
   return (
     <div
@@ -252,8 +274,11 @@ export default function WorkflowBuilderPage({
           setPaletteOpen={setPaletteOpen}
           addNode={addNode}
           blocks={Object.entries(AllBlockSchemas).map(([blockName, schema]) => {
-            const info = blockLabels[blockName] || { title: blockName, description: "" };
-            
+            const info = blockLabels[blockName] || {
+              title: blockName,
+              description: "",
+            };
+
             // 각 블록의 기본 데이터 생성
             const defaultBlock: any = {
               name: blockName,
@@ -268,7 +293,10 @@ export default function WorkflowBuilderPage({
             } else if (blockName === "set-value-form") {
               defaultBlock.setValue = "";
               defaultBlock.type = "text-field";
-            } else if (blockName === "get-value-form" || blockName === "clear-value-form") {
+            } else if (
+              blockName === "get-value-form" ||
+              blockName === "clear-value-form"
+            ) {
               defaultBlock.type = "text-field";
             }
 
@@ -286,7 +314,14 @@ export default function WorkflowBuilderPage({
         />
       </div>
 
-      <div style={{ position: "relative", display: "flex", gap: "8px", height: "100%" }}>
+      <div
+        style={{
+          position: "relative",
+          display: "flex",
+          gap: "8px",
+          height: "100%",
+        }}
+      >
         {/* 왼쪽: ReactFlow */}
         <div style={{ flex: 1, position: "relative" }}>
           <ReactFlow
@@ -313,7 +348,7 @@ export default function WorkflowBuilderPage({
         <div style={{ width: "300px", overflow: "auto" }}>
           <VariablesPreviewPanel variables={variables} />
         </div>
-        
+
         <EdgeConfigDialog
           open={edgeDialogOpen}
           onOpenChange={setEdgeDialogOpen}
@@ -321,14 +356,14 @@ export default function WorkflowBuilderPage({
           onSave={handleEdgeSave}
           nodes={nodes}
         />
-        
+
         <SaveDialog
           open={saveDialogOpen}
           onOpenChange={setSaveDialogOpen}
           onSave={handleSave}
           initialDescription={description}
         />
-        
+
         <ParserDialog
           open={parserDialogOpen}
           onOpenChange={setParserDialogOpen}
@@ -336,7 +371,7 @@ export default function WorkflowBuilderPage({
           onExpressionChange={setParserExpression}
           sampleResult={result}
         />
-        
+
         <VariablesDialog
           open={variablesDialogOpen}
           onOpenChange={setVariablesDialogOpen}

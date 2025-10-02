@@ -1,2 +1,2 @@
 export { ConditionalEdge } from "./ConditionalEdge";
-export { EdgeConfigDialog } from "./EdgeConfigDialog";
+export { EdgeConfigDialog } from "./EdgeConfigDialog/index";

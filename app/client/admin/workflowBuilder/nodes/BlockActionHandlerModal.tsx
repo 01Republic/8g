@@ -128,7 +128,7 @@ export const BlockActionHandlerModal = (
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          size="sm"
+          size="xxs"
           onClick={() => console.log(parsedSchema)}
         >
           수정

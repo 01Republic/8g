@@ -89,7 +89,7 @@ export default function GenericBlockNode({
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between gap-10 items-center">
-      <span className="text-xxs text-gray-500">{label}</span>
+      <span className="text-xxs text-gray-500 whitespace-nowrap">{label}</span>
       <span className="text-sm text-gray-700 font-semibold">{value}</span>
     </div>
   );
