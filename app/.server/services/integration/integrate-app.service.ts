@@ -1,4 +1,4 @@
-import { initializeDatabase, AppDataSource, Organizations, Subscriptions, SubscriptionSeats, Moneys, BillingHistories, CreditCard } from "~/.server/db";
+import { initializeDatabase, AppDataSource, Organizations, Subscriptions, SubscriptionSeats, Moneys, BillingHistories, CreditCard, TeamMembers, ProductPaymentPlans, ProductBillingCycles, Products } from "~/.server/db";
 import type { RegisterAppDto, RegisterAppResponseDto } from "~/routes/dto/app";
 
 export async function integrateApp(
@@ -23,11 +23,33 @@ export async function integrateApp(
       throw new Error("not found organization");
     }
 
+    const product = await queryRunner.manager.findOne(Products, {
+      where: {
+        id: productId,
+      },
+    });
+
+    if (!product) {
+      throw new Error("not found product");
+    }
+
     const currentBillingAmount = createCurrentBillingAmount(paymentInfo.price);
     const savedCurrentBillingAmount = await queryRunner.manager.save(currentBillingAmount);
 
     const creditCard = createCreditCard(paymentInfo.lastFourDigits, organization);
     const savedCreditCard = await queryRunner.manager.save(creditCard);
+
+    const paymentPlan = createProductPaymentPlan(paymentInfo.planName, product);
+    const savedPaymentPlan = await queryRunner.manager.save(paymentPlan);
+
+    const priceAmount = parseFloat(paymentInfo.price.replace(/[^0-9.]/g, ''));
+    const billingCycle = createProductBillingCycle(
+      priceAmount,
+      paymentInfo.billingCycle === "Monthly" ? "MONTHLY" : "YEARLY",
+      savedPaymentPlan,
+      product
+    );
+    const savedBillingCycle = await queryRunner.manager.save(billingCycle);
 
     const subscription = createSubscription(
       productId, 
@@ -35,11 +57,13 @@ export async function integrateApp(
       members, 
       savedCurrentBillingAmount, 
       savedCreditCard, 
-      paymentInfo.planName
+      workspace.content,
+      savedPaymentPlan,
+      savedBillingCycle
     );
     const savedSubscription = await queryRunner.manager.save(subscription);
 
-    const savedSeats = await createSubscriptionSeats(savedSubscription.id, members, queryRunner);
+    const savedSeats = await createSubscriptionSeats(savedSubscription.id, members, organization, queryRunner);
 
     if (paymentHistory && paymentHistory.length > 0) {
       for (const payment of paymentHistory) {
@@ -66,7 +90,7 @@ export async function integrateApp(
 }
 
 function createMoneyEntity(amountString: string): Moneys {
-  const usdMatch = amountString.match(/^\$?(\d+(?:\.\d{2})?)$/);
+  const usdMatch = amountString.match(/^(?:US\$|\$)?(\d+(?:\.\d{2})?)$/);
   if (usdMatch) {
     const amount = parseFloat(usdMatch[1]);
     return Moneys.create({
@@ -137,7 +161,9 @@ function createSubscription(
   members: Array<{ status: string }>,
   currentBillingAmount: Moneys,
   creditCard: CreditCard,
-  planName: string
+  workspaceContent: string,
+  paymentPlan: ProductPaymentPlans,
+  billingCycle: ProductBillingCycles
 ): Subscriptions {
   return Subscriptions.create({
     productId: productId,
@@ -154,23 +180,42 @@ function createSubscription(
     currentBillingAmount: currentBillingAmount,
     creditCard: creditCard,
     billingCycleType: getBillingCycleType(),
-    alias: planName,
+    alias: workspaceContent,
+    paymentPlan: paymentPlan,
+    billingCycle: billingCycle,
   });
 }
 
 async function createSubscriptionSeats(
   subscriptionId: number,
-  members: Array<{ status: string; joinDate: string }>,
+  members: Array<{ status: string; joinDate: string; email: string }>,
+  organization: Organizations,
   queryRunner: any
 ): Promise<number> {
   let savedSeats = 0;
   
   for (const member of members) {
+    let teamMember = await queryRunner.manager.findOne(TeamMembers, {
+      where: {
+        email: member.email,
+      },
+    });
+
+    if (!teamMember) {
+      const newTeamMember = TeamMembers.create({
+        email: member.email,
+        name: member.email,
+        organization: organization,
+      });
+      await queryRunner.manager.save(newTeamMember);
+      teamMember = newTeamMember;
+    }
+
     const subscriptionSeat = SubscriptionSeats.create({
       subscriptionId: subscriptionId,
-      teamMemberId: null,
-      status: member.status === "active" ? "PAID" : "QUIT",
-      isPaid: member.status === "active" ? 1 : 0,
+      teamMemberId: teamMember.id,
+      status: "PAID",
+      isPaid: 1,
       startAt: member.joinDate ? new Date(member.joinDate) : new Date(),
     });
 
@@ -198,5 +243,28 @@ function createCreditCard(lastFourDigits: string, organization: Organizations): 
     isCreditCard: 1,
     monthlyPaidAmount: 0,
     subscriptionCount: 0
+  });
+}
+
+function createProductPaymentPlan(planName: string, product: Products): ProductPaymentPlans {
+  return ProductPaymentPlans.create({
+    name: planName,
+    product: product
+  });
+}
+
+function createProductBillingCycle(
+  unitPrice: number,
+  term: "MONTHLY" | "YEARLY",
+  paymentPlan: ProductPaymentPlans,
+  product: Products
+): ProductBillingCycles {
+  return ProductBillingCycles.create({
+    unitPrice: unitPrice,
+    term: term,
+    isPerUser: 1,
+    adminComment: "Auto-generated from integration",
+    paymentPlan: paymentPlan,
+    product: product
   });
 }

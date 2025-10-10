@@ -101,3 +101,4 @@ const PaymentInfoSectionConfigPanel = ({
 
 export default PaymentInfoSectionConfigPanel;
 
+

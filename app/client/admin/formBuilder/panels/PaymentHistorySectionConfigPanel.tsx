@@ -101,3 +101,4 @@ const PaymentHistorySectionConfigPanel = ({
 
 export default PaymentHistorySectionConfigPanel;
 
+
