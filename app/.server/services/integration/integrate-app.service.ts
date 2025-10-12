@@ -36,9 +36,6 @@ export async function integrateApp(
     const currentBillingAmount = createCurrentBillingAmount(paymentInfo.currentPaymentAmount);
     const savedCurrentBillingAmount = await queryRunner.manager.save(currentBillingAmount);
 
-    const nextBillingAmount = createMoneyEntity(paymentInfo.nextPaymentAmount);
-    const savedNextBillingAmount = await queryRunner.manager.save(nextBillingAmount);
-
     const creditCard = createCreditCard(paymentInfo.cardNumber, organization);
     const savedCreditCard = await queryRunner.manager.save(creditCard);
 
@@ -54,6 +51,10 @@ export async function integrateApp(
     );
     const savedBillingCycle = await queryRunner.manager.save(billingCycle);
 
+    const nextBillingAmountValue = paymentInfo.nextPaymentAmount 
+      ? parseAmountToDollar(paymentInfo.nextPaymentAmount)
+      : undefined;
+
     const subscription = createSubscription(
       productId, 
       organization, 
@@ -64,7 +65,7 @@ export async function integrateApp(
       savedPaymentPlan,
       savedBillingCycle,
       paymentInfo.nextPaymentDate,
-      savedNextBillingAmount
+      nextBillingAmountValue
     );
     const savedSubscription = await queryRunner.manager.save(subscription);
 
@@ -92,6 +93,26 @@ export async function integrateApp(
   } finally {
     await queryRunner.release();
   }
+}
+
+function parseAmountToDollar(amountString: string): number {
+  // USD 형식 체크
+  const usdMatch = amountString.match(/^(?:US\$|\$)?(\d+(?:\.\d{2})?)$/);
+  if (usdMatch) {
+    return parseFloat(usdMatch[1]);
+  }
+
+  // KRW 형식 체크
+  const krwMatch = amountString.match(/^(\d{1,3}(?:,\d{3})*|\d+)원?$/);
+  if (krwMatch) {
+    const cleanAmount = krwMatch[1].replace(/,/g, '');
+    const amount = parseInt(cleanAmount);
+    return amount / 1300; // KRW to USD
+  }
+
+  // 기본값: 숫자만 추출
+  const numericValue = parseFloat(amountString.replace(/[^0-9.]/g, ''));
+  return isNaN(numericValue) ? 0 : numericValue;
 }
 
 function createMoneyEntity(amountString: string): Moneys {
@@ -170,7 +191,7 @@ function createSubscription(
   paymentPlan: ProductPaymentPlans,
   billingCycle: ProductBillingCycles,
   nextPaymentDate?: string,
-  nextBillingAmount?: Moneys
+  nextBillingAmount?: number
 ): Subscriptions {
   const subscriptionData: any = {
     productId: productId,
@@ -196,7 +217,7 @@ function createSubscription(
     subscriptionData.nextBillingDate = new Date(nextPaymentDate);
   }
 
-  if (nextBillingAmount) {
+  if (nextBillingAmount !== undefined) {
     subscriptionData.nextBillingAmount = nextBillingAmount;
   }
 
@@ -215,6 +236,7 @@ async function createSubscriptionSeats(
     let teamMember = await queryRunner.manager.findOne(TeamMembers, {
       where: {
         email: member.email,
+        organization: organization,
       },
     });
 
@@ -223,6 +245,7 @@ async function createSubscriptionSeats(
         email: member.email,
         name: member.name,
         profileImgUrl: member.profileImgUrl,
+        subscriptionCount: 1,
         organization: organization,
       });
       await queryRunner.manager.save(newTeamMember);

@@ -123,17 +123,7 @@ const formatDateTime = (date: Date | string | null) => {
 };
 
 export default function AppDetailPage({ appDetail }: AppDetailPageProps) {
-  const utilizationRate =
-    appDetail.paidMemberCount > 0
-      ? ((appDetail.usedMemberCount / appDetail.paidMemberCount) * 100).toFixed(
-          1
-        )
-      : "0";
 
-  const costPerUser =
-    appDetail.usedMemberCount > 0
-      ? appDetail.paymentInfo.currentBillingAmount / appDetail.usedMemberCount
-      : 0;
 
   return (
     <div className="h-full w-full bg-gray-50">
@@ -186,7 +176,7 @@ export default function AppDetailPage({ appDetail }: AppDetailPageProps) {
                 <p className="text-2xl font-bold text-gray-900">
                   {appDetail.usedMemberCount}
                   <span className="text-sm text-gray-500 font-normal">
-                    /{appDetail.paidMemberCount}
+                    /{appDetail.totalTeamMemberCount}
                   </span>
                 </p>
               </div>
@@ -201,7 +191,7 @@ export default function AppDetailPage({ appDetail }: AppDetailPageProps) {
               <div>
                 <p className="text-sm text-gray-600">활용률</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {utilizationRate}%
+                  {appDetail.utilizationRate}%
                 </p>
               </div>
             </div>
@@ -232,7 +222,7 @@ export default function AppDetailPage({ appDetail }: AppDetailPageProps) {
               <div>
                 <p className="text-sm text-gray-600">인당 비용</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {formatCurrency(costPerUser, appDetail.paymentInfo.currency)}
+                  {formatCurrency(appDetail.costPerUser, appDetail.paymentInfo.currency)}
                 </p>
               </div>
             </div>
@@ -304,7 +294,7 @@ export default function AppDetailPage({ appDetail }: AppDetailPageProps) {
                 <Users className="w-5 h-5" />
                 구성원 목록
                 <span className="text-sm font-normal text-gray-500">
-                  ({appDetail.members.length}명)
+                  ({appDetail.seats.length}명)
                 </span>
               </h2>
               <div className="border rounded-lg overflow-hidden">
@@ -329,7 +319,7 @@ export default function AppDetailPage({ appDetail }: AppDetailPageProps) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {appDetail.members.length === 0 ? (
+                    {appDetail.seats.length === 0 ? (
                       <TableRow>
                         <TableCell
                           colSpan={5}
@@ -339,7 +329,7 @@ export default function AppDetailPage({ appDetail }: AppDetailPageProps) {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      appDetail.members.map((member) => (
+                      appDetail.seats.map((member) => (
                         <TableRow key={member.id} className="hover:bg-gray-50">
                           <TableCell className="font-medium">
                             <div className="flex items-center gap-2">

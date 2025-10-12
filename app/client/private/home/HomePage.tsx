@@ -7,10 +7,11 @@ interface HomePageProps {
   apps: AppType[];
   isLoading: boolean;
   onSearch: (query: string) => void;
+  onGoToAppDetailPage: (appId: number) => void;
 }
 
 export default function HomePage(props: HomePageProps) {
-  const { apps, isLoading, onSearch } = props;
+  const { apps, isLoading, onSearch, onGoToAppDetailPage } = props;
 
   const [query, setQuery] = useState("");
 
@@ -34,7 +35,7 @@ export default function HomePage(props: HomePageProps) {
           <AppSearch query={query} onQueryChange={setQuery} />
         </section>
 
-        <AppItemsSection apps={apps} isLoading={isLoading} />
+        <AppItemsSection apps={apps} isLoading={isLoading} onGoToAppDetailPage={onGoToAppDetailPage} />
       </div>
     </div>
   );

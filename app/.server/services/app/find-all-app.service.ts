@@ -1,5 +1,5 @@
 import { Like } from "typeorm";
-import type { AppResponseDto, FindAllAppDto } from "~/routes/dto/app";
+import type { AppDetailResponseDto, AppResponseDto, FindAllAppDto } from "~/routes/dto/app";
 import { initializeDatabase, Subscriptions } from "~/.server/db";
 import { isKorean, isEnglish } from "~/.server/utils";
 
@@ -46,6 +46,7 @@ export async function findAllApp({
     billingCycleType: subscription.billingCycleType,
     pricingModel: subscription.pricingModel,
     connectStatus: subscription.connectStatus,
+    registeredAt: subscription.registeredAt,
   }));
 }
 
@@ -68,7 +69,7 @@ const createProductCondition = (query?: string) => {
   return conditions;
 };
 
-export async function getSubscriptionDetail(id: number) {
+export async function getSubscriptionDetail(id: number): Promise<AppDetailResponseDto> {
   await initializeDatabase();
   
   const subscription = await Subscriptions.findOne({
@@ -80,6 +81,7 @@ export async function getSubscriptionDetail(id: number) {
       "currentBillingAmount",
       "paymentPlan",
       "organization",
+      "organization.teamMembers",
       "creditCard",
       "billingHistories",
       "billingHistories.payAmount",
@@ -118,7 +120,7 @@ export async function getSubscriptionDetail(id: number) {
     usedMemberCount: subscription.usedMemberCount || 0,
     
     // Members list
-    members: subscription.subscriptionSeats?.map((seat: any) => ({
+    seats: subscription.subscriptionSeats?.map((seat: any) => ({
       id: seat.id,
       name: seat.teamMember?.name || "Unknown",
       email: seat.teamMember?.email || "",
@@ -164,5 +166,14 @@ export async function getSubscriptionDetail(id: number) {
     // Additional info
     description: subscription.desc,
     connectMethod: subscription.connectMethod,
+    utilizationRate: subscription.paidMemberCount > 0
+      ? ((subscription.usedMemberCount / subscription.organization.teamMembers.length) * 100).toFixed(
+          1
+        )
+      : "0",
+    costPerUser: subscription.usedMemberCount > 0
+      ? subscription.currentBillingAmount?.amount / subscription.usedMemberCount
+      : 0,
+    totalTeamMemberCount: subscription.organization.teamMembers.length,
   };
 }

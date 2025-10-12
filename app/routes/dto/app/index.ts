@@ -60,6 +60,7 @@ export interface AppResponseDto {
   billingCycleType: string;
   pricingModel: string;
   connectStatus: string;
+  registeredAt: Date;
 }
 
 export interface AppDetailResponseDto {
@@ -83,7 +84,7 @@ export interface AppDetailResponseDto {
   paidMemberCount: number;
   usedMemberCount: number;
   
-  members: Array<{
+  seats: Array<{
     id: number;
     name: string;
     email: string;
@@ -125,4 +126,7 @@ export interface AppDetailResponseDto {
   
   description: string | null;
   connectMethod: string;
+  utilizationRate: string;
+  costPerUser: number;
+  totalTeamMemberCount: number;
 }

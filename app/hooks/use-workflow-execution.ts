@@ -85,13 +85,10 @@ export function useWorkflowExecution(
       
       if (workflow.parser?.expression) {
         try {
-          console.log(workflow.parser?.expression)
-          console.log(workflowResult)
           const parsed = await ResultParser.parse(
             workflowResult,  // { result: {...} } 형태로 전달
             workflow.parser.expression
           );
-          console.log(parsed)
           setParsed(parsed);
           
         } catch (parseError: any) {

@@ -2,12 +2,13 @@ import type { AppType } from "~/models/apps/types";
 
 interface AppItemProps {
   apps: AppType;
+  onGoToAppDetailPage: (appId: number) => void;
 }
 
 export const AppItem = (props: AppItemProps) => {
-  const { apps } = props;
+  const { apps, onGoToAppDetailPage  } = props;
 
-  const { appKoreanName, appEnglishName, appLogo, nextBillingDate } = apps;
+  const { appKoreanName, appEnglishName, appLogo, registeredAt } = apps;
 
   const formatTimeAgo = (date: Date) => {
     const now = new Date();
@@ -20,10 +21,12 @@ export const AppItem = (props: AppItemProps) => {
     return `${diffInMonths} months ago`;
   };
 
-  const onClick = () => {};
+  const onClick = () => {
+    onGoToAppDetailPage(apps.id);
+  };
 
   return (
-    <div className="border border-gray-200 rounded-2xl overflow-hidden cursor-pointer hover:shadow-lg p-4 flex gap-5 items-center">
+    <div className="border border-gray-200 rounded-2xl overflow-hidden cursor-pointer hover:shadow-lg p-4 flex gap-5 items-center" onClick={onClick}>
       <div className="w-15.5 h-15.5 overflow-hidden rounded-sm">
         <img
           src={appLogo}
@@ -36,7 +39,7 @@ export const AppItem = (props: AppItemProps) => {
         <span>{appKoreanName || appEnglishName || ""}</span>
         <span className="text-sm text-gray-400">
           {" "}
-          {formatTimeAgo(nextBillingDate || new Date())}
+          {formatTimeAgo(registeredAt)}
         </span>
       </div>
     </div>

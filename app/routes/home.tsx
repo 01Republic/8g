@@ -2,7 +2,7 @@ import { userContext } from "~/context";
 import type { Route } from "./+types/home";
 import { authMiddleware } from "~/middleware/auth";
 import HomePage from "~/client/private/home/HomePage";
-import { useFetcher } from "react-router";
+import { useFetcher, useNavigate } from "react-router";
 import { useCallback, useEffect, useState } from "react";
 import type { AppType } from "~/models/apps/types";
 import { findAllApp } from "~/.server/services";
@@ -32,6 +32,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
 
   const fetcher = useFetcher<typeof action>();
+  const navigate = useNavigate();
 
   const handleSearch = useCallback(
     (query: string) => {
@@ -40,6 +41,11 @@ export default function Home() {
     },
     [fetcher],
   );
+
+  const goToAppDetailPage = (appId: number) => {
+    console.log("goToAppDetailPage", appId);
+    navigate(`/apps/${appId}`);
+  };
 
   useEffect(() => {
     if (fetcher.state === "idle") {
@@ -50,5 +56,5 @@ export default function Home() {
     }
   }, [fetcher.state, fetcher.data]);
 
-  return <HomePage apps={apps} isLoading={isLoading} onSearch={handleSearch} />;
+  return <HomePage apps={apps} isLoading={isLoading} onSearch={handleSearch} onGoToAppDetailPage={goToAppDetailPage} />;
 }

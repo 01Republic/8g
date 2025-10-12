@@ -33,7 +33,7 @@ export async function runWorkflow(
       steps: resolvedWorkflow.steps,
     },
     closeTabAfterCollection: closeTabAfterCollection ?? false,
-    activateTab: activateTab ?? false,
+    activateTab: activateTab ?? true,
   });
 
   return { result };

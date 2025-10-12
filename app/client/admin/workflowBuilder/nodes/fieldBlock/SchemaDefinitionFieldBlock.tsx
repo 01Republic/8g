@@ -99,13 +99,48 @@ function ObjectSchemaFieldBlock({
   };
 
   const updateFieldType = (key: string, type: string) => {
+    const currentField = shape[key] as any;
+    const fieldValue: any = { type };
+    
+    // string이나 number 타입이고 기존에 enum이 있었다면 유지
+    if ((type === 'string' || type === 'number') && currentField?.enum) {
+      fieldValue.enum = currentField.enum;
+    }
+    
     updateFormField(name, {
       type: "object",
       shape: {
         ...shape,
-        [key]: { type },
+        [key]: fieldValue,
       },
     });
+  };
+
+  const updateFieldEnumValues = (key: string, valuesStr: string) => {
+    const currentField = shape[key] as any;
+    const fieldType = currentField?.type || 'string';
+    
+    if (valuesStr.trim() === '') {
+      // enum 제거
+      const { enum: _, ...rest } = currentField;
+      updateFormField(name, {
+        type: "object",
+        shape: {
+          ...shape,
+          [key]: rest,
+        },
+      });
+    } else {
+      // enum 추가/업데이트
+      const values = valuesStr.split(',').map(v => v.trim()).filter(v => v);
+      updateFormField(name, {
+        type: "object",
+        shape: {
+          ...shape,
+          [key]: { ...currentField, type: fieldType, enum: values },
+        },
+      });
+    }
   };
 
   return (
@@ -131,37 +166,53 @@ function ObjectSchemaFieldBlock({
           <div className="flex flex-col gap-2 w-full border-t pt-2">
             {entries.map(([key, typeObj], index) => {
               const typeValue = (typeObj as any)?.type || "string";
+              const enumValues = (typeObj as any)?.enum || [];
+              const canHaveEnum = typeValue === 'string' || typeValue === 'number';
+              
               return (
-                <div key={index} className="flex gap-2 items-center">
-                  <Input
-                    value={key}
-                    onChange={(e) => updateFieldKey(key, e.target.value)}
-                    placeholder="필드 이름"
-                    className="flex-1"
-                  />
-                  <Select
-                    value={typeValue}
-                    onValueChange={(v) => updateFieldType(key, v)}
-                  >
-                    <SelectTrigger className="w-32">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="string">문자열</SelectItem>
-                      <SelectItem value="number">숫자</SelectItem>
-                      <SelectItem value="boolean">불린</SelectItem>
-                      <SelectItem value="array">배열</SelectItem>
-                      <SelectItem value="object">객체</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => removeField(key)}
-                    className="shrink-0"
-                  >
-                    삭제
-                  </Button>
+                <div key={index} className="flex flex-col gap-2">
+                  <div className="flex gap-2 items-center">
+                    <Input
+                      value={key}
+                      onChange={(e) => updateFieldKey(key, e.target.value)}
+                      placeholder="필드 이름"
+                      className="flex-1"
+                    />
+                    <Select
+                      value={typeValue}
+                      onValueChange={(v) => updateFieldType(key, v)}
+                    >
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="string">문자열</SelectItem>
+                        <SelectItem value="number">숫자</SelectItem>
+                        <SelectItem value="boolean">불린</SelectItem>
+                        <SelectItem value="array">배열</SelectItem>
+                        <SelectItem value="object">객체</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeField(key)}
+                      className="shrink-0"
+                    >
+                      삭제
+                    </Button>
+                  </div>
+                  {canHaveEnum && (
+                    <div className="pl-2 flex gap-2 items-center">
+                      <span className="text-xs text-gray-500 w-20">Enum 값:</span>
+                      <Input
+                        value={enumValues.join(', ')}
+                        onChange={(e) => updateFieldEnumValues(key, e.target.value)}
+                        placeholder="선택 사항: 쉼표로 구분 (예: MONTHLY, YEARLY)"
+                        className="flex-1 text-sm"
+                      />
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -204,9 +255,36 @@ function ArraySchemaFieldBlock({
         items: { type: "object", shape: {} },
       });
     } else {
+      // string/number일 경우 기존 enum 유지
+      const currentItems = items as any;
+      const itemValue: any = { type: newType };
+      if ((newType === 'string' || newType === 'number') && currentItems?.enum) {
+        itemValue.enum = currentItems.enum;
+      }
       updateFormField(name, {
         type: "array",
-        items: { type: newType },
+        items: itemValue,
+      });
+    }
+  };
+
+  const updateItemsEnumValues = (valuesStr: string) => {
+    const currentItems = items as any;
+    const itemType = currentItems?.type || 'string';
+    
+    if (valuesStr.trim() === '') {
+      // enum 제거
+      const { enum: _, ...rest } = currentItems;
+      updateFormField(name, {
+        type: "array",
+        items: rest,
+      });
+    } else {
+      // enum 추가/업데이트
+      const values = valuesStr.split(',').map(v => v.trim()).filter(v => v);
+      updateFormField(name, {
+        type: "array",
+        items: { ...currentItems, type: itemType, enum: values },
       });
     }
   };
@@ -253,16 +331,57 @@ function ArraySchemaFieldBlock({
   };
 
   const updateFieldType = (key: string, type: string) => {
+    const currentField = shape[key] as any;
+    const fieldValue: any = { type };
+    
+    // string이나 number 타입이고 기존에 enum이 있었다면 유지
+    if ((type === 'string' || type === 'number') && currentField?.enum) {
+      fieldValue.enum = currentField.enum;
+    }
+    
     updateFormField(name, {
       type: "array",
       items: {
         type: "object",
         shape: {
           ...shape,
-          [key]: { type },
+          [key]: fieldValue,
         },
       },
     });
+  };
+
+  const updateFieldEnumValues = (key: string, valuesStr: string) => {
+    const currentField = shape[key] as any;
+    const fieldType = currentField?.type || 'string';
+    
+    if (valuesStr.trim() === '') {
+      // enum 제거
+      const { enum: _, ...rest } = currentField;
+      updateFormField(name, {
+        type: "array",
+        items: {
+          type: "object",
+          shape: {
+            ...shape,
+            [key]: rest,
+          },
+        },
+      });
+    } else {
+      // enum 추가/업데이트
+      const values = valuesStr.split(',').map(v => v.trim()).filter(v => v);
+      updateFormField(name, {
+        type: "array",
+        items: {
+          type: "object",
+          shape: {
+            ...shape,
+            [key]: { ...currentField, type: fieldType, enum: values },
+          },
+        },
+      });
+    }
   };
 
   return (
@@ -300,6 +419,19 @@ function ArraySchemaFieldBlock({
             </Select>
           </div>
 
+          {/* string/number일 경우 enum 값 입력 */}
+          {(itemsType === "string" || itemsType === "number") && (
+            <div className="flex gap-2 items-center border-t pt-2">
+              <span className="text-sm text-gray-600 w-24">Enum 값</span>
+              <Input
+                value={((items as any).enum || []).join(', ')}
+                onChange={(e) => updateItemsEnumValues(e.target.value)}
+                placeholder="선택 사항: 쉼표로 구분 (예: MONTHLY, YEARLY)"
+                className="flex-1"
+              />
+            </div>
+          )}
+
           {/* 객체일 경우 필드 목록 */}
           {itemsType === "object" && (
             <div className="flex flex-col gap-2 w-full border-t pt-2">
@@ -308,37 +440,53 @@ function ArraySchemaFieldBlock({
               </div>
               {entries.map(([key, typeObj], index) => {
                 const typeValue = (typeObj as any)?.type || "string";
+                const enumValues = (typeObj as any)?.enum || [];
+                const canHaveEnum = typeValue === 'string' || typeValue === 'number';
+                
                 return (
-                  <div key={index} className="flex gap-2 items-center">
-                    <Input
-                      value={key}
-                      onChange={(e) => updateFieldKey(key, e.target.value)}
-                      placeholder="필드 이름"
-                      className="flex-1"
-                    />
-                    <Select
-                      value={typeValue}
-                      onValueChange={(v) => updateFieldType(key, v)}
-                    >
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="string">문자열</SelectItem>
-                        <SelectItem value="number">숫자</SelectItem>
-                        <SelectItem value="boolean">불린</SelectItem>
-                        <SelectItem value="array">배열</SelectItem>
-                        <SelectItem value="object">객체</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => removeField(key)}
-                      className="shrink-0"
-                    >
-                      삭제
-                    </Button>
+                  <div key={index} className="flex flex-col gap-2">
+                    <div className="flex gap-2 items-center">
+                      <Input
+                        value={key}
+                        onChange={(e) => updateFieldKey(key, e.target.value)}
+                        placeholder="필드 이름"
+                        className="flex-1"
+                      />
+                      <Select
+                        value={typeValue}
+                        onValueChange={(v) => updateFieldType(key, v)}
+                      >
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="string">문자열</SelectItem>
+                          <SelectItem value="number">숫자</SelectItem>
+                          <SelectItem value="boolean">불린</SelectItem>
+                          <SelectItem value="array">배열</SelectItem>
+                          <SelectItem value="object">객체</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeField(key)}
+                        className="shrink-0"
+                      >
+                        삭제
+                      </Button>
+                    </div>
+                    {canHaveEnum && (
+                      <div className="pl-2 flex gap-2 items-center">
+                        <span className="text-xs text-gray-500 w-20">Enum 값:</span>
+                        <Input
+                          value={enumValues.join(', ')}
+                          onChange={(e) => updateFieldEnumValues(key, e.target.value)}
+                          placeholder="선택 사항: 쉼표로 구분 (예: MONTHLY, YEARLY)"
+                          className="flex-1 text-sm"
+                        />
+                      </div>
+                    )}
                   </div>
                 );
               })}

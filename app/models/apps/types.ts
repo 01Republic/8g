@@ -12,4 +12,5 @@ export type AppType = {
   billingCycleType: string;
   pricingModel: string;
   connectStatus: string;
+  registeredAt: Date;
 };

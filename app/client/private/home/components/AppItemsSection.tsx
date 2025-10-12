@@ -4,10 +4,11 @@ import { AppItem } from "./AppItem";
 interface AppItemsSectionProps {
   apps: AppType[];
   isLoading: boolean;
+  onGoToAppDetailPage: (appId: number) => void;
 }
 
 export const AppItemsSection = (props: AppItemsSectionProps) => {
-  const { apps, isLoading } = props;
+  const { apps, isLoading, onGoToAppDetailPage } = props;
   const hasApps = apps.length > 0;
   const showItems = hasApps && !isLoading;
 
@@ -23,7 +24,7 @@ export const AppItemsSection = (props: AppItemsSectionProps) => {
             {showItems ? (
               <div className="grid grid-cols-2 gap-3">
                 {apps.map((app) => (
-                  <AppItem key={app.id} apps={app} />
+                  <AppItem key={app.id} apps={app} onGoToAppDetailPage={onGoToAppDetailPage} />
                 ))}
               </div>
             ) : (
