@@ -16,8 +16,10 @@ import { NumberFieldBlock } from "./fieldBlock/NumberFieldBlock";
 import { BooleanFieldBlock } from "./fieldBlock/BooleanFieldBlock";
 import { EnumFieldBlock } from "./fieldBlock/EnumFieldBlock";
 import { ArrayFieldBlock } from "./fieldBlock/ArrayFieldBlock";
-import { ObjectFieldBlock } from "./fieldBlock/ObjectFieldBlock";
+import { TextFilterFieldBlock } from "./fieldBlock/TextFilterFieldBlock";
 import { OptionFieldBlock } from "./fieldBlock/OptionFieldBlock";
+import { SchemaDefinitionFieldBlock } from "./fieldBlock/SchemaDefinitionFieldBlock";
+import { SourceDataFieldBlock } from "./fieldBlock/SourceDataFieldBlock";
 
 interface BlockActionHandlerModalProps {
   id: string;
@@ -157,8 +159,30 @@ export const BlockActionHandlerModal = (
             }
 
             // Render field based on type
+            
+            // schemaDefinition은 독립적으로 처리 (discriminated union이라 field.type이 "object"가 아닐 수 있음)
+            if (field.name === "schemaDefinition") {
+              return (
+                <SchemaDefinitionFieldBlock
+                  field={field}
+                  formData={formData}
+                  updateFormField={updateFormField}
+                />
+              );
+            }
 
             if (field.type === "string") {
+              // sourceData는 이전 노드 선택 드롭다운으로
+              if (field.name === "sourceData") {
+                return (
+                  <SourceDataFieldBlock
+                    field={field}
+                    formData={formData}
+                    updateFormField={updateFormField}
+                    currentNodeId={id}
+                  />
+                );
+              }
               return (
                 <StringFieldBlock
                   field={field}
@@ -205,7 +229,7 @@ export const BlockActionHandlerModal = (
               // For textFilter in EventClickBlock
               if (field.name === "textFilter") {
                 return (
-                  <ObjectFieldBlock
+                  <TextFilterFieldBlock
                     field={field}
                     formData={formData}
                     updateFormField={updateFormField}

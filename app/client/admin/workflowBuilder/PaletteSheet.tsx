@@ -27,7 +27,7 @@ export const PaletteSheet = ({
         <SheetHeader>
           <SheetTitle>Blocks</SheetTitle>
         </SheetHeader>
-        <div style={{ padding: 12, display: "grid", gap: 12 }}>
+        <div style={{ padding: 12, display: "grid", gap: 12, overflowY: "auto", maxHeight: "calc(100vh - 120px)" }}>
           {blocks.map((block) => (
             <PaletteItem
               title={block.title}

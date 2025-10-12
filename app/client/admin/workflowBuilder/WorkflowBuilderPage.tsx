@@ -152,7 +152,7 @@ export default function WorkflowBuilderPage({
       const res = await runWorkflow({
         evaluatedUrl,
         workflow,
-        closeTabAfterCollection: false,
+        closeTabAfterCollection: true,
         activateTab: true,
         variables, // variables 전달
       });

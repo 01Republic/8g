@@ -51,6 +51,22 @@ export const blockLabels: Record<string, { title: string; description: string }>
     title: "요소 데이터 추출",
     description: "텍스트/속성/셀렉터 추출",
   },
+  "scroll": {
+    title: "스크롤",
+    description: "스크롤",
+  },
+  "ai-parse-data": {
+    title: "AI 데이터 파싱",
+    description: "AI 데이터 파싱",
+  },
+  "keypress": {
+    title: "키 입력",
+    description: "키 입력",
+  },
+  "wait": {
+    title: "대기",
+    description: "대기",
+  }
 };
 
 /**

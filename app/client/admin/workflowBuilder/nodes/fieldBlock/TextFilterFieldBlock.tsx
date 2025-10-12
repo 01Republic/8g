@@ -10,13 +10,13 @@ import {
 import { Input } from "~/components/ui/input";
 import { FieldBlockContentBox } from "./FieldBlockContentBox";
 
-interface ObjectFieldBlockProps {
+interface TextFilterFieldBlockProps {
   field: ParsedField;
   formData: Record<string, any>;
   updateFormField: (fieldName: string, value: any) => void;
 }
 
-export const ObjectFieldBlock = (props: ObjectFieldBlockProps) => {
+export const TextFilterFieldBlock = (props: TextFilterFieldBlockProps) => {
   const { field, formData, updateFormField } = props;
   const { name } = field;
 
