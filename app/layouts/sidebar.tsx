@@ -1,4 +1,4 @@
-import { FolderIcon, HomeIcon, PlusIcon } from "lucide-react";
+import { FolderIcon, HomeIcon, PlusIcon, UsersIcon } from "lucide-react";
 import {
   SidebarGroupLabel,
   SidebarMenuButton,
@@ -55,6 +55,10 @@ function AppSidebar() {
           <SidebarMenuButton size="lg">
             <FolderIcon />
             <Link to="/apps">Apps</Link>
+          </SidebarMenuButton>
+          <SidebarMenuButton size="lg">
+            <UsersIcon />
+            <Link to="/members">Members</Link>
           </SidebarMenuButton>
         </SidebarGroup>
       </SidebarContent>

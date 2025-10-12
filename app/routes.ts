@@ -14,6 +14,7 @@ export default [
     route("/workflows", "routes/workflows.tsx"),
     route("/workflow-builder/:workflowId?", "routes/workflow-builder.tsx"),
     route("/apps/:appId/form-builder", "routes/form-builder.tsx"),
+    route("/members", "routes/members.tsx"),
   ]),
   layout("layouts/common.tsx", [route("/login", "routes/login.tsx")]),
   route("/not-found", "routes/not-found.tsx"),
