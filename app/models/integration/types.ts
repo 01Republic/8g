@@ -106,11 +106,13 @@ export type SelectedMembers = {
 };
 
 export type PaymentInfo = {
-  lastFourDigits: string;
+  cardNumber: string;
   billingEmail: string;
-  planName: string;
-  billingCycle: string; // 연간 / 월간
-  price: string;
+  nextPaymentDate: string;
+  nextPaymentAmount: string;
+  currentPaymentAmount: string;
+  subscriptionPlanName: string;
+  billingCycleType: string;
 };
 
 export type PaymentHistory = {

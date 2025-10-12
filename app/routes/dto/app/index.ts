@@ -12,11 +12,13 @@ export interface MemberDto {
 }
 
 export interface PaymentInfoDto {
-  lastFourDigits: string;
+  cardNumber: string;
   billingEmail: string;
-  planName: string;
-  billingCycle: string;
-  price: string;
+  nextPaymentDate: string;
+  nextPaymentAmount: string;
+  currentPaymentAmount: string;
+  subscriptionPlanName: string;
+  billingCycleType: string;
 }
 
 export interface PaymentHistoryDto {

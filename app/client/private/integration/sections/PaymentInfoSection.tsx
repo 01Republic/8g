@@ -71,9 +71,9 @@ export function PaymentInfoSection({
         <Card className="mt-4 p-6 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <div className="text-xs text-gray-500 mb-1">카드 뒷 번호</div>
+              <div className="text-xs text-gray-500 mb-1">카드 번호</div>
               <div className="text-sm font-medium">
-                {paymentInfo?.lastFourDigits ? `**** ${paymentInfo.lastFourDigits}` : "N/A"}
+                {paymentInfo?.cardNumber ?? "N/A"}
               </div>
             </div>
             
@@ -85,23 +85,30 @@ export function PaymentInfoSection({
             </div>
 
             <div>
-              <div className="text-xs text-gray-500 mb-1">요금제</div>
+              <div className="text-xs text-gray-500 mb-1">구독 플랜</div>
               <div className="text-sm font-medium">
-                {paymentInfo?.planName ?? "N/A"}
+                {paymentInfo?.subscriptionPlanName ?? "N/A"}
               </div>
             </div>
 
             <div>
-              <div className="text-xs text-gray-500 mb-1">연간/월간</div>
+              <div className="text-xs text-gray-500 mb-1">다음 결제일</div>
               <div className="text-sm font-medium">
-                {paymentInfo?.billingCycle ?? "N/A"}
+                {paymentInfo?.nextPaymentDate ?? "N/A"}
               </div>
             </div>
 
-            <div className="col-span-2">
-              <div className="text-xs text-gray-500 mb-1">가격</div>
+            <div>
+              <div className="text-xs text-gray-500 mb-1">현재 결제 금액</div>
               <div className="text-lg font-semibold text-primary">
-                {paymentInfo?.price ?? "N/A"}
+                {paymentInfo?.currentPaymentAmount ?? "N/A"}
+              </div>
+            </div>
+
+            <div>
+              <div className="text-xs text-gray-500 mb-1">다음 결제 금액</div>
+              <div className="text-lg font-semibold text-primary">
+                {paymentInfo?.nextPaymentAmount ?? "N/A"}
               </div>
             </div>
           </div>

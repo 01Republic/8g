@@ -33,19 +33,22 @@ export async function integrateApp(
       throw new Error("not found product");
     }
 
-    const currentBillingAmount = createCurrentBillingAmount(paymentInfo.price);
+    const currentBillingAmount = createCurrentBillingAmount(paymentInfo.currentPaymentAmount);
     const savedCurrentBillingAmount = await queryRunner.manager.save(currentBillingAmount);
 
-    const creditCard = createCreditCard(paymentInfo.lastFourDigits, organization);
+    const nextBillingAmount = createMoneyEntity(paymentInfo.nextPaymentAmount);
+    const savedNextBillingAmount = await queryRunner.manager.save(nextBillingAmount);
+
+    const creditCard = createCreditCard(paymentInfo.cardNumber, organization);
     const savedCreditCard = await queryRunner.manager.save(creditCard);
 
-    const paymentPlan = createProductPaymentPlan(paymentInfo.planName, product);
+    const paymentPlan = createProductPaymentPlan(paymentInfo.subscriptionPlanName, product);
     const savedPaymentPlan = await queryRunner.manager.save(paymentPlan);
 
-    const priceAmount = parseFloat(paymentInfo.price.replace(/[^0-9.]/g, ''));
+    const priceAmount = parseFloat(paymentInfo.currentPaymentAmount.replace(/[^0-9.]/g, ''));
     const billingCycle = createProductBillingCycle(
       priceAmount,
-      paymentInfo.billingCycle === "Monthly" ? "MONTHLY" : "YEARLY",
+      paymentInfo.billingCycleType.toLowerCase() === "monthly" ? "MONTHLY" : "YEARLY",
       savedPaymentPlan,
       product
     );
@@ -59,7 +62,9 @@ export async function integrateApp(
       savedCreditCard, 
       workspace.content,
       savedPaymentPlan,
-      savedBillingCycle
+      savedBillingCycle,
+      paymentInfo.nextPaymentDate,
+      savedNextBillingAmount
     );
     const savedSubscription = await queryRunner.manager.save(subscription);
 
@@ -163,9 +168,11 @@ function createSubscription(
   creditCard: CreditCard,
   workspaceContent: string,
   paymentPlan: ProductPaymentPlans,
-  billingCycle: ProductBillingCycles
+  billingCycle: ProductBillingCycles,
+  nextPaymentDate?: string,
+  nextBillingAmount?: Moneys
 ): Subscriptions {
-  return Subscriptions.create({
+  const subscriptionData: any = {
     productId: productId,
     organization: organization,
     connectMethod: "MANUAL",
@@ -183,7 +190,17 @@ function createSubscription(
     alias: workspaceContent,
     paymentPlan: paymentPlan,
     billingCycle: billingCycle,
-  });
+  };
+
+  if (nextPaymentDate) {
+    subscriptionData.nextBillingDate = new Date(nextPaymentDate);
+  }
+
+  if (nextBillingAmount) {
+    subscriptionData.nextBillingAmount = nextBillingAmount;
+  }
+
+  return Subscriptions.create(subscriptionData);
 }
 
 async function createSubscriptionSeats(
