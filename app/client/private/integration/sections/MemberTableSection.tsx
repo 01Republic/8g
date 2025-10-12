@@ -16,6 +16,7 @@ import { useEffect, useMemo } from "react";
 import type { SelectedMembers } from "~/models/integration/types";
 import { IntegrationSectionContentBox } from "./IntegrationSectionContentBox";
 import { generateVariablesFromSectionResults } from "~/models/integration/VariableGenerator";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
 interface MemberTableSectionProps {
   title: string;
@@ -46,9 +47,7 @@ export function MemberTableSection({
 
   useEffect(() => {
     if (!Array.isArray(parsed)) return;
-    console.log(parsed)
     onSelectedMembersChange(parsed);
-    console.log(selectedMembers)
     setSectionResult("member-table", { result: parsed });
   }, [parsed]);
 
@@ -82,20 +81,29 @@ export function MemberTableSection({
             <TableHeader className="sticky top-0">
               <TableRow>
                 <TableHead className="w-16">#</TableHead>
+                <TableHead>프로필</TableHead>
                 <TableHead>이메일</TableHead>
-                <TableHead>상태</TableHead>
+                <TableHead>이름</TableHead>
                 <TableHead>가입일</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {selectedMembers.map((member: any, index: number) => (
+              {selectedMembers.map((member: SelectedMembers, index: number) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
+                  <TableCell className="text-sm">
+                    <Avatar className="w-10 h-10">
+                      <AvatarImage src={member.profileImgUrl ?? ""} />
+                      <AvatarFallback>
+                        {member.name?.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </TableCell>
                   <TableCell className="text-sm">
                     {member.email ?? ""}
                   </TableCell>
                   <TableCell className="text-sm">
-                    {member.status ?? ""}
+                    {member.name ?? ""}
                   </TableCell>
                   <TableCell className="text-sm">
                     {member.joinDate ?? "N/A"}

@@ -99,8 +99,9 @@ export type SelectedWorkspace = {
 };
 
 export type SelectedMembers = {
+  profileImgUrl: string | undefined;
+  name: string;
   email: string;
-  status: string;
   joinDate: string;
 };
 

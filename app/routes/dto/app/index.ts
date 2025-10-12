@@ -5,8 +5,9 @@ export interface WorkspaceDto {
 }
 
 export interface MemberDto {
+  profileImgUrl: string | undefined;
+  name: string;
   email: string;
-  status: string;
   joinDate: string;
 }
 

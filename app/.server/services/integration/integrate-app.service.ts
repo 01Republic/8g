@@ -1,5 +1,5 @@
 import { initializeDatabase, AppDataSource, Organizations, Subscriptions, SubscriptionSeats, Moneys, BillingHistories, CreditCard, TeamMembers, ProductPaymentPlans, ProductBillingCycles, Products } from "~/.server/db";
-import type { RegisterAppDto, RegisterAppResponseDto } from "~/routes/dto/app";
+import type { MemberDto, RegisterAppDto, RegisterAppResponseDto } from "~/routes/dto/app";
 
 export async function integrateApp(
   data: RegisterAppDto,
@@ -158,7 +158,7 @@ function createBillingHistory(
 function createSubscription(
   productId: number,
   organization: Organizations,
-  members: Array<{ status: string }>,
+  members: Array<MemberDto>,
   currentBillingAmount: Moneys,
   creditCard: CreditCard,
   workspaceContent: string,
@@ -171,7 +171,7 @@ function createSubscription(
     connectMethod: "MANUAL",
     accountCount: members.length,
     usedMemberCount: members.length,
-    paidMemberCount: members.filter((m) => m.status === "active").length,
+    paidMemberCount: members.length,
     status: "PAYMENT_SUCCESS",
     connectStatus: "SUCCESS",
     pricingModel: "PER_SEAT",
@@ -188,7 +188,7 @@ function createSubscription(
 
 async function createSubscriptionSeats(
   subscriptionId: number,
-  members: Array<{ status: string; joinDate: string; email: string }>,
+  members: Array<MemberDto>,
   organization: Organizations,
   queryRunner: any
 ): Promise<number> {
@@ -204,7 +204,8 @@ async function createSubscriptionSeats(
     if (!teamMember) {
       const newTeamMember = TeamMembers.create({
         email: member.email,
-        name: member.email,
+        name: member.name,
+        profileImgUrl: member.profileImgUrl,
         organization: organization,
       });
       await queryRunner.manager.save(newTeamMember);
