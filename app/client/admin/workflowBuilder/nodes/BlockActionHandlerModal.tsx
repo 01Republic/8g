@@ -20,6 +20,8 @@ import { TextFilterFieldBlock } from "./fieldBlock/TextFilterFieldBlock";
 import { OptionFieldBlock } from "./fieldBlock/OptionFieldBlock";
 import { SchemaDefinitionFieldBlock } from "./fieldBlock/SchemaDefinitionFieldBlock";
 import { SourceDataFieldBlock } from "./fieldBlock/SourceDataFieldBlock";
+import { RecordFieldBlock } from "./fieldBlock/RecordFieldBlock";
+import { CodeFieldBlock } from "./fieldBlock/CodeFieldBlock";
 
 interface BlockActionHandlerModalProps {
   id: string;
@@ -172,14 +174,24 @@ export const BlockActionHandlerModal = (
             }
 
             if (field.type === "string") {
-              // sourceData는 이전 노드 선택 드롭다운으로
-              if (field.name === "sourceData") {
+              // sourceData, inputData는 이전 노드 선택 드롭다운으로
+              if (field.name === "sourceData" || field.name === "inputData") {
                 return (
                   <SourceDataFieldBlock
                     field={field}
                     formData={formData}
                     updateFormField={updateFormField}
                     currentNodeId={id}
+                  />
+                );
+              }
+              // code 필드는 코드 입력 textarea로
+              if (field.name === "code") {
+                return (
+                  <CodeFieldBlock
+                    field={field}
+                    formData={formData}
+                    updateFormField={updateFormField}
                   />
                 );
               }
@@ -225,6 +237,14 @@ export const BlockActionHandlerModal = (
                   updateFormField={updateFormField}
                 />
               );
+            } else if (field.type === "record") {
+              return (
+                <RecordFieldBlock
+                  field={field}
+                  formData={formData}
+                  updateFormField={updateFormField}
+                />
+              );
             } else if (field.type === "object") {
               // For textFilter in EventClickBlock
               if (field.name === "textFilter") {
@@ -234,7 +254,7 @@ export const BlockActionHandlerModal = (
                     formData={formData}
                     updateFormField={updateFormField}
                   />
-                );
+              );
               }
             }
 

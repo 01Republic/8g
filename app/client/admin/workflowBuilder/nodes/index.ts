@@ -66,7 +66,15 @@ export const blockLabels: Record<string, { title: string; description: string }>
   "wait": {
     title: "대기",
     description: "대기",
-  }
+  },
+  "fetch-api": {
+    title: "API 호출",
+    description: "API 호출",
+  },
+  "data-extract": {
+    title: "데이터 추출/변환",
+    description: "JavaScript로 데이터 추출 및 변환",
+  },
 };
 
 /**
@@ -103,4 +111,17 @@ export const fieldLabels: Record<string, string> = {
   attributes: "추출할 속성 목록",
   includeSelector: "셀렉터 생성",
   includeXPath: "XPath 생성",
+  
+  // FetchApiBlock
+  url: "URL",
+  method: "HTTP 메서드",
+  headers: "헤더",
+  body: "요청 본문",
+  timeout: "타임아웃 (ms)",
+  parseJson: "JSON 파싱",
+  returnHeaders: "응답 헤더 반환",
+  
+  // DataExtractBlock
+  code: "JavaScript 코드",
+  inputData: "입력 데이터",
 };

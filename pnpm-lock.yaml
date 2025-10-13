@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       8g-extension:
-        specifier: ^1.12.2
-        version: 1.12.2(axios@0.21.4)(handlebars@4.7.8)(openai@5.12.2(ws@8.18.3)(zod@4.1.11))(typeorm@0.3.26(mssql@6.4.1(encoding@0.1.13))(mysql2@3.14.5)(pg@8.16.3)(reflect-metadata@0.2.2)(sqlite3@5.1.7))(ws@8.18.3)
+        specifier: ^1.13.3
+        version: 1.13.3(axios@0.21.4)(handlebars@4.7.8)(openai@5.12.2(ws@8.18.3)(zod@4.1.11))(typeorm@0.3.26(mssql@6.4.1(encoding@0.1.13))(mysql2@3.14.5)(pg@8.16.3)(reflect-metadata@0.2.2)(sqlite3@5.1.7))(ws@8.18.3)
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -174,8 +174,8 @@ importers:
 
 packages:
 
-  8g-extension@1.12.2:
-    resolution: {integrity: sha512-p9XZAgETp4i6QPee7AfKp7C9AxgI2bbUjH+aQyseb4gzNMKBkUNJcWOK+4xu3Su/ukXRZR8taMwvnlmizcrp1w==}
+  8g-extension@1.13.3:
+    resolution: {integrity: sha512-Yg+D9iiKhpY/Z1SRanh/iiRbpSvoTlhWfPk1OkPzR6NmJg6qjhWI/ytQcqrJ5ScdyiFVbLFXAiETHoyZiM3gcw==}
 
   '@azure/abort-controller@2.1.2':
     resolution: {integrity: sha512-nBrLsEWm4J2u5LpAPjxADTlq3trDgVZZXHNKabeXZtpq3d3AbN/KGO82R87rdDz5/lYB024rtEf10/q0urNgsA==}
@@ -3796,7 +3796,7 @@ packages:
 
 snapshots:
 
-  8g-extension@1.12.2(axios@0.21.4)(handlebars@4.7.8)(openai@5.12.2(ws@8.18.3)(zod@4.1.11))(typeorm@0.3.26(mssql@6.4.1(encoding@0.1.13))(mysql2@3.14.5)(pg@8.16.3)(reflect-metadata@0.2.2)(sqlite3@5.1.7))(ws@8.18.3):
+  8g-extension@1.13.3(axios@0.21.4)(handlebars@4.7.8)(openai@5.12.2(ws@8.18.3)(zod@4.1.11))(typeorm@0.3.26(mssql@6.4.1(encoding@0.1.13))(mysql2@3.14.5)(pg@8.16.3)(reflect-metadata@0.2.2)(sqlite3@5.1.7))(ws@8.18.3):
     dependencies:
       '@langchain/core': 0.3.78(openai@5.12.2(ws@8.18.3)(zod@4.1.11))
       '@langchain/openai': 0.6.15(@langchain/core@0.3.78(openai@5.12.2(ws@8.18.3)(zod@4.1.11)))(ws@8.18.3)

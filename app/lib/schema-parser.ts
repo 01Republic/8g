@@ -7,6 +7,7 @@ export type FieldType =
   | "enum"
   | "array"
   | "object"
+  | "record"
   | "literal"
   | "union";
 
@@ -205,6 +206,10 @@ const typeHandlers: TypeHandler[] = [
                      : undefined,
       };
     },
+  },
+  {
+    check: (s) => s instanceof z.ZodRecord,
+    handle: () => ({ type: "record" }),
   },
   {
     check: (s) => s instanceof z.ZodObject,
