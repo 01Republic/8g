@@ -11,6 +11,7 @@ export const AppItem = (props: AppItemProps) => {
   const { appKoreanName, appEnglishName, appLogo, registeredAt } = apps;
 
   const formatTimeAgo = (date: Date) => {
+    if (!date) return "Recently";
     const now = new Date();
     const diffInMonths = Math.floor(
       (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24 * 30),
