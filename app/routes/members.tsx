@@ -5,9 +5,11 @@ import { userContext } from "~/context";
 import { findAllTeamMembers } from "~/.server/services";
 import MembersPage, {
   type TeamMemberAddPayload,
+  type TeamMemberUpdatePayload,
 } from "~/client/private/members/MembersPage";
 import { deleteTeamMembers } from "~/.server/services/member/delete-all-team-members.service";
 import { createTeamMembers } from "~/.server/services/member/create-team-members.service";
+import { updateTeamMember } from "~/.server/services/member/update-team-member.service";
 
 export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
 
@@ -44,6 +46,18 @@ export async function action({ request, context }: Route.ActionArgs) {
     await createTeamMembers(payload);
     return null;
   }
+
+  if (request.method === "PUT") {
+    const payload = {
+      id: parseInt(formData.get("id")!.toString()),
+      name: formData.get("name")!.toString(),
+      email: formData.get("email")!.toString(),
+      phone: formData.get("phone")!.toString(),
+      jobName: formData.get("position")!.toString(),
+    };
+    await updateTeamMember(payload);
+    return null;
+  }
 }
 
 export async function loader({ context }: Route.LoaderArgs) {
@@ -57,13 +71,20 @@ export async function loader({ context }: Route.LoaderArgs) {
   return { members };
 }
 
-export default function Members() {
-  const { members } = useLoaderData<typeof loader>();
+export default function Members({
+  loaderData,
+}: Route.ComponentProps) {
+
+  const { members } = loaderData;
 
   const fetcher = useFetcher();
 
   const onAddMember = (payload: TeamMemberAddPayload) => {
     fetcher.submit(payload, { method: "POST" });
+  };
+
+  const onUpdateMember = (payload: TeamMemberUpdatePayload) => {
+    fetcher.submit(payload, { method: "PUT" });
   };
 
   const onDeleteMember = (teamMemberId: number) => {
@@ -81,6 +102,7 @@ export default function Members() {
     <MembersPage
       members={members}
       addMember={onAddMember}
+      updateMember={onUpdateMember}
       deleteMember={onDeleteMember}
       deleteAllMembers={onDeleteAllMembers}
     />

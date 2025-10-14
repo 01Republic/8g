@@ -23,15 +23,24 @@ export type TeamMemberAddPayload = {
   subscriptionCount: number;
 };
 
+export type TeamMemberUpdatePayload = {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  position: string;
+};
+
 interface MembersPageProps {
   members: TeamMembers[];
   addMember: (payload: TeamMemberAddPayload) => void;
+  updateMember: (payload: TeamMemberUpdatePayload) => void;
   deleteMember: (teamMemberId: number) => void;
   deleteAllMembers: (teamMemberIds: number[]) => void;
 }
 
 export default function MembersPage(props: MembersPageProps) {
-  const { members, addMember, deleteMember, deleteAllMembers } = props;
+  const { members, addMember, deleteMember, deleteAllMembers, updateMember } = props;
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [selectedMemberIds, setSelectedMemberIds] = useState<number[]>([]);
   const [deleteAllDialogOpen, setDeleteAllDialogOpen] = useState(false);
