@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -15,20 +15,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import type { SwitchEdgeData, WhenCondition } from "~/models/workflow/types";
+import type { SwitchEdgeData } from "~/models/workflow/types";
 import { EdgFieldContentBox } from "./EdgFieldContentBox";
 import type {
   ConditionMode,
   MultipleConditionType,
   SingleConditionType,
   SubCondition,
-  SubConditionType,
 } from "./types";
 import { SingleEquals } from "./SingleEquals";
 import { SingleExists } from "./SingleExists";
 import { SingleContains } from "./SingleContains";
 import { Multiple } from "./Multiple";
 import { SingleRegex } from "./SingleRegex";
+import { parseEdgeData, buildEdgeData } from "./edgeDataConverter";
 
 interface EdgeConfigDialogProps {
   open: boolean;
@@ -46,247 +46,77 @@ export function EdgeConfigDialog({
   targetNodeId,
 }: EdgeConfigDialogProps) {
   // 조건 모드: 단일 vs 복합
-  const [conditionMode, setConditionMode] = useState<ConditionMode>(
-    edgeData?.when?.and || edgeData?.when?.or ? "multiple" : "single",
-  );
+  const [conditionMode, setConditionMode] = useState<ConditionMode>("single");
 
   // 단일 조건 타입
   const [singleConditionType, setSingleConditionType] =
-    useState<SingleConditionType>(
-      edgeData?.isDefault
-        ? "default"
-        : edgeData?.when?.equals
-          ? "equals"
-          : edgeData?.when?.exists
-            ? "exists"
-            : edgeData?.when?.expr
-              ? "expr"
-              : edgeData?.when?.regex
-                ? "regex"
-                : edgeData?.when?.contains
-                  ? "contains"
-                  : "default",
-    );
+    useState<SingleConditionType>("default");
 
   // 복합 조건 타입 (AND/OR)
   const [multipleConditionType, setMultipleConditionType] =
-    useState<MultipleConditionType>(edgeData?.when?.and ? "and" : "or");
+    useState<MultipleConditionType>("and");
 
-  // 노드 선택용 (equals, exists, regex에서 사용)
-  const extractNodeIdFromPath = (path: string) => {
-    const match = path.match(/\$\.steps\.([^.]+)/);
-    return match ? match[1] : "";
-  };
-
-  const [selectedNodeId, setSelectedNodeId] = useState<string>(
-    extractNodeIdFromPath(
-      edgeData?.when?.equals?.left ||
-        edgeData?.when?.exists ||
-        edgeData?.when?.regex?.value ||
-        "",
-    ),
-  );
-
+  const [selectedNodeId, setSelectedNodeId] = useState<string>("");
   const [resultPath, setResultPath] = useState("result.data");
 
   // equals 조건용
-  const [rightValue, setRightValue] = useState(
-    edgeData?.when?.equals?.right || "",
-  );
+  const [rightValue, setRightValue] = useState("");
 
   // exists 조건용 - 이제 노드 선택과 경로 조합으로 처리
   const [existsResultPath, setExistsResultPath] = useState("result");
 
   // expr 조건용
-  const [exprValue, setExprValue] = useState(edgeData?.when?.expr || "");
+  const [exprValue, setExprValue] = useState("");
 
   // regex 조건용
   const [regexResultPath, setRegexResultPath] = useState("result.data");
-  const [regexPattern, setRegexPattern] = useState(
-    edgeData?.when?.regex?.pattern || "",
-  );
+  const [regexPattern, setRegexPattern] = useState("");
 
   // contains 조건용
   const [containsResultPath, setContainsResultPath] = useState("result.data");
-  const [containsSearch, setContainsSearch] = useState(
-    edgeData?.when?.contains?.search || "",
-  );
+  const [containsSearch, setContainsSearch] = useState("");
 
-  const initializeSubConditions = (): SubCondition[] => {
-    const conditions = edgeData?.when?.and || edgeData?.when?.or || [];
-    if (conditions.length === 0) return [];
+  const [subConditions, setSubConditions] = useState<SubCondition[]>([]);
 
-    return conditions.map((cond: any, idx: number) => {
-      const id = `sub-${Date.now()}-${idx}`;
-      if (cond.equals) {
-        const match = cond.equals.left?.match(/\$\.steps\.([^.]+)\.(.+)/);
-        return {
-          id,
-          type: "equals" as SubConditionType,
-          nodeId: match?.[1] || "",
-          path: match?.[2] || "result.data",
-          value: cond.equals.right || "",
-        };
-      } else if (cond.contains) {
-        const match = cond.contains.value?.match(/\$\.steps\.([^.]+)\.(.+)/);
-        return {
-          id,
-          type: "contains" as SubConditionType,
-          nodeId: match?.[1] || "",
-          path: match?.[2] || "result.data",
-          value: cond.contains.search || "",
-        };
-      } else if (cond.exists) {
-        const match = cond.exists?.match(/\$\.steps\.([^.]+)\.(.+)/);
-        return {
-          id,
-          type: "exists" as SubConditionType,
-          nodeId: match?.[1] || "",
-          path: match?.[2] || "result",
-        };
-      } else if (cond.regex) {
-        const match = cond.regex.value?.match(/\$\.steps\.([^.]+)\.(.+)/);
-        return {
-          id,
-          type: "regex" as SubConditionType,
-          nodeId: match?.[1] || "",
-          path: match?.[2] || "result.data",
-          value: cond.regex.pattern || "",
-        };
-      }
-      return {
-        id,
-        type: "equals" as SubConditionType,
-        nodeId: "",
-        path: "result.data",
-        value: "",
-      };
-    });
-  };
+  // edgeData가 변경되거나 dialog가 열릴 때 state 초기화
+  useEffect(() => {
+    if (!open) return;
 
-  const [subConditions, setSubConditions] = useState<SubCondition[]>(
-    initializeSubConditions,
-  );
+    // edgeData를 파싱해서 폼 상태로 변환
+    const formState = parseEdgeData(edgeData);
+
+    setConditionMode(formState.conditionMode);
+    setSingleConditionType(formState.singleConditionType);
+    setMultipleConditionType(formState.multipleConditionType);
+    setSelectedNodeId(formState.selectedNodeId);
+    setResultPath(formState.resultPath);
+    setRightValue(formState.rightValue);
+    setExistsResultPath(formState.existsResultPath);
+    setExprValue(formState.exprValue);
+    setRegexResultPath(formState.regexResultPath);
+    setRegexPattern(formState.regexPattern);
+    setContainsResultPath(formState.containsResultPath);
+    setContainsSearch(formState.containsSearch);
+    setSubConditions(formState.subConditions);
+  }, [open, edgeData]);
 
   const handleSave = () => {
-    let newData: SwitchEdgeData = {};
-
-    if (conditionMode === "single") {
-      // 단일 조건 처리
-      switch (singleConditionType) {
-        case "default":
-          newData = {
-            isDefault: true,
-            conditionLabel: "default",
-          };
-          break;
-
-        case "equals":
-          const leftPath = `$.steps.${selectedNodeId}.${resultPath}`;
-          newData = {
-            when: {
-              equals: { left: leftPath, right: rightValue },
-            },
-            conditionLabel: `== ${rightValue}`,
-            isDefault: false,
-          };
-          break;
-
-        case "exists":
-          const existsPath = `$.steps.${selectedNodeId}.${existsResultPath}`;
-          newData = {
-            when: {
-              exists: existsPath,
-            },
-            conditionLabel: "exists",
-            isDefault: false,
-          };
-          break;
-
-        case "expr":
-          newData = {
-            when: {
-              expr: exprValue,
-            },
-            conditionLabel:
-              exprValue.length > 15
-                ? exprValue.substring(0, 15) + "..."
-                : exprValue,
-            isDefault: false,
-          };
-          break;
-
-        case "regex":
-          const regexPath = `$.steps.${selectedNodeId}.${regexResultPath}`;
-          newData = {
-            when: {
-              regex: { value: regexPath, pattern: regexPattern },
-            },
-            conditionLabel: `~= ${regexPattern}`,
-            isDefault: false,
-          };
-          break;
-
-        case "contains":
-          const containsPath = `$.steps.${selectedNodeId}.${containsResultPath}`;
-          newData = {
-            when: {
-              contains: { value: containsPath, search: containsSearch },
-            },
-            conditionLabel: `contains ${containsSearch}`,
-            isDefault: false,
-          };
-          break;
-
-        default:
-          break;
-      }
-    } else {
-      // 복합 조건 (AND/OR) 처리
-      if (multipleConditionType === "and") {
-        const andConditions: WhenCondition[] = subConditions.map((sub) => {
-          const fullPath = `$.steps.${sub.nodeId}.${sub.path}`;
-          if (sub.type === "equals") {
-            return { equals: { left: fullPath, right: sub.value } };
-          } else if (sub.type === "contains") {
-            return { contains: { value: fullPath, search: sub.value || "" } };
-          } else if (sub.type === "exists") {
-            return { exists: fullPath };
-          } else if (sub.type === "regex") {
-            return { regex: { value: fullPath, pattern: sub.value || "" } };
-          }
-          return { exists: fullPath };
-        });
-        newData = {
-          when: {
-            and: andConditions,
-          },
-          conditionLabel: `AND (${andConditions.length})`,
-          isDefault: false,
-        };
-      } else if (multipleConditionType === "or") {
-        const orConditions: WhenCondition[] = subConditions.map((sub) => {
-          const fullPath = `$.steps.${sub.nodeId}.${sub.path}`;
-          if (sub.type === "equals") {
-            return { equals: { left: fullPath, right: sub.value } };
-          } else if (sub.type === "contains") {
-            return { contains: { value: fullPath, search: sub.value || "" } };
-          } else if (sub.type === "exists") {
-            return { exists: fullPath };
-          } else if (sub.type === "regex") {
-            return { regex: { value: fullPath, pattern: sub.value || "" } };
-          }
-          return { exists: fullPath };
-        });
-        newData = {
-          when: {
-            or: orConditions,
-          },
-          conditionLabel: `OR (${orConditions.length})`,
-          isDefault: false,
-        };
-      }
-    }
+    // 현재 폼 상태를 SwitchEdgeData로 직렬화
+    const newData = buildEdgeData({
+      conditionMode,
+      singleConditionType,
+      multipleConditionType,
+      selectedNodeId,
+      resultPath,
+      rightValue,
+      existsResultPath,
+      exprValue,
+      regexResultPath,
+      regexPattern,
+      containsResultPath,
+      containsSearch,
+      subConditions,
+    });
 
     onSave(newData);
     onOpenChange(false);

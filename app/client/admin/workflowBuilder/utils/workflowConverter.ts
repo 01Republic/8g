@@ -3,6 +3,7 @@ import type { Workflow, WorkflowStep } from "8g-extension";
 import { AllBlockSchemas } from "8g-extension";
 import type { WorkflowEdge } from "~/models/workflow/types";
 import { getLayoutedElements } from "./autoLayout";
+import { getConditionLabel } from "./conditionUtils";
 
 interface ConvertedWorkflow {
   nodes: Node[];
@@ -111,37 +112,4 @@ export function convertWorkflowToNodesAndEdges(
     nodes: layouted.nodes,
     edges: layouted.edges,
   };
-}
-
-/**
- * 조건을 라벨로 변환
- */
-function getConditionLabel(when: any): string {
-  if (!when) return "condition";
-
-  if (when.equals) {
-    return `== ${when.equals.right}`;
-  }
-  if (when.contains) {
-    return `contains ${when.contains.search}`;
-  }
-  if (when.exists) {
-    return "exists";
-  }
-  if (when.regex) {
-    return `~= ${when.regex.pattern}`;
-  }
-  if (when.expr) {
-    return when.expr.length > 15
-      ? when.expr.substring(0, 15) + "..."
-      : when.expr;
-  }
-  if (when.and) {
-    return `AND (${when.and.length})`;
-  }
-  if (when.or) {
-    return `OR (${when.or.length})`;
-  }
-
-  return "condition";
 }

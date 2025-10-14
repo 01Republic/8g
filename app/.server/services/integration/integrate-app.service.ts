@@ -280,6 +280,7 @@ async function createSubscriptionSeats(
     let teamMember = await queryRunner.manager.findOne(TeamMembers, {
       where: {
         email: member.email,
+        organizationId: organization.id,
       },
     });
 
