@@ -138,13 +138,13 @@ export const BlockActionHandlerModal = (
           수정
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="min-w-3xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">{title} 편집</DialogTitle>
         </DialogHeader>
-        <div className="mt-2 flex flex-col gap-4">
+        <div className="mt-2 flex flex-col gap-5">
           {(() => {
-            console.log('🔍 Parsed Schema Fields:', parsedSchema.fields);
+            console.log("🔍 Parsed Schema Fields:", parsedSchema.fields);
             return null;
           })()}
           {parsedSchema.fields.map((field) => {
@@ -161,7 +161,7 @@ export const BlockActionHandlerModal = (
             }
 
             // Render field based on type
-            
+
             // schemaDefinition은 독립적으로 처리 (discriminated union이라 field.type이 "object"가 아닐 수 있음)
             if (field.name === "schemaDefinition") {
               return (
@@ -256,7 +256,7 @@ export const BlockActionHandlerModal = (
                     formData={formData}
                     updateFormField={updateFormField}
                   />
-              );
+                );
               }
             }
 

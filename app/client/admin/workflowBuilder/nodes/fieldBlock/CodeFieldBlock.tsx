@@ -14,21 +14,18 @@ export const CodeFieldBlock = (props: CodeFieldBlockProps) => {
   const { name, defaultValue } = field;
 
   return (
-    <FieldBlockContentBox key={name}>
-      <Label htmlFor={name}>
-        <span className="whitespace-nowrap w-80 text-base">
-          JavaScript 코드
-        </span>
-        <Textarea
-          id={name}
-          value={formData[name] ?? ""}
-          onChange={(e) => updateFormField(name, e.target.value)}
-          placeholder={defaultValue || "// JavaScript 코드를 입력하세요\n// inputData를 사용할 수 있습니다\nreturn { result: inputData };"}
-          className="font-mono text-sm min-h-[200px]"
-          spellCheck={false}
-        />
-      </Label>
+    <FieldBlockContentBox key={name} label=" JavaScript 코드" location="top">
+      <Textarea
+        id={name}
+        value={formData[name] ?? ""}
+        onChange={(e) => updateFormField(name, e.target.value)}
+        placeholder={
+          defaultValue ||
+          "// JavaScript 코드를 입력하세요\n// inputData를 사용할 수 있습니다\nreturn { result: inputData };"
+        }
+        className="font-mono text-sm min-h-50 max-h-72"
+        spellCheck={false}
+      />
     </FieldBlockContentBox>
   );
 };
-

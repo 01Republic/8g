@@ -18,22 +18,19 @@ export const ArrayFieldBlock = (props: ArrayFieldBlockProps) => {
     : "";
 
   return (
-    <FieldBlockContentBox key={name}>
-      <Label htmlFor={name}>
-        <span className="whitespace-nowrap w-80 text-base">{name}</span>
-        <Input
-          id={name}
-          value={arrayValue}
-          onChange={(e) => {
-            const arr = e.target.value
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean);
-            updateFormField(name, arr.length > 0 ? arr : undefined);
-          }}
-          placeholder="쉼표로 구분 (예: href, src, class)"
-        />
-      </Label>
+    <FieldBlockContentBox key={name} label={name}>
+      <Input
+        id={name}
+        value={arrayValue}
+        onChange={(e) => {
+          const arr = e.target.value
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean);
+          updateFormField(name, arr.length > 0 ? arr : undefined);
+        }}
+        placeholder="쉼표로 구분 (예: href, src, class)"
+      />
     </FieldBlockContentBox>
   );
 };

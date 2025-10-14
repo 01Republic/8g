@@ -21,41 +21,38 @@ export const TextFilterFieldBlock = (props: TextFilterFieldBlockProps) => {
   const { name } = field;
 
   return (
-    <FieldBlockContentBox key={name}>
-      <Label>
-        <span className="whitespace-nowrap w-80 text-base">텍스트 필터</span>
-        <Input
-          placeholder="필터할 텍스트"
-          value={formData[name]?.text ?? ""}
-          onChange={(e) =>
-            updateFormField(name, {
-              ...formData[name],
-              text: e.target.value,
-              mode: formData[name]?.mode ?? "exact",
-            })
-          }
-        />
-        <Select
-          value={formData[name]?.mode ?? "exact"}
-          onValueChange={(v) =>
-            updateFormField(name, {
-              ...formData[name],
-              mode: v,
-            })
-          }
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="exact">정확히 일치</SelectItem>
-            <SelectItem value="contains">포함</SelectItem>
-            <SelectItem value="startsWith">시작</SelectItem>
-            <SelectItem value="endsWith">끝</SelectItem>
-            <SelectItem value="regex">정규식</SelectItem>
-          </SelectContent>
-        </Select>
-      </Label>
+    <FieldBlockContentBox key={name} label="텍스트 필터">
+      <Input
+        placeholder="필터할 텍스트"
+        value={formData[name]?.text ?? ""}
+        onChange={(e) =>
+          updateFormField(name, {
+            ...formData[name],
+            text: e.target.value,
+            mode: formData[name]?.mode ?? "exact",
+          })
+        }
+      />
+      <Select
+        value={formData[name]?.mode ?? "exact"}
+        onValueChange={(v) =>
+          updateFormField(name, {
+            ...formData[name],
+            mode: v,
+          })
+        }
+      >
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="exact">정확히 일치</SelectItem>
+          <SelectItem value="contains">포함</SelectItem>
+          <SelectItem value="startsWith">시작</SelectItem>
+          <SelectItem value="endsWith">끝</SelectItem>
+          <SelectItem value="regex">정규식</SelectItem>
+        </SelectContent>
+      </Select>
     </FieldBlockContentBox>
   );
 };

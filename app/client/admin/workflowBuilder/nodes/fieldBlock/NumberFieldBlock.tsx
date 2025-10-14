@@ -14,19 +14,17 @@ export const NumberFieldBlock = (props: NumberFieldBlockProps) => {
   const { name, defaultValue } = field;
 
   return (
-    <FieldBlockContentBox key={name}>
-      <Label htmlFor={name}>
-        <span className="whitespace-nowrap w-80 text-base">{name}</span>
-        <Input
-          id={name}
-          type="number"
-          value={formData[name] ?? ""}
-          onChange={(e) =>
-            updateFormField(name, e.target.value ? Number(e.target.value) : "")
-          }
-          placeholder={defaultValue}
-        />
-      </Label>
+    <FieldBlockContentBox key={name} label={name}>
+      <Input
+        id={name}
+        type="number"
+        value={formData[name] ?? ""}
+        onChange={(e) =>
+          updateFormField(name, e.target.value ? Number(e.target.value) : "")
+        }
+        placeholder={defaultValue || "ms 단위로 입력해주세요."}
+        className="max-w-48"
+      />
     </FieldBlockContentBox>
   );
 };

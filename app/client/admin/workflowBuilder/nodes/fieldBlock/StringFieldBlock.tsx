@@ -1,5 +1,4 @@
 import type { ParsedField } from "~/lib/schema-parser";
-import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { FieldBlockContentBox } from "./FieldBlockContentBox";
 import { useState, useRef, useEffect } from "react";
@@ -86,38 +85,35 @@ export const StringFieldBlock = (props: StringFieldBlockProps) => {
   }, [showDropdown]);
 
   return (
-    <FieldBlockContentBox key={name}>
-      <Label htmlFor={name}>
-        <span className="whitespace-nowrap w-80 text-base">{name}</span>
-        <div className="relative w-full">
-          <Input
-            ref={inputRef}
-            id={name}
-            value={currentValue}
-            onChange={handleInputChange}
-            placeholder={defaultValue || "$.로 노드 참조"}
-          />
-          {showDropdown && previousNodes.length > 0 && (
-            <div
-              ref={dropdownRef}
-              className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
-            >
-              <div className="p-2 text-xs text-gray-500 border-b">
-                이전 노드 선택
-              </div>
-              {previousNodes.map((node) => (
-                <div
-                  key={node.id}
-                  onClick={() => handleNodeSelect(node.id)}
-                  className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                >
-                  {getNodeDisplayName(node)}
-                </div>
-              ))}
+    <FieldBlockContentBox key={name} label={name}>
+      <div className="relative w-full">
+        <Input
+          ref={inputRef}
+          id={name}
+          value={currentValue}
+          onChange={handleInputChange}
+          placeholder={defaultValue || "$.로 노드 참조"}
+        />
+        {showDropdown && previousNodes.length > 0 && (
+          <div
+            ref={dropdownRef}
+            className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+          >
+            <div className="p-2 text-xs text-gray-500 border-b">
+              이전 노드 선택
             </div>
-          )}
-        </div>
-      </Label>
+            {previousNodes.map((node) => (
+              <div
+                key={node.id}
+                onClick={() => handleNodeSelect(node.id)}
+                className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+              >
+                {getNodeDisplayName(node)}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </FieldBlockContentBox>
   );
 };
