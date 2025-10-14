@@ -15,8 +15,8 @@ interface StringFieldBlockProps {
 export const StringFieldBlock = (props: StringFieldBlockProps) => {
   const { field, formData, updateFormField, currentNodeId } = props;
   const { name, defaultValue } = field;
-  
-  const { previousNodes, getNodeDisplayName, createNodeReference } = 
+
+  const { previousNodes, getNodeDisplayName, createNodeReference } =
     usePreviousNodes(currentNodeId || "");
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -30,12 +30,15 @@ export const StringFieldBlock = (props: StringFieldBlockProps) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     const cursorPos = e.target.selectionStart || 0;
-    
+
     updateFormField(name, newValue);
     setCursorPosition(cursorPos);
 
     // $. 감지 (현재 커서 위치 기준)
-    if (newValue.slice(0, cursorPos).endsWith('$.') && previousNodes.length > 0) {
+    if (
+      newValue.slice(0, cursorPos).endsWith("$.") &&
+      previousNodes.length > 0
+    ) {
       setShowDropdown(true);
     } else {
       setShowDropdown(false);
@@ -48,10 +51,10 @@ export const StringFieldBlock = (props: StringFieldBlockProps) => {
     const beforeCursor = currentValue.slice(0, cursorPosition - 2); // $. 제거
     const afterCursor = currentValue.slice(cursorPosition);
     const newValue = beforeCursor + nodeRef + afterCursor;
-    
+
     updateFormField(name, newValue);
     setShowDropdown(false);
-    
+
     // 커서 위치를 삽입된 참조 뒤로 이동
     setTimeout(() => {
       if (inputRef.current) {
@@ -76,8 +79,9 @@ export const StringFieldBlock = (props: StringFieldBlockProps) => {
     };
 
     if (showDropdown) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [showDropdown]);
 
@@ -85,7 +89,7 @@ export const StringFieldBlock = (props: StringFieldBlockProps) => {
     <FieldBlockContentBox key={name}>
       <Label htmlFor={name}>
         <span className="whitespace-nowrap w-80 text-base">{name}</span>
-        <div className="relative">
+        <div className="relative w-full">
           <Input
             ref={inputRef}
             id={name}
@@ -98,7 +102,9 @@ export const StringFieldBlock = (props: StringFieldBlockProps) => {
               ref={dropdownRef}
               className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
             >
-              <div className="p-2 text-xs text-gray-500 border-b">이전 노드 선택</div>
+              <div className="p-2 text-xs text-gray-500 border-b">
+                이전 노드 선택
+              </div>
               {previousNodes.map((node) => (
                 <div
                   key={node.id}
