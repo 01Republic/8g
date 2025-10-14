@@ -9,7 +9,7 @@ import {
 } from "~/components/ui/table";
 import { Button } from "~/components/ui/button";
 import { Trash2, Mail, Phone, Briefcase } from "lucide-react";
-import type { TeamMembers } from "~/.server/db";
+import type { TeamMemberResponseDto } from "~/routes/dto/member";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,7 +24,7 @@ import { Checkbox } from "~/components/ui/checkbox";
 import { useState } from "react";
 
 interface MembersTableProps {
-  members: TeamMembers[];
+  members: TeamMemberResponseDto[];
   onDeleteMember: (teamMemberId: number) => void;
   selectedMemberIds: number[];
   onSelectMember: (memberId: number) => void;
@@ -57,7 +57,7 @@ export const MembersTable = ({
   onSelectAll,
 }: MembersTableProps) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<TeamMembers | null>(
+  const [selectedMember, setSelectedMember] = useState<TeamMemberResponseDto | null>(
     null,
   );
 
@@ -66,7 +66,7 @@ export const MembersTable = ({
   const someSelected =
     selectedMemberIds.length > 0 && selectedMemberIds.length < members.length;
 
-  const handleDeleteClick = (member: TeamMembers, e: React.MouseEvent) => {
+  const handleDeleteClick = (member: TeamMemberResponseDto, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedMember(member);
     setDeleteDialogOpen(true);

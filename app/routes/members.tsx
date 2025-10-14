@@ -13,6 +13,17 @@ import { updateTeamMember } from "~/.server/services/member/update-team-member.s
 
 export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
 
+export async function loader({ context }: Route.LoaderArgs) {
+  const user = context.get(userContext);
+  const organizationId = user!.orgId;
+
+  const members = await findAllTeamMembers({
+    orgId: organizationId,
+  });
+
+  return { members };
+}
+
 export async function action({ request, context }: Route.ActionArgs) {
   const formData = await request.formData();
   const user = context.get(userContext);
@@ -58,17 +69,6 @@ export async function action({ request, context }: Route.ActionArgs) {
     await updateTeamMember(payload);
     return null;
   }
-}
-
-export async function loader({ context }: Route.LoaderArgs) {
-  const user = context.get(userContext);
-  const organizationId = user!.orgId;
-
-  const members = await findAllTeamMembers({
-    orgId: organizationId,
-  });
-
-  return { members };
 }
 
 export default function Members({

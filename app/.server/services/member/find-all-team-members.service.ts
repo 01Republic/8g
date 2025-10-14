@@ -1,9 +1,9 @@
 import { initializeDatabase, Organizations, TeamMembers } from "~/.server/db";
-import type { FindAllTeamMembersDto } from "~/routes/dto/member";
+import type { FindAllTeamMembersDto, TeamMemberResponseDto } from "~/routes/dto/member";
 
 export async function findAllTeamMembers(
   dto: FindAllTeamMembersDto,
-): Promise<TeamMembers[]> {
+): Promise<TeamMemberResponseDto[]> {
   const { orgId } = dto;
 
   await initializeDatabase();
@@ -23,5 +23,14 @@ export async function findAllTeamMembers(
 
   const teamMembers = organization.teamMembers;
 
-  return teamMembers;
+  return teamMembers.map((teamMember) => ({
+    id: teamMember.id,
+    name: teamMember.name,
+    email: teamMember.email || "",
+    phone: teamMember.phone || "",
+    jobName: teamMember.jobName || "",
+    profileImgUrl: teamMember.profileImgUrl,
+    subscriptionCount: teamMember.subscriptionCount,
+    createdAt: teamMember.createdAt,
+  }));
 }

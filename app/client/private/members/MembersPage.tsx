@@ -1,5 +1,4 @@
 import { useState } from "react";
-import type { TeamMembers } from "~/.server/db";
 import { MembersTable } from "~/client/private/members/MembersTable";
 import { AddMemberDialog } from "~/client/private/members/AddMemberDialog";
 import { Button } from "~/components/ui/button";
@@ -14,6 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "~/components/ui/alert-dialog";
+import type { TeamMemberResponseDto } from "~/routes/dto/member";
 
 export type TeamMemberAddPayload = {
   name: string;
@@ -32,7 +32,7 @@ export type TeamMemberUpdatePayload = {
 };
 
 interface MembersPageProps {
-  members: TeamMembers[];
+  members: TeamMemberResponseDto[];
   addMember: (payload: TeamMemberAddPayload) => void;
   updateMember: (payload: TeamMemberUpdatePayload) => void;
   deleteMember: (teamMemberId: number) => void;
