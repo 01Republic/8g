@@ -14,6 +14,7 @@ import { CustomConfirm } from "~/components/CustomConfirm";
 import { EditMemberModal } from "./EditMemberModal";
 import type { TeamMemberResponseDto } from "~/routes/dto/member";
 import { Checkbox } from "~/components/ui/checkbox";
+import type { TeamMemberUpdatePayload } from "../MembersPage";
 
 interface MembersTableProps {
   members: TeamMemberResponseDto[];
@@ -21,6 +22,7 @@ interface MembersTableProps {
   selectedMemberIds: number[];
   onSelectMember: (memberId: number) => void;
   onSelectAll: (selected: boolean) => void;
+  updateMember: (payload: TeamMemberUpdatePayload) => void;
 }
 
 const formatDate = (date: Date | null) => {
@@ -47,6 +49,7 @@ export const MembersTable = ({
   selectedMemberIds,
   onSelectMember,
   onSelectAll,
+  updateMember,
 }: MembersTableProps) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -181,16 +184,14 @@ export const MembersTable = ({
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => setIsEditModalOpen(true)}
+                      onClick={() => {
+                        setSelectedMember(member);
+                        setIsEditModalOpen(true);
+                      }}
                       className="text-gray-600 hover:text-gray-700 hover:bg-gray-150"
                     >
                       <PencilLine className="w-4 h-4" />
                     </Button>
-                    <EditMemberModal
-                      onOpen={isEditModalOpen}
-                      onClose={() => setIsEditModalOpen(false)}
-                      member={member}
-                    />
 
                     <Button
                       variant="ghost"
@@ -207,6 +208,13 @@ export const MembersTable = ({
           </TableBody>
         </Table>
       </div>
+
+      <EditMemberModal
+        onOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        member={selectedMember}
+        updateMember={updateMember}
+      />
 
       <CustomConfirm
         onOpen={deleteDialogOpen}

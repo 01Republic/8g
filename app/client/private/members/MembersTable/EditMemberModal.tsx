@@ -4,22 +4,40 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 
 import type { TeamMemberResponseDto } from "~/routes/dto/member";
+import type { TeamMemberUpdatePayload } from "../MembersPage";
 
 interface EditMemberModalProps {
   onOpen: boolean;
   onClose: () => void;
 
   // content
-  member: TeamMemberResponseDto;
+
+  member: TeamMemberResponseDto | null;
+  updateMember: (payload: TeamMemberUpdatePayload) => void;
 }
 
 const FORM_ID = "edit-member-form";
 
 export const EditMemberModal = (props: EditMemberModalProps) => {
   const { onOpen = false, onClose } = props;
-  const { member } = props;
+  const { member, updateMember } = props;
 
+  if (!member) return;
   const [formData, setFormData] = useState(member);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    updateMember({
+      name: formData.name || member.name,
+      email: formData.email || member.email,
+      phone: formData.phone || member.phone,
+      position: formData.jobName || member.jobName,
+      id: member.id,
+    });
+
+    onClose();
+  };
 
   return (
     <CustomModal
@@ -28,9 +46,9 @@ export const EditMemberModal = (props: EditMemberModalProps) => {
       title="멤버 정보 수정"
       subTitle={`${member.name} 멤버의 정보를 수정할 수 있습니다.`}
       buttonText="수정하기"
+      formId={FORM_ID}
     >
-      <></>
-      {/* <form id={FORM_ID} onSubmit={handleSubmit}>
+      <form id={FORM_ID} onSubmit={handleSubmit}>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
@@ -88,7 +106,7 @@ export const EditMemberModal = (props: EditMemberModalProps) => {
             />
           </div>
         </div>
-      </form> */}
+      </form>
     </CustomModal>
   );
 };

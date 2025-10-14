@@ -11,6 +11,7 @@ interface AddMemberDialogProps {
 }
 
 const FORM_ID = "add-member-form";
+
 export const AddMemberDialog = ({
   open,
   onOpenChange,

@@ -40,7 +40,8 @@ interface MembersPageProps {
 }
 
 export default function MembersPage(props: MembersPageProps) {
-  const { members, addMember, deleteMember, deleteAllMembers, updateMember } = props;
+  const { members, addMember, deleteMember, deleteAllMembers, updateMember } =
+    props;
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [selectedMemberIds, setSelectedMemberIds] = useState<number[]>([]);
   const [deleteAllDialogOpen, setDeleteAllDialogOpen] = useState(false);
@@ -49,7 +50,7 @@ export default function MembersPage(props: MembersPageProps) {
     setSelectedMemberIds((prev) =>
       prev.includes(memberId)
         ? prev.filter((id) => id !== memberId)
-        : [...prev, memberId],
+        : [...prev, memberId]
     );
   };
 
@@ -114,6 +115,7 @@ export default function MembersPage(props: MembersPageProps) {
           selectedMemberIds={selectedMemberIds}
           onSelectMember={handleSelectMember}
           onSelectAll={handleSelectAll}
+          updateMember={updateMember}
         />
         <AddMemberDialog
           open={addDialogOpen}

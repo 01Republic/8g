@@ -18,4 +18,11 @@ export async function updateTeamMember(payload: UpdateTeamMemberDto) {
   if (!teamMember) {
     throw new Error("Team member not found");
   }
+
+  await TeamMembers.update(payload.id, {
+    name: payload.name,
+    email: payload.email,
+    phone: payload.phone,
+    jobName: payload.jobName,
+  });
 }

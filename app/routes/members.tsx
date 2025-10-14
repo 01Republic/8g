@@ -36,7 +36,7 @@ export async function action({ request, context }: Route.ActionArgs) {
     if (teamMemberIdsStr) {
       // 일괄 삭제
       const teamMemberIds = JSON.parse(teamMemberIdsStr).map((id: string) =>
-        parseInt(id),
+        parseInt(id)
       );
       await deleteTeamMembers(teamMemberIds);
     } else if (teamMemberIdStr) {
@@ -71,10 +71,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   }
 }
 
-export default function Members({
-  loaderData,
-}: Route.ComponentProps) {
-
+export default function Members({ loaderData }: Route.ComponentProps) {
   const { members } = loaderData;
 
   const fetcher = useFetcher();
@@ -94,7 +91,7 @@ export default function Members({
   const onDeleteAllMembers = (teamMemberIds: number[]) => {
     fetcher.submit(
       { teamMemberIds: JSON.stringify(teamMemberIds) },
-      { method: "DELETE" },
+      { method: "DELETE" }
     );
   };
 
