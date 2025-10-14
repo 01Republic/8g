@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       8g-extension:
-        specifier: ^1.13.3
-        version: 1.13.3(axios@0.21.4)(handlebars@4.7.8)(openai@5.12.2(ws@8.18.3)(zod@4.1.11))(typeorm@0.3.26(mssql@6.4.1(encoding@0.1.13))(mysql2@3.14.5)(pg@8.16.3)(reflect-metadata@0.2.2)(sqlite3@5.1.7))(ws@8.18.3)
+        specifier: ^1.13.5
+        version: 1.13.5(axios@0.21.4)(handlebars@4.7.8)(openai@5.12.2(ws@8.18.3)(zod@4.1.11))(typeorm@0.3.26(mssql@6.4.1(encoding@0.1.13))(mysql2@3.14.5)(pg@8.16.3)(reflect-metadata@0.2.2)(sqlite3@5.1.7))(ws@8.18.3)
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -174,8 +174,8 @@ importers:
 
 packages:
 
-  8g-extension@1.13.3:
-    resolution: {integrity: sha512-Yg+D9iiKhpY/Z1SRanh/iiRbpSvoTlhWfPk1OkPzR6NmJg6qjhWI/ytQcqrJ5ScdyiFVbLFXAiETHoyZiM3gcw==}
+  8g-extension@1.13.5:
+    resolution: {integrity: sha512-L/D3Wbj82NBk/e+jswheCBfl5K5qbSPTCFZ3AtkM39z5sDGEXKToL7cvHvpn/2GQII/NCbiaxmV6pl2TjaRn9w==}
 
   '@azure/abort-controller@2.1.2':
     resolution: {integrity: sha512-nBrLsEWm4J2u5LpAPjxADTlq3trDgVZZXHNKabeXZtpq3d3AbN/KGO82R87rdDz5/lYB024rtEf10/q0urNgsA==}
@@ -536,8 +536,8 @@ packages:
     resolution: {integrity: sha512-Nn0x9erQlK3zgtRU1Z8NUjLuyW0gzdclMsvLQ6wwLeDqV91pE+YKl6uQb+L2NUDs4F0N7c2Zncgz46HxrvPzuA==}
     engines: {node: '>=18'}
 
-  '@langchain/openai@0.6.15':
-    resolution: {integrity: sha512-eMxTujxuK7ioOh3EyH/Z/vCbo7PbfjVG/dHjN3o6++WIrM9q0KkZCtp9i68uuSijVJYLDYhQJ0F79S03X44Cig==}
+  '@langchain/openai@0.6.16':
+    resolution: {integrity: sha512-v9INBOjE0w6ZrUE7kP9UkRyNsV7daH7aPeSOsPEJ35044UI3udPHwNduQ8VmaOUsD26OvSdg1b1GDhrqWLMaRw==}
     engines: {node: '>=18'}
     peerDependencies:
       '@langchain/core': '>=0.3.68 <0.4.0'
@@ -2268,8 +2268,8 @@ packages:
   jws@3.2.2:
     resolution: {integrity: sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA==}
 
-  langchain@0.3.35:
-    resolution: {integrity: sha512-OkPstP43L3rgaAk72UAVcXy4BzJSiyzXfJsHRBTx9xD3rRtgrAu/jsWpMcsbFAoNO3iGerK+ULzkTzaBJBz6kg==}
+  langchain@0.3.36:
+    resolution: {integrity: sha512-PqC19KChFF0QlTtYDFgfEbIg+SCnCXox29G8tY62QWfj9bOW7ew2kgWmPw5qoHLOTKOdQPvXET20/1Pdq8vAtQ==}
     engines: {node: '>=18'}
     peerDependencies:
       '@langchain/anthropic': '*'
@@ -3796,11 +3796,12 @@ packages:
 
 snapshots:
 
-  8g-extension@1.13.3(axios@0.21.4)(handlebars@4.7.8)(openai@5.12.2(ws@8.18.3)(zod@4.1.11))(typeorm@0.3.26(mssql@6.4.1(encoding@0.1.13))(mysql2@3.14.5)(pg@8.16.3)(reflect-metadata@0.2.2)(sqlite3@5.1.7))(ws@8.18.3):
+  8g-extension@1.13.5(axios@0.21.4)(handlebars@4.7.8)(openai@5.12.2(ws@8.18.3)(zod@4.1.11))(typeorm@0.3.26(mssql@6.4.1(encoding@0.1.13))(mysql2@3.14.5)(pg@8.16.3)(reflect-metadata@0.2.2)(sqlite3@5.1.7))(ws@8.18.3):
     dependencies:
       '@langchain/core': 0.3.78(openai@5.12.2(ws@8.18.3)(zod@4.1.11))
-      '@langchain/openai': 0.6.15(@langchain/core@0.3.78(openai@5.12.2(ws@8.18.3)(zod@4.1.11)))(ws@8.18.3)
-      langchain: 0.3.35(@langchain/core@0.3.78(openai@5.12.2(ws@8.18.3)(zod@4.1.11)))(axios@0.21.4)(handlebars@4.7.8)(openai@5.12.2(ws@8.18.3)(zod@4.1.11))(typeorm@0.3.26(mssql@6.4.1(encoding@0.1.13))(mysql2@3.14.5)(pg@8.16.3)(reflect-metadata@0.2.2)(sqlite3@5.1.7))(ws@8.18.3)
+      '@langchain/openai': 0.6.16(@langchain/core@0.3.78(openai@5.12.2(ws@8.18.3)(zod@4.1.11)))(ws@8.18.3)
+      jsonata: 2.1.0
+      langchain: 0.3.36(@langchain/core@0.3.78(openai@5.12.2(ws@8.18.3)(zod@4.1.11)))(axios@0.21.4)(handlebars@4.7.8)(openai@5.12.2(ws@8.18.3)(zod@4.1.11))(typeorm@0.3.26(mssql@6.4.1(encoding@0.1.13))(mysql2@3.14.5)(pg@8.16.3)(reflect-metadata@0.2.2)(sqlite3@5.1.7))(ws@8.18.3)
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
       zod: 4.1.11
@@ -4214,7 +4215,7 @@ snapshots:
       - '@opentelemetry/sdk-trace-base'
       - openai
 
-  '@langchain/openai@0.6.15(@langchain/core@0.3.78(openai@5.12.2(ws@8.18.3)(zod@4.1.11)))(ws@8.18.3)':
+  '@langchain/openai@0.6.16(@langchain/core@0.3.78(openai@5.12.2(ws@8.18.3)(zod@4.1.11)))(ws@8.18.3)':
     dependencies:
       '@langchain/core': 0.3.78(openai@5.12.2(ws@8.18.3)(zod@4.1.11))
       js-tiktoken: 1.0.21
@@ -6110,10 +6111,10 @@ snapshots:
       jwa: 1.4.2
       safe-buffer: 5.2.1
 
-  langchain@0.3.35(@langchain/core@0.3.78(openai@5.12.2(ws@8.18.3)(zod@4.1.11)))(axios@0.21.4)(handlebars@4.7.8)(openai@5.12.2(ws@8.18.3)(zod@4.1.11))(typeorm@0.3.26(mssql@6.4.1(encoding@0.1.13))(mysql2@3.14.5)(pg@8.16.3)(reflect-metadata@0.2.2)(sqlite3@5.1.7))(ws@8.18.3):
+  langchain@0.3.36(@langchain/core@0.3.78(openai@5.12.2(ws@8.18.3)(zod@4.1.11)))(axios@0.21.4)(handlebars@4.7.8)(openai@5.12.2(ws@8.18.3)(zod@4.1.11))(typeorm@0.3.26(mssql@6.4.1(encoding@0.1.13))(mysql2@3.14.5)(pg@8.16.3)(reflect-metadata@0.2.2)(sqlite3@5.1.7))(ws@8.18.3):
     dependencies:
       '@langchain/core': 0.3.78(openai@5.12.2(ws@8.18.3)(zod@4.1.11))
-      '@langchain/openai': 0.6.15(@langchain/core@0.3.78(openai@5.12.2(ws@8.18.3)(zod@4.1.11)))(ws@8.18.3)
+      '@langchain/openai': 0.6.16(@langchain/core@0.3.78(openai@5.12.2(ws@8.18.3)(zod@4.1.11)))(ws@8.18.3)
       '@langchain/textsplitters': 0.1.0(@langchain/core@0.3.78(openai@5.12.2(ws@8.18.3)(zod@4.1.11)))
       js-tiktoken: 1.0.21
       js-yaml: 4.1.0

@@ -288,7 +288,12 @@ export default function WorkflowBuilderPage({
             };
 
             // 블록별 특수 필드 추가
-            if (blockName === "attribute-value") {
+            if (blockName === "data-extract") {
+              defaultBlock.code = "";
+              delete defaultBlock.selector;
+              delete defaultBlock.findBy;
+              delete defaultBlock.option;
+            } else if (blockName === "attribute-value") {
               defaultBlock.attributeName = "href";
             } else if (blockName === "set-value-form") {
               defaultBlock.setValue = "";

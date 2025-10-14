@@ -200,6 +200,7 @@ export const BlockActionHandlerModal = (
                   field={field}
                   formData={formData}
                   updateFormField={updateFormField}
+                  currentNodeId={id}
                 />
               );
             } else if (field.type === "number") {
@@ -243,6 +244,7 @@ export const BlockActionHandlerModal = (
                   field={field}
                   formData={formData}
                   updateFormField={updateFormField}
+                  currentNodeId={id}
                 />
               );
             } else if (field.type === "object") {
