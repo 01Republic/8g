@@ -20,11 +20,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "~/components/ui/alert-dialog";
+import { Checkbox } from "~/components/ui/checkbox";
 import { useState } from "react";
 
 interface MembersTableProps {
   members: TeamMembers[];
   onDeleteMember: (teamMemberId: number) => void;
+  selectedMemberIds: number[];
+  onSelectMember: (memberId: number) => void;
+  onSelectAll: (selected: boolean) => void;
 }
 
 const formatDate = (date: Date | null) => {
@@ -45,9 +49,12 @@ const getInitials = (name: string) => {
     .slice(0, 2);
 };
 
-export const MembersTable = ({ members, onDeleteMember }: MembersTableProps) => {
+export const MembersTable = ({ members, onDeleteMember, selectedMemberIds, onSelectMember, onSelectAll }: MembersTableProps) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<TeamMembers | null>(null);
+
+  const allSelected = members.length > 0 && selectedMemberIds.length === members.length;
+  const someSelected = selectedMemberIds.length > 0 && selectedMemberIds.length < members.length;
 
   const handleDeleteClick = (member: TeamMembers, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -69,6 +76,12 @@ export const MembersTable = ({ members, onDeleteMember }: MembersTableProps) => 
         <Table>
           <TableHeader className="bg-gray-50">
             <TableRow>
+              <TableHead className="w-12">
+                <Checkbox
+                  checked={allSelected || (someSelected ? "indeterminate" : false)}
+                  onCheckedChange={(checked) => onSelectAll(!!checked)}
+                />
+              </TableHead>
               <TableHead className="font-semibold text-gray-900">
                 멤버
               </TableHead>
@@ -92,7 +105,7 @@ export const MembersTable = ({ members, onDeleteMember }: MembersTableProps) => 
           <TableBody>
             {members.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
                   등록된 멤버가 없습니다. 새로운 멤버를 추가해주세요.
                 </TableCell>
               </TableRow>
@@ -102,6 +115,12 @@ export const MembersTable = ({ members, onDeleteMember }: MembersTableProps) => 
                   key={member.id}
                   className="hover:bg-gray-50"
                 >
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedMemberIds.includes(member.id)}
+                      onCheckedChange={() => onSelectMember(member.id)}
+                    />
+                  </TableCell>
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-3">
                       <Avatar className="w-10 h-10">

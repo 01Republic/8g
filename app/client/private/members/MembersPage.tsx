@@ -3,7 +3,17 @@ import type { TeamMembers } from "~/.server/db";
 import { MembersTable } from "~/client/private/members/MembersTable";
 import { AddMemberDialog } from "~/client/private/members/AddMemberDialog";
 import { Button } from "~/components/ui/button";
-import { UserPlus, Users } from "lucide-react";
+import { UserPlus, Users, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
 
 export type TeamMemberAddPayload = {
   name: string;
@@ -17,11 +27,40 @@ interface MembersPageProps {
   members: TeamMembers[];
   addMember: (payload: TeamMemberAddPayload) => void;
   deleteMember: (teamMemberId: number) => void;
+  deleteAllMembers: (teamMemberIds: number[]) => void;
 }
 
 export default function MembersPage(props: MembersPageProps) {
-  const { members, addMember, deleteMember   } = props;
+  const { members, addMember, deleteMember, deleteAllMembers } = props;
   const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [selectedMemberIds, setSelectedMemberIds] = useState<number[]>([]);
+  const [deleteAllDialogOpen, setDeleteAllDialogOpen] = useState(false);
+
+  const handleSelectMember = (memberId: number) => {
+    setSelectedMemberIds((prev) =>
+      prev.includes(memberId)
+        ? prev.filter((id) => id !== memberId)
+        : [...prev, memberId]
+    );
+  };
+
+  const handleSelectAll = (selected: boolean) => {
+    if (selected) {
+      setSelectedMemberIds(members.map((m) => m.id));
+    } else {
+      setSelectedMemberIds([]);
+    }
+  };
+
+  const handleDeleteAll = () => {
+    setDeleteAllDialogOpen(true);
+  };
+
+  const handleConfirmDeleteAll = () => {
+    deleteAllMembers(selectedMemberIds);
+    setSelectedMemberIds([]);
+    setDeleteAllDialogOpen(false);
+  };
 
   return (
     <div className="h-full w-full p-8">
@@ -38,21 +77,60 @@ export default function MembersPage(props: MembersPageProps) {
               </p>
             </div>
           </div>
-          <Button
-            onClick={() => setAddDialogOpen(true)}
-            className="gap-2"
-          >
-            <UserPlus className="w-4 h-4" />
-            멤버 추가
-          </Button>
+          <div className="flex items-center gap-2">
+            {selectedMemberIds.length > 0 && (
+              <Button
+                onClick={handleDeleteAll}
+                variant="destructive"
+                className="gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                선택 삭제 ({selectedMemberIds.length})
+              </Button>
+            )}
+            <Button
+              onClick={() => setAddDialogOpen(true)}
+              className="gap-2"
+            >
+              <UserPlus className="w-4 h-4" />
+              멤버 추가
+            </Button>
+          </div>
         </div>
 
-        <MembersTable members={members} onDeleteMember={deleteMember} />
+        <MembersTable
+          members={members}
+          onDeleteMember={deleteMember}
+          selectedMemberIds={selectedMemberIds}
+          onSelectMember={handleSelectMember}
+          onSelectAll={handleSelectAll}
+        />
         <AddMemberDialog
           open={addDialogOpen}
           onOpenChange={setAddDialogOpen}
           onAddMember={addMember}
         />
+        <AlertDialog open={deleteAllDialogOpen} onOpenChange={setDeleteAllDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>선택한 멤버 일괄 삭제</AlertDialogTitle>
+              <AlertDialogDescription>
+                정말로 선택한 <strong>{selectedMemberIds.length}명</strong>의 멤버를 삭제하시겠습니까?
+                <br />
+                이 작업은 되돌릴 수 없습니다.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>취소</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleConfirmDeleteAll}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                삭제
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );

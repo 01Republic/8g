@@ -235,9 +235,8 @@ async function createSubscriptionSeats(
   for (const member of members) {
     let teamMember = await queryRunner.manager.findOne(TeamMembers, {
       where: {
-        email: member.email,
-        organization: organization,
-      },
+        email: member.email
+      }
     });
 
     if (!teamMember) {

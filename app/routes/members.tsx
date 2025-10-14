@@ -4,7 +4,7 @@ import { useFetcher, useLoaderData } from "react-router";
 import { userContext } from "~/context";
 import { findAllTeamMembers } from "~/.server/services";
 import MembersPage, { type TeamMemberAddPayload } from "~/client/private/members/MembersPage";
-import { deleteTeamMembers } from "~/.server/services/member/delete-team-members.service";
+import { deleteTeamMembers } from "~/.server/services/member/delete-all-team-members.service";
 import { createTeamMembers } from "~/.server/services/member/create-team-members.service";
 
 export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
@@ -15,8 +15,17 @@ export async function action({ request, context }: Route.ActionArgs) {
   const organizationId = user!.orgId;
 
   if(request.method === "DELETE")  {
-    const teamMemberId = parseInt(formData.get("teamMemberId")!.toString());
-    await deleteTeamMembers(teamMemberId);
+    const teamMemberIdStr = formData.get("teamMemberId")?.toString();
+    const teamMemberIdsStr = formData.get("teamMemberIds")?.toString();
+    
+    if (teamMemberIdsStr) {
+      // 일괄 삭제
+      const teamMemberIds = JSON.parse(teamMemberIdsStr).map((id: string) => parseInt(id));
+      await deleteTeamMembers(teamMemberIds);
+    } else if (teamMemberIdStr) {
+      // 단일 삭제
+      await deleteTeamMembers([parseInt(teamMemberIdStr)]);
+    }
     return null;
   }
 
@@ -57,5 +66,9 @@ export default function Members() {
     fetcher.submit({ teamMemberId }, { method: "DELETE" });
   };
 
-  return <MembersPage members={members} addMember={onAddMember} deleteMember={onDeleteMember} />;
+  const onDeleteAllMembers = (teamMemberIds: number[]) => {
+    fetcher.submit({ teamMemberIds: JSON.stringify(teamMemberIds) }, { method: "DELETE" });
+  };
+
+  return <MembersPage members={members} addMember={onAddMember} deleteMember={onDeleteMember} deleteAllMembers={onDeleteAllMembers} />;
 }
