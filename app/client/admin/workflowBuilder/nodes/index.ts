@@ -8,13 +8,16 @@ export const workflowNodeTypes: NodeTypes = Object.keys(AllBlockSchemas).reduce(
     acc[blockName] = GenericBlockNode;
     return acc;
   },
-  {} as NodeTypes
+  {} as NodeTypes,
 );
 
 /**
  * Block 이름에 따른 한글 라벨 매핑
  */
-export const blockLabels: Record<string, { title: string; description: string }> = {
+export const blockLabels: Record<
+  string,
+  { title: string; description: string }
+> = {
   "get-text": {
     title: "텍스트 추출",
     description: "요소의 텍스트 추출",
@@ -51,7 +54,7 @@ export const blockLabels: Record<string, { title: string; description: string }>
     title: "요소 데이터 추출",
     description: "텍스트/속성/셀렉터 추출",
   },
-  "scroll": {
+  scroll: {
     title: "스크롤",
     description: "스크롤",
   },
@@ -59,11 +62,11 @@ export const blockLabels: Record<string, { title: string; description: string }>
     title: "AI 데이터 파싱",
     description: "AI 데이터 파싱",
   },
-  "keypress": {
+  keypress: {
     title: "키 입력",
     description: "키 입력",
   },
-  "wait": {
+  wait: {
     title: "대기",
     description: "대기",
   },
@@ -88,30 +91,30 @@ export const fieldLabels: Record<string, string> = {
   waitForSelector: "셀렉터 대기",
   waitSelectorTimeout: "대기 시간 (ms)",
   multiple: "다중 선택",
-  
+
   // GetTextBlock
   includeTags: "HTML 태그 포함",
   useTextContent: "textContent 사용",
   regex: "정규식 필터",
   prefixText: "접두사",
   suffixText: "접미사",
-  
+
   // EventClickBlock
   textFilter: "텍스트 필터",
-  
+
   // GetAttributeValueBlock
   attributeName: "속성 이름",
-  
+
   // SetValueFormBlock
   setValue: "설정할 값",
   type: "폼 타입",
-  
+
   // GetElementDataBlock
   includeText: "텍스트 포함",
   attributes: "추출할 속성 목록",
   includeSelector: "셀렉터 생성",
   includeXPath: "XPath 생성",
-  
+
   // FetchApiBlock
   url: "URL",
   method: "HTTP 메서드",
@@ -120,7 +123,7 @@ export const fieldLabels: Record<string, string> = {
   timeout: "타임아웃 (ms)",
   parseJson: "JSON 파싱",
   returnHeaders: "응답 헤더 반환",
-  
+
   // DataExtractBlock
   code: "JavaScript 코드",
   inputData: "입력 데이터",

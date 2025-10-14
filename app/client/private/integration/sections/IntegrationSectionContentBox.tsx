@@ -22,7 +22,7 @@ interface IntegrationSectionContentBoxProps {
 }
 
 export const IntegrationSectionContentBox = (
-  props: IntegrationSectionContentBoxProps
+  props: IntegrationSectionContentBoxProps,
 ) => {
   const { title, children } = props;
   const { buttonText, onClick, isLoading } = props;

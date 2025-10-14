@@ -9,22 +9,24 @@ import type {
   MultipleConditionType,
   SubCondition,
   SubConditionType,
-  WorkflowNode,
 } from "./types";
 import { EdgFieldContentBox } from "./EdgFieldContentBox";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
+import { usePreviousNodes } from "~/hooks/use-previous-nodes";
 
 interface MultipleProps {
-  nodes: WorkflowNode[];
+  targetNodeId: string;
   multipleConditionType: MultipleConditionType;
   subConditions: SubCondition[];
   setSubConditions: (val: SubCondition[]) => void;
 }
 
 export const Multiple = (props: MultipleProps) => {
-  const { nodes, multipleConditionType } = props;
+  const { targetNodeId, multipleConditionType } = props;
   const { subConditions, setSubConditions } = props;
+
+  const { previousNodes, getNodeDisplayName } = usePreviousNodes(targetNodeId);
 
   const addSubCondition = () => {
     setSubConditions([
@@ -32,7 +34,7 @@ export const Multiple = (props: MultipleProps) => {
       {
         id: `sub-${Date.now()}`,
         type: "equals",
-        nodeId: nodes[0]?.id || "",
+        nodeId: previousNodes[0]?.id || "",
         path: "result.data",
         value: "",
       },
@@ -42,10 +44,10 @@ export const Multiple = (props: MultipleProps) => {
   const updateSubCondition = (
     id: string,
     field: keyof SubCondition,
-    value: any
+    value: any,
   ) => {
     setSubConditions(
-      subConditions.map((c) => (c.id === id ? { ...c, [field]: value } : c))
+      subConditions.map((c) => (c.id === id ? { ...c, [field]: value } : c)),
     );
   };
 
@@ -120,9 +122,9 @@ export const Multiple = (props: MultipleProps) => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {nodes.map((node) => (
+                    {previousNodes.map((node) => (
                       <SelectItem key={node.id} value={node.id}>
-                        {node.data?.title || node.data?.block?.name || node.id}
+                        {getNodeDisplayName(node)}
                       </SelectItem>
                     ))}
                   </SelectContent>

@@ -41,11 +41,14 @@ export function PaymentHistorySection({
     return generateVariablesFromSectionResults();
   }, []);
 
-  const { loading, error, parsed, run } = useWorkflowExecution(workflow, variables);
+  const { loading, error, parsed, run } = useWorkflowExecution(
+    workflow,
+    variables,
+  );
 
   useEffect(() => {
     if (!Array.isArray(parsed)) return;
-    console.log('Payment History:', parsed);
+    console.log("Payment History:", parsed);
     onPaymentHistoryChange(parsed);
     setSectionResult("payment-history", { result: parsed });
   }, [parsed]);
@@ -71,7 +74,11 @@ export function PaymentHistorySection({
         <CenteredSection className="space-y-4">
           <LoadingCard
             icon={<LoaderCircleIcon className="w-4 h-4 animate-spin" />}
-            message={loading ? "결제 내역 수집 중..." : error || "결제 내역 수집 준비됨"}
+            message={
+              loading
+                ? "결제 내역 수집 중..."
+                : error || "결제 내역 수집 준비됨"
+            }
           />
         </CenteredSection>
       ) : (
@@ -119,4 +126,3 @@ export function PaymentHistorySection({
     </IntegrationSectionContentBox>
   );
 }
-

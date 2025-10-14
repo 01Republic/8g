@@ -10,7 +10,7 @@
 
 ```html
 <script type="module">
-  import { EightGClient } from './dist/index.js';
+  import { EightGClient } from "./dist/index.js";
   const client = new EightGClient();
   await client.checkExtension();
   // ...
@@ -27,7 +27,7 @@ yarn add 8g-extension
 
 ```ts
 // ESM
-import { EightGClient } from '8g-extension';
+import { EightGClient } from "8g-extension";
 
 // 타입도 함께 제공됩니다 (types: ./dist/sdk/index.d.ts)
 const client = new EightGClient();
@@ -42,25 +42,25 @@ await client.checkExtension();
 
 ```ts
 const workflow = {
-  version: '1.0',
-  start: 'getTitle',
+  version: "1.0",
+  start: "getTitle",
   steps: [
     {
-      id: 'getTitle',
+      id: "getTitle",
       block: {
-        name: 'get-text',
-        selector: '#title',
-        findBy: 'cssSelector',
-        option: {},  // 필수: 비어있어도 {}로 넣어주세요
-        useTextContent: true
-      }
-    }
-  ]
+        name: "get-text",
+        selector: "#title",
+        findBy: "cssSelector",
+        option: {}, // 필수: 비어있어도 {}로 넣어주세요
+        useTextContent: true,
+      },
+    },
+  ],
 };
 
 const result = await client.collectWorkflow({
   targetUrl: location.href,
-  workflow
+  workflow,
 });
 ```
 
@@ -70,36 +70,36 @@ const result = await client.collectWorkflow({
 
 ```ts
 const workflow = {
-  version: '1.0',
-  start: 'clickModal',
+  version: "1.0",
+  start: "clickModal",
   steps: [
     {
-      id: 'clickModal',
-      block: { 
-        name: 'event-click', 
-        selector: '.open-modal-btn', 
-        findBy: 'cssSelector', 
-        option: { waitForSelector: true } 
+      id: "clickModal",
+      block: {
+        name: "event-click",
+        selector: ".open-modal-btn",
+        findBy: "cssSelector",
+        option: { waitForSelector: true },
       },
-      delayAfterMs: 500,  // 모달 열리는 시간 대기
-      next: 'readModal'
+      delayAfterMs: 500, // 모달 열리는 시간 대기
+      next: "readModal",
     },
     {
-      id: 'readModal',
-      block: { 
-        name: 'get-text', 
-        selector: '.modal.open .modal-content', 
-        findBy: 'cssSelector', 
+      id: "readModal",
+      block: {
+        name: "get-text",
+        selector: ".modal.open .modal-content",
+        findBy: "cssSelector",
         option: { waitForSelector: true, waitSelectorTimeout: 2000 },
-        useTextContent: true
-      }
-    }
-  ]
+        useTextContent: true,
+      },
+    },
+  ],
 };
 
 const result = await client.collectWorkflow({
   targetUrl: location.href,
-  workflow
+  workflow,
 });
 ```
 
@@ -111,47 +111,49 @@ const result = await client.collectWorkflow({
 
 ```ts
 const workflow = {
-  version: '1.0',
-  start: 'getProductIds',
+  version: "1.0",
+  start: "getProductIds",
   steps: [
     {
-      id: 'getProductIds',
+      id: "getProductIds",
       block: {
-        name: 'get-element-data',
-        selector: '.product-item',
-        findBy: 'cssSelector',
+        name: "get-element-data",
+        selector: ".product-item",
+        findBy: "cssSelector",
         option: { multiple: true },
-        extractors: [
-          { type: 'attribute', attribute: 'data-id', saveAs: 'id' }
-        ]
+        extractors: [{ type: "attribute", attribute: "data-id", saveAs: "id" }],
       },
-      next: 'fetchEachProduct'
+      next: "fetchEachProduct",
     },
     {
-      id: 'fetchEachProduct',
+      id: "fetchEachProduct",
       repeat: {
-        forEach: '$.steps.getProductIds.result.data',  // 배열 경로
-        continueOnError: true,   // 하나 실패해도 계속
-        delayBetween: 200        // 각 반복 사이 200ms 대기
+        forEach: "$.steps.getProductIds.result.data", // 배열 경로
+        continueOnError: true, // 하나 실패해도 계속
+        delayBetween: 200, // 각 반복 사이 200ms 대기
       },
       block: {
-        name: 'fetch-api',
+        name: "fetch-api",
         // forEach 반복 시 $.forEach.item, $.forEach.index 접근 가능
-        url: { template: 'https://api.example.com/products/${$.forEach.item.id}' },
-        method: 'GET',
-        parseJson: true
-      }
-    }
-  ]
+        url: {
+          template: "https://api.example.com/products/${$.forEach.item.id}",
+        },
+        method: "GET",
+        parseJson: true,
+      },
+    },
+  ],
 };
 ```
 
 **forEach 컨텍스트 변수:**
+
 - `$.forEach.item` - 현재 배열 항목
 - `$.forEach.index` - 현재 인덱스 (0부터 시작)
 - `$.forEach.total` - 전체 배열 길이
 
 **동작:**
+
 - 배열이면 각 항목마다 실행
 - 단일 값이면 1번 실행
 - null/undefined면 스킵
@@ -161,40 +163,42 @@ const workflow = {
 
 ```ts
 const workflow = {
-  version: '1.0',
-  start: 'scrollMultipleTimes',
+  version: "1.0",
+  start: "scrollMultipleTimes",
   steps: [
     {
-      id: 'scrollMultipleTimes',
+      id: "scrollMultipleTimes",
       repeat: {
-        count: 10,           // 10번 반복
-        delayBetween: 500    // 각 스크롤 사이 500ms 대기
+        count: 10, // 10번 반복
+        delayBetween: 500, // 각 스크롤 사이 500ms 대기
       },
       block: {
-        name: 'scroll',
-        scrollType: 'byDistance',
-        distance: 500
+        name: "scroll",
+        scrollType: "byDistance",
+        distance: 500,
       },
-      next: 'collectData'
+      next: "collectData",
     },
     {
-      id: 'collectData',
+      id: "collectData",
       block: {
-        name: 'get-text',
-        selector: '.loaded-items',
-        findBy: 'cssSelector',
-        option: { multiple: true }
-      }
-    }
-  ]
+        name: "get-text",
+        selector: ".loaded-items",
+        findBy: "cssSelector",
+        option: { multiple: true },
+      },
+    },
+  ],
 };
 ```
 
 **loop 컨텍스트 변수:**
+
 - `$.loop.index` - 현재 반복 인덱스 (0부터 시작)
 - `$.loop.count` - 전체 반복 횟수
 
 **동적 count 값:**
+
 ```ts
 {
   id: 'dynamicRepeat',
@@ -218,24 +222,88 @@ const workflow = {
 
 ```ts
 const workflow = {
-  version: '1.0',
-  start: 'readStatus',
+  version: "1.0",
+  start: "readStatus",
   steps: [
     {
-      id: 'readStatus',
-      block: { name: 'get-text', selector: '.status', findBy: 'cssSelector', useTextContent: true, option: {} },
+      id: "readStatus",
+      block: {
+        name: "get-text",
+        selector: ".status",
+        findBy: "cssSelector",
+        useTextContent: true,
+        option: {},
+      },
       // 분기: JSON 조건식(권장) 또는 expr 문자열 모두 지원
       switch: [
-        { when: { equals: { left: "$.steps.readStatus.result.data", right: 'OK' } }, next: 'flowOk' },
-        { when: { equals: { left: "$.steps.readStatus.result.data", right: 'PENDING' } }, next: 'flowPending' },
+        {
+          when: {
+            equals: { left: "$.steps.readStatus.result.data", right: "OK" },
+          },
+          next: "flowOk",
+        },
+        {
+          when: {
+            equals: {
+              left: "$.steps.readStatus.result.data",
+              right: "PENDING",
+            },
+          },
+          next: "flowPending",
+        },
       ],
-      next: 'flowError', // 위 조건이 모두 false일 때 사용
+      next: "flowError", // 위 조건이 모두 false일 때 사용
     },
-    { id: 'flowOk',      block: { name: 'event-click', selector: '.go',   findBy: 'cssSelector', option: {} }, next: 'openModal' },
-    { id: 'flowPending', block: { name: 'event-click', selector: '.wait', findBy: 'cssSelector', option: {} }, next: 'openModal' },
-    { id: 'flowError',   block: { name: 'event-click', selector: '.retry',findBy: 'cssSelector', option: {} }, next: 'openModal' },
-    { id: 'openModal',   block: { name: 'event-click', selector: '.open-modal-btn', findBy: 'cssSelector', option: {} }, delayAfterMs: 500, next: 'readModal' },
-    { id: 'readModal',   block: { name: 'get-text', selector: '.modal.open .modal-content', findBy: 'cssSelector', option: { waitForSelector: true, waitSelectorTimeout: 2000 } } },
+    {
+      id: "flowOk",
+      block: {
+        name: "event-click",
+        selector: ".go",
+        findBy: "cssSelector",
+        option: {},
+      },
+      next: "openModal",
+    },
+    {
+      id: "flowPending",
+      block: {
+        name: "event-click",
+        selector: ".wait",
+        findBy: "cssSelector",
+        option: {},
+      },
+      next: "openModal",
+    },
+    {
+      id: "flowError",
+      block: {
+        name: "event-click",
+        selector: ".retry",
+        findBy: "cssSelector",
+        option: {},
+      },
+      next: "openModal",
+    },
+    {
+      id: "openModal",
+      block: {
+        name: "event-click",
+        selector: ".open-modal-btn",
+        findBy: "cssSelector",
+        option: {},
+      },
+      delayAfterMs: 500,
+      next: "readModal",
+    },
+    {
+      id: "readModal",
+      block: {
+        name: "get-text",
+        selector: ".modal.open .modal-content",
+        findBy: "cssSelector",
+        option: { waitForSelector: true, waitSelectorTimeout: 2000 },
+      },
+    },
   ],
 };
 
@@ -252,62 +320,62 @@ const result = await client.collectWorkflow({
 ```ts
 // 무한 스크롤 페이지에서 데이터 수집 후 ESC로 모달 닫기
 const workflow = {
-  version: '1.0',
-  start: 'scrollToLoad',
+  version: "1.0",
+  start: "scrollToLoad",
   steps: [
     {
-      id: 'scrollToLoad',
-      block: { 
-        name: 'scroll',
-        scrollType: 'untilLoaded',
+      id: "scrollToLoad",
+      block: {
+        name: "scroll",
+        scrollType: "untilLoaded",
         distance: 800,
         maxScrolls: 50,
-        waitAfterScroll: 1000
+        waitAfterScroll: 1000,
       },
-      next: 'waitForContent'
+      next: "waitForContent",
     },
     {
-      id: 'waitForContent',
-      block: { name: 'wait', duration: 2000 }, // 2초 대기
-      next: 'clickItem'
+      id: "waitForContent",
+      block: { name: "wait", duration: 2000 }, // 2초 대기
+      next: "clickItem",
     },
     {
-      id: 'clickItem',
-      block: { 
-        name: 'event-click',
-        selector: '.item:nth-child(5)',
-        findBy: 'cssSelector',
-        option: {}
+      id: "clickItem",
+      block: {
+        name: "event-click",
+        selector: ".item:nth-child(5)",
+        findBy: "cssSelector",
+        option: {},
       },
       delayAfterMs: 500,
-      next: 'getData'
+      next: "getData",
     },
     {
-      id: 'getData',
+      id: "getData",
       block: {
-        name: 'get-text',
-        selector: '.modal .detail',
-        findBy: 'cssSelector',
-        option: { waitForSelector: true, waitSelectorTimeout: 3000 }
+        name: "get-text",
+        selector: ".modal .detail",
+        findBy: "cssSelector",
+        option: { waitForSelector: true, waitSelectorTimeout: 3000 },
       },
-      next: 'closeModal'
+      next: "closeModal",
     },
     {
-      id: 'closeModal',
-      block: { name: 'keypress', key: 'Escape' },
-      next: 'confirmClose'
+      id: "closeModal",
+      block: { name: "keypress", key: "Escape" },
+      next: "confirmClose",
     },
     {
-      id: 'confirmClose',
-      block: { name: 'wait', duration: 500 } // 모달 닫힘 확인
-    }
-  ]
+      id: "confirmClose",
+      block: { name: "wait", duration: 500 }, // 모달 닫힘 확인
+    },
+  ],
 };
 
 const result = await client.collectWorkflow({
-  targetUrl: 'https://example.com',
+  targetUrl: "https://example.com",
   workflow,
-  closeTabAfterCollection: true
+  closeTabAfterCollection: true,
 });
 ```
 
@@ -385,26 +453,31 @@ const result = await client.collectWorkflow({
 모든 블록에는 기본적으로 `option: {}`가 필요합니다(비어있어도 OK).
 
 **데이터 추출 블록:**
+
 - `get-text`: 텍스트 추출 (정규식, prefix/suffix 지원)
 - `attribute-value`: 속성 값 추출 (단일/다중)
 - `get-element-data`: 복합 데이터 추출 (텍스트, 속성, 선택자, XPath)
 
 **폼 처리 블록:**
+
 - `get-value-form`: 폼 값 가져오기 (text-field, select, checkbox)
 - `set-value-form`: 폼 값 설정
 - `clear-value-form`: 폼 값 초기화
 
 **상호작용 블록:**
+
 - `event-click`: 클릭 이벤트 (텍스트 필터 지원)
 - `keypress`: 키보드 입력 시뮬레이션 (Escape, Enter 등, modifier 키 지원)
 - `scroll`: 페이지 스크롤 (toElement, toBottom, byDistance, untilLoaded)
 
 **유틸리티 블록:**
+
 - `element-exists`: 요소 존재 확인 (boolean)
 - `wait`: 지정 시간 대기 (ms)
 - `save-assets`: 이미지/미디어 URL 수집
 
 **API/AI 블록:**
+
 - `fetch-api`: 외부 API 호출 (GET, POST 등, CORS 제약 없음)
 - `ai-parse-data`: AI 기반 데이터 파싱 (OpenAI, 스키마 정의 필요)
 
@@ -419,6 +492,3 @@ const result = await client.collectWorkflow({
 - steps가 빈 배열로 옴: SDK 1.1.0 이상을 사용하거나, 응답의 `result.result.steps`를 파싱하도록 업데이트하세요.(현재 SDK 반영 완료)
 - keypress/wait/fetch-api/ai-parse-data 블록: `selector`, `findBy`, `option` 필드가 필요하지 않습니다.
 - API 호출 실패: `fetch-api` 블록은 Background에서 실행되므로 CORS 제약을 받지 않습니다. `host_permissions: ['<all_urls>']` 설정이 필요합니다.
- 
-
-

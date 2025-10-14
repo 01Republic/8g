@@ -34,11 +34,14 @@ export function PaymentInfoSection({
     return generateVariablesFromSectionResults();
   }, []);
 
-  const { loading, error, parsed, run } = useWorkflowExecution(workflow, variables);
+  const { loading, error, parsed, run } = useWorkflowExecution(
+    workflow,
+    variables,
+  );
 
   useEffect(() => {
     if (!parsed) return;
-    console.log('Payment Info:', parsed);
+    console.log("Payment Info:", parsed);
     onPaymentInfoChange(parsed as PaymentInfo);
     setSectionResult("payment-info", { result: parsed });
   }, [parsed]);
@@ -64,7 +67,11 @@ export function PaymentInfoSection({
         <CenteredSection className="space-y-4">
           <LoadingCard
             icon={<LoaderCircleIcon className="w-4 h-4 animate-spin" />}
-            message={loading ? "결제 정보 수집 중..." : error || "결제 정보 수집 준비됨"}
+            message={
+              loading
+                ? "결제 정보 수집 중..."
+                : error || "결제 정보 수집 준비됨"
+            }
           />
         </CenteredSection>
       ) : (
@@ -76,7 +83,7 @@ export function PaymentInfoSection({
                 {paymentInfo?.cardNumber ?? "N/A"}
               </div>
             </div>
-            
+
             <div>
               <div className="text-xs text-gray-500 mb-1">청구 이메일</div>
               <div className="text-sm font-medium">
@@ -117,4 +124,3 @@ export function PaymentInfoSection({
     </IntegrationSectionContentBox>
   );
 }
-

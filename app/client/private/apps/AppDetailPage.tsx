@@ -28,7 +28,10 @@ interface AppDetailPageProps {
 const getStatusBadge = (status: string) => {
   const statusConfig = {
     PAYMENT_SUCCESS: { label: "활성", color: "bg-green-100 text-green-800" },
-    PAYMENT_PENDING: { label: "대기중", color: "bg-yellow-100 text-yellow-800" },
+    PAYMENT_PENDING: {
+      label: "대기중",
+      color: "bg-yellow-100 text-yellow-800",
+    },
     PAYMENT_FAILURE: { label: "실패", color: "bg-red-100 text-red-800" },
     FREE_TRIAL_STARTED: {
       label: "무료 체험",
@@ -47,7 +50,9 @@ const getStatusBadge = (status: string) => {
   };
 
   return (
-    <span className={`px-3 py-1 rounded-full text-sm font-medium ${config.color}`}>
+    <span
+      className={`px-3 py-1 rounded-full text-sm font-medium ${config.color}`}
+    >
       {config.label}
     </span>
   );
@@ -67,7 +72,9 @@ const getConnectStatusBadge = (status: string) => {
   };
 
   return (
-    <span className={`px-3 py-1 rounded-full text-sm font-medium ${config.color}`}>
+    <span
+      className={`px-3 py-1 rounded-full text-sm font-medium ${config.color}`}
+    >
       {config.label}
     </span>
   );
@@ -123,8 +130,6 @@ const formatDateTime = (date: Date | string | null) => {
 };
 
 export default function AppDetailPage({ appDetail }: AppDetailPageProps) {
-
-
   return (
     <div className="h-full w-full bg-gray-50">
       <div className="max-w-7xl mx-auto p-8">
@@ -134,8 +139,7 @@ export default function AppDetailPage({ appDetail }: AppDetailPageProps) {
             to="/apps"
             className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            앱 목록으로 돌아가기
+            <ArrowLeft className="w-4 h-4 mr-2" />앱 목록으로 돌아가기
           </Link>
         </div>
 
@@ -144,13 +148,18 @@ export default function AppDetailPage({ appDetail }: AppDetailPageProps) {
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
               <Avatar className="w-16 h-16">
-                <AvatarImage src={appDetail.appLogo} alt={appDetail.appKoreanName} />
+                <AvatarImage
+                  src={appDetail.appLogo}
+                  alt={appDetail.appKoreanName}
+                />
               </Avatar>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">
                   {appDetail.appKoreanName}
                 </h1>
-                <p className="text-lg text-gray-600">{appDetail.appEnglishName}</p>
+                <p className="text-lg text-gray-600">
+                  {appDetail.appEnglishName}
+                </p>
                 <div className="flex gap-2 mt-2">
                   {getStatusBadge(appDetail.status)}
                   {getConnectStatusBadge(appDetail.connectStatus)}
@@ -207,7 +216,7 @@ export default function AppDetailPage({ appDetail }: AppDetailPageProps) {
                 <p className="text-2xl font-bold text-gray-900">
                   {formatCurrency(
                     appDetail.paymentInfo.currentBillingAmount,
-                    appDetail.paymentInfo.currency
+                    appDetail.paymentInfo.currency,
                   )}
                 </p>
               </div>
@@ -222,7 +231,10 @@ export default function AppDetailPage({ appDetail }: AppDetailPageProps) {
               <div>
                 <p className="text-sm text-gray-600">인당 비용</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {formatCurrency(appDetail.costPerUser, appDetail.paymentInfo.currency)}
+                  {formatCurrency(
+                    appDetail.costPerUser,
+                    appDetail.paymentInfo.currency,
+                  )}
                 </p>
               </div>
             </div>
@@ -470,7 +482,7 @@ export default function AppDetailPage({ appDetail }: AppDetailPageProps) {
                   <p className="text-2xl font-bold text-blue-600">
                     {formatCurrency(
                       appDetail.nextBillingAmount,
-                      appDetail.paymentInfo.currency
+                      appDetail.paymentInfo.currency,
                     )}
                   </p>
                 </div>
@@ -531,7 +543,8 @@ export default function AppDetailPage({ appDetail }: AppDetailPageProps) {
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
                   {appDetail.connectMethod === "MANUAL" && "수동 등록"}
-                  {appDetail.connectMethod === "G_SUITE" && "Google Workspace 연동"}
+                  {appDetail.connectMethod === "G_SUITE" &&
+                    "Google Workspace 연동"}
                   {appDetail.connectMethod === "INVOICE" && "인보이스 연동"}
                   {appDetail.connectMethod === "CODEF_CARD" && "카드 자동 연동"}
                 </p>
@@ -543,4 +556,3 @@ export default function AppDetailPage({ appDetail }: AppDetailPageProps) {
     </div>
   );
 }
-

@@ -25,4 +25,3 @@ export default function AppDetail() {
 
   return <AppDetailPage appDetail={appDetail} />;
 }
-

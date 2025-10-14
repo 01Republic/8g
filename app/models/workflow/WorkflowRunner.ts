@@ -17,11 +17,17 @@ export interface RunWorkflowResult {
 export async function runWorkflow(
   params: RunWorkflowParams,
 ): Promise<RunWorkflowResult> {
-  const { evaluatedUrl, workflow, closeTabAfterCollection, activateTab, variables } = params;
+  const {
+    evaluatedUrl,
+    workflow,
+    closeTabAfterCollection,
+    activateTab,
+    variables,
+  } = params;
   const client = new EightGClient();
 
   // 변수 치환
-  const resolvedWorkflow = variables 
+  const resolvedWorkflow = variables
     ? resolveWorkflowVariables(workflow, variables)
     : workflow;
 

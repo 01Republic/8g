@@ -1,5 +1,9 @@
 import type { ReactNode } from "react";
-import type { AppFormMetadata, PaymentInfo, PaymentHistory } from "~/models/integration/types";
+import type {
+  AppFormMetadata,
+  PaymentInfo,
+  PaymentHistory,
+} from "~/models/integration/types";
 import { buildSections } from "./SectionsBuilder";
 import {
   Stepper,
@@ -49,7 +53,7 @@ export function DynamicFormBuilder(options: BuilderOptions) {
       const sectionCount = meta.sections.length;
       const sectionNumbers = Array.from(
         { length: sectionCount },
-        (_, i) => i + 1
+        (_, i) => i + 1,
       );
       const loadingStates =
         args.loadingStates ||

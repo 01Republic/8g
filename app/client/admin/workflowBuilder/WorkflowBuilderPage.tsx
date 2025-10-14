@@ -62,26 +62,26 @@ export default function WorkflowBuilderPage({
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialData.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<WorkflowEdge>(
-    initialData.edges
+    initialData.edges,
   );
   const [selectedEdge, setSelectedEdge] = React.useState<WorkflowEdge | null>(
-    null
+    null,
   );
   const [edgeDialogOpen, setEdgeDialogOpen] = React.useState(false);
   const [saveDialogOpen, setSaveDialogOpen] = React.useState(false);
   const [description, setDescription] = React.useState(
-    initialWorkflow?.description || ""
+    initialWorkflow?.description || "",
   );
 
   // Parser 관리
   const [parserExpression, setParserExpression] = React.useState(
-    initialWorkflow?.meta?.parser?.expression || ""
+    initialWorkflow?.meta?.parser?.expression || "",
   );
   const [parserDialogOpen, setParserDialogOpen] = React.useState(false);
 
   // Variables 관리
   const [variables, setVariables] = React.useState<Record<string, any>>(
-    initialWorkflow?.meta?.variables || {}
+    initialWorkflow?.meta?.variables || {},
   );
   const [variablesDialogOpen, setVariablesDialogOpen] = React.useState(false);
 
@@ -98,12 +98,12 @@ export default function WorkflowBuilderPage({
       };
       setEdges((eds) => addEdge(newEdge, eds));
     },
-    [setEdges]
+    [setEdges],
   );
 
   const [targetUrl, setTargetUrl] = React.useState<string>(
     initialWorkflow?.meta?.targetUrl ||
-      (typeof window !== "undefined" ? window.location.href : "")
+      (typeof window !== "undefined" ? window.location.href : ""),
   );
   const [isRunning, setIsRunning] = React.useState(false);
   const [result, setResult] = React.useState<any>(null);
@@ -176,7 +176,7 @@ export default function WorkflowBuilderPage({
       setNodes((nds) => nds.concat(newNode));
       setPaletteOpen(false);
     },
-    [setNodes]
+    [setNodes],
   );
 
   const onEdgeDoubleClick = React.useCallback(
@@ -184,32 +184,32 @@ export default function WorkflowBuilderPage({
       setSelectedEdge(edge as WorkflowEdge);
       setEdgeDialogOpen(true);
     },
-    []
+    [],
   );
 
   const handleEdgeSave = React.useCallback(
     (data: SwitchEdgeData) => {
       if (selectedEdge) {
         setEdges((eds) =>
-          eds.map((e) => (e.id === selectedEdge.id ? { ...e, data } : e))
+          eds.map((e) => (e.id === selectedEdge.id ? { ...e, data } : e)),
         );
       }
     },
-    [selectedEdge, setEdges]
+    [selectedEdge, setEdges],
   );
 
   const edgeTypes = React.useMemo(
     () => ({
       conditional: ConditionalEdge,
     }),
-    []
+    [],
   );
 
   const onAutoLayout = React.useCallback(() => {
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
       nodes,
       edges,
-      "TB"
+      "TB",
     );
 
     setNodes(layoutedNodes);
@@ -236,7 +236,7 @@ export default function WorkflowBuilderPage({
       });
       setDescription(desc);
     },
-    [workflowId, buildWorkflow, onSave, targetUrl]
+    [workflowId, buildWorkflow, onSave, targetUrl],
   );
 
   return (
@@ -345,6 +345,36 @@ export default function WorkflowBuilderPage({
           >
             <Background />
             <Controls />
+
+            <EdgeConfigDialog
+              open={edgeDialogOpen}
+              onOpenChange={setEdgeDialogOpen}
+              edgeData={selectedEdge?.data}
+              onSave={handleEdgeSave}
+              targetNodeId={selectedEdge?.target || ""}
+            />
+
+            <SaveDialog
+              open={saveDialogOpen}
+              onOpenChange={setSaveDialogOpen}
+              onSave={handleSave}
+              initialDescription={description}
+            />
+
+            <ParserDialog
+              open={parserDialogOpen}
+              onOpenChange={setParserDialogOpen}
+              expression={parserExpression}
+              onExpressionChange={setParserExpression}
+              sampleResult={result}
+            />
+
+            <VariablesDialog
+              open={variablesDialogOpen}
+              onOpenChange={setVariablesDialogOpen}
+              variables={variables}
+              onVariablesChange={setVariables}
+            />
           </ReactFlow>
           {result && <ResultPanel result={result} />}
         </div>
@@ -353,36 +383,6 @@ export default function WorkflowBuilderPage({
         <div style={{ width: "300px", overflow: "auto" }}>
           <VariablesPreviewPanel variables={variables} />
         </div>
-
-        <EdgeConfigDialog
-          open={edgeDialogOpen}
-          onOpenChange={setEdgeDialogOpen}
-          edgeData={selectedEdge?.data}
-          onSave={handleEdgeSave}
-          nodes={nodes}
-        />
-
-        <SaveDialog
-          open={saveDialogOpen}
-          onOpenChange={setSaveDialogOpen}
-          onSave={handleSave}
-          initialDescription={description}
-        />
-
-        <ParserDialog
-          open={parserDialogOpen}
-          onOpenChange={setParserDialogOpen}
-          expression={parserExpression}
-          onExpressionChange={setParserExpression}
-          sampleResult={result}
-        />
-
-        <VariablesDialog
-          open={variablesDialogOpen}
-          onOpenChange={setVariablesDialogOpen}
-          variables={variables}
-          onVariablesChange={setVariables}
-        />
       </div>
     </div>
   );

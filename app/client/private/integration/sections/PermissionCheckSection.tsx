@@ -36,7 +36,10 @@ export const PermissionCheckSection = ({
     return generateVariablesFromSectionResults();
   }, []);
 
-  const { loading, error, parsed, run } = useWorkflowExecution(workflow, variables);
+  const { loading, error, parsed, run } = useWorkflowExecution(
+    workflow,
+    variables,
+  );
 
   useEffect(() => {
     if (parsed === true) {

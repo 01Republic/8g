@@ -1,10 +1,34 @@
-import { initializeDatabase, AppDataSource, Organizations, Subscriptions, SubscriptionSeats, Moneys, BillingHistories, CreditCard, TeamMembers, ProductPaymentPlans, ProductBillingCycles, Products } from "~/.server/db";
-import type { MemberDto, RegisterAppDto, RegisterAppResponseDto } from "~/routes/dto/app";
+import {
+  initializeDatabase,
+  AppDataSource,
+  Organizations,
+  Subscriptions,
+  SubscriptionSeats,
+  Moneys,
+  BillingHistories,
+  CreditCard,
+  TeamMembers,
+  ProductPaymentPlans,
+  ProductBillingCycles,
+  Products,
+} from "~/.server/db";
+import type {
+  MemberDto,
+  RegisterAppDto,
+  RegisterAppResponseDto,
+} from "~/routes/dto/app";
 
 export async function integrateApp(
   data: RegisterAppDto,
 ): Promise<RegisterAppResponseDto> {
-  const { workspace, members, paymentInfo, paymentHistory, organizationId, productId } = data;
+  const {
+    workspace,
+    members,
+    paymentInfo,
+    paymentHistory,
+    organizationId,
+    productId,
+  } = data;
 
   await initializeDatabase();
 
@@ -33,50 +57,70 @@ export async function integrateApp(
       throw new Error("not found product");
     }
 
-    const currentBillingAmount = createCurrentBillingAmount(paymentInfo.currentPaymentAmount);
-    const savedCurrentBillingAmount = await queryRunner.manager.save(currentBillingAmount);
+    const currentBillingAmount = createCurrentBillingAmount(
+      paymentInfo.currentPaymentAmount,
+    );
+    const savedCurrentBillingAmount =
+      await queryRunner.manager.save(currentBillingAmount);
 
     const creditCard = createCreditCard(paymentInfo.cardNumber, organization);
     const savedCreditCard = await queryRunner.manager.save(creditCard);
 
-    const paymentPlan = createProductPaymentPlan(paymentInfo.subscriptionPlanName, product);
+    const paymentPlan = createProductPaymentPlan(
+      paymentInfo.subscriptionPlanName,
+      product,
+    );
     const savedPaymentPlan = await queryRunner.manager.save(paymentPlan);
 
-    const priceAmount = parseFloat(paymentInfo.currentPaymentAmount.replace(/[^0-9.]/g, ''));
+    const priceAmount = parseFloat(
+      paymentInfo.currentPaymentAmount.replace(/[^0-9.]/g, ""),
+    );
     const billingCycle = createProductBillingCycle(
       priceAmount,
-      paymentInfo.billingCycleType.toLowerCase() === "monthly" ? "MONTHLY" : "YEARLY",
+      paymentInfo.billingCycleType.toLowerCase() === "monthly"
+        ? "MONTHLY"
+        : "YEARLY",
       savedPaymentPlan,
-      product
+      product,
     );
     const savedBillingCycle = await queryRunner.manager.save(billingCycle);
 
-    const nextBillingAmountValue = paymentInfo.nextPaymentAmount 
+    const nextBillingAmountValue = paymentInfo.nextPaymentAmount
       ? parseAmountToDollar(paymentInfo.nextPaymentAmount)
       : undefined;
 
     const subscription = createSubscription(
-      productId, 
-      organization, 
-      members, 
-      savedCurrentBillingAmount, 
-      savedCreditCard, 
+      productId,
+      organization,
+      members,
+      savedCurrentBillingAmount,
+      savedCreditCard,
       workspace.content,
       savedPaymentPlan,
       savedBillingCycle,
       paymentInfo.nextPaymentDate,
-      nextBillingAmountValue
+      nextBillingAmountValue,
     );
     const savedSubscription = await queryRunner.manager.save(subscription);
 
-    const savedSeats = await createSubscriptionSeats(savedSubscription.id, members, organization, queryRunner);
+    const savedSeats = await createSubscriptionSeats(
+      savedSubscription.id,
+      members,
+      organization,
+      queryRunner,
+    );
 
     if (paymentHistory && paymentHistory.length > 0) {
       for (const payment of paymentHistory) {
         const payAmount = createMoneyEntity(payment.amount);
         const savedPayAmount = await queryRunner.manager.save(payAmount);
-        
-        const billingHistory = createBillingHistory(payment, savedSubscription, organization, savedPayAmount);
+
+        const billingHistory = createBillingHistory(
+          payment,
+          savedSubscription,
+          organization,
+          savedPayAmount,
+        );
         await queryRunner.manager.save(billingHistory);
       }
     }
@@ -105,13 +149,13 @@ function parseAmountToDollar(amountString: string): number {
   // KRW 형식 체크
   const krwMatch = amountString.match(/^(\d{1,3}(?:,\d{3})*|\d+)원?$/);
   if (krwMatch) {
-    const cleanAmount = krwMatch[1].replace(/,/g, '');
+    const cleanAmount = krwMatch[1].replace(/,/g, "");
     const amount = parseInt(cleanAmount);
     return amount / 1300; // KRW to USD
   }
 
   // 기본값: 숫자만 추출
-  const numericValue = parseFloat(amountString.replace(/[^0-9.]/g, ''));
+  const numericValue = parseFloat(amountString.replace(/[^0-9.]/g, ""));
   return isNaN(numericValue) ? 0 : numericValue;
 }
 
@@ -127,13 +171,13 @@ function createMoneyEntity(amountString: string): Moneys {
       format: "%n",
       exchangeRate: 1,
       exchangedCurrency: "USD" as const,
-      dollarPrice: amount
+      dollarPrice: amount,
     });
   }
 
   const krwMatch = amountString.match(/^(\d{1,3}(?:,\d{3})*|\d+)원?$/);
   if (krwMatch) {
-    const cleanAmount = krwMatch[1].replace(/,/g, '');
+    const cleanAmount = krwMatch[1].replace(/,/g, "");
     const amount = parseInt(cleanAmount);
     return Moneys.create({
       text: amountString,
@@ -143,7 +187,7 @@ function createMoneyEntity(amountString: string): Moneys {
       format: "%n",
       exchangeRate: 1,
       exchangedCurrency: "KRW" as const,
-      dollarPrice: amount / 1300
+      dollarPrice: amount / 1300,
     });
   }
 
@@ -155,7 +199,7 @@ function createMoneyEntity(amountString: string): Moneys {
     format: "%n",
     exchangeRate: 1,
     exchangedCurrency: "USD" as const,
-    dollarPrice: 0
+    dollarPrice: 0,
   });
 }
 
@@ -163,7 +207,7 @@ function createBillingHistory(
   paymentHistory: { date: string; amount: string; invoiceUrl: string },
   subscription: Subscriptions,
   organization: Organizations,
-  payAmount: Moneys
+  payAmount: Moneys,
 ): BillingHistories {
   return BillingHistories.create({
     subscription: subscription,
@@ -177,7 +221,7 @@ function createBillingHistory(
     isDomestic: 1,
     isVatDeductible: 0,
     connectMethod: "MANUAL",
-    payAmount: payAmount
+    payAmount: payAmount,
   });
 }
 
@@ -191,7 +235,7 @@ function createSubscription(
   paymentPlan: ProductPaymentPlans,
   billingCycle: ProductBillingCycles,
   nextPaymentDate?: string,
-  nextBillingAmount?: number
+  nextBillingAmount?: number,
 ): Subscriptions {
   const subscriptionData: any = {
     productId: productId,
@@ -228,15 +272,15 @@ async function createSubscriptionSeats(
   subscriptionId: number,
   members: Array<MemberDto>,
   organization: Organizations,
-  queryRunner: any
+  queryRunner: any,
 ): Promise<number> {
   let savedSeats = 0;
-  
+
   for (const member of members) {
     let teamMember = await queryRunner.manager.findOne(TeamMembers, {
       where: {
-        email: member.email
-      }
+        email: member.email,
+      },
     });
 
     if (!teamMember) {
@@ -262,7 +306,7 @@ async function createSubscriptionSeats(
     await queryRunner.manager.save(subscriptionSeat);
     savedSeats++;
   }
-  
+
   return savedSeats;
 }
 
@@ -274,7 +318,10 @@ function createCurrentBillingAmount(price: string): Moneys {
   return createMoneyEntity(price);
 }
 
-function createCreditCard(lastFourDigits: string, organization: Organizations): CreditCard {
+function createCreditCard(
+  lastFourDigits: string,
+  organization: Organizations,
+): CreditCard {
   return CreditCard.create({
     number_4: lastFourDigits,
     organization: organization,
@@ -282,14 +329,17 @@ function createCreditCard(lastFourDigits: string, organization: Organizations): 
     usingStatus: 2,
     isCreditCard: 1,
     monthlyPaidAmount: 0,
-    subscriptionCount: 0
+    subscriptionCount: 0,
   });
 }
 
-function createProductPaymentPlan(planName: string, product: Products): ProductPaymentPlans {
+function createProductPaymentPlan(
+  planName: string,
+  product: Products,
+): ProductPaymentPlans {
   return ProductPaymentPlans.create({
     name: planName,
-    product: product
+    product: product,
   });
 }
 
@@ -297,7 +347,7 @@ function createProductBillingCycle(
   unitPrice: number,
   term: "MONTHLY" | "YEARLY",
   paymentPlan: ProductPaymentPlans,
-  product: Products
+  product: Products,
 ): ProductBillingCycles {
   return ProductBillingCycles.create({
     unitPrice: unitPrice,
@@ -305,6 +355,6 @@ function createProductBillingCycle(
     isPerUser: 1,
     adminComment: "Auto-generated from integration",
     paymentPlan: paymentPlan,
-    product: product
+    product: product,
   });
 }

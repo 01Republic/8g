@@ -49,12 +49,22 @@ const getInitials = (name: string) => {
     .slice(0, 2);
 };
 
-export const MembersTable = ({ members, onDeleteMember, selectedMemberIds, onSelectMember, onSelectAll }: MembersTableProps) => {
+export const MembersTable = ({
+  members,
+  onDeleteMember,
+  selectedMemberIds,
+  onSelectMember,
+  onSelectAll,
+}: MembersTableProps) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<TeamMembers | null>(null);
+  const [selectedMember, setSelectedMember] = useState<TeamMembers | null>(
+    null,
+  );
 
-  const allSelected = members.length > 0 && selectedMemberIds.length === members.length;
-  const someSelected = selectedMemberIds.length > 0 && selectedMemberIds.length < members.length;
+  const allSelected =
+    members.length > 0 && selectedMemberIds.length === members.length;
+  const someSelected =
+    selectedMemberIds.length > 0 && selectedMemberIds.length < members.length;
 
   const handleDeleteClick = (member: TeamMembers, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -78,7 +88,9 @@ export const MembersTable = ({ members, onDeleteMember, selectedMemberIds, onSel
             <TableRow>
               <TableHead className="w-12">
                 <Checkbox
-                  checked={allSelected || (someSelected ? "indeterminate" : false)}
+                  checked={
+                    allSelected || (someSelected ? "indeterminate" : false)
+                  }
                   onCheckedChange={(checked) => onSelectAll(!!checked)}
                 />
               </TableHead>
@@ -97,24 +109,22 @@ export const MembersTable = ({ members, onDeleteMember, selectedMemberIds, onSel
               <TableHead className="font-semibold text-gray-900">
                 가입일
               </TableHead>
-              <TableHead className="font-semibold text-gray-900 text-right">
-                
-              </TableHead>
+              <TableHead className="font-semibold text-gray-900 text-right"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {members.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                <TableCell
+                  colSpan={7}
+                  className="text-center py-8 text-gray-500"
+                >
                   등록된 멤버가 없습니다. 새로운 멤버를 추가해주세요.
                 </TableCell>
               </TableRow>
             ) : (
               members.map((member) => (
-                <TableRow
-                  key={member.id}
-                  className="hover:bg-gray-50"
-                >
+                <TableRow key={member.id} className="hover:bg-gray-50">
                   <TableCell>
                     <Checkbox
                       checked={selectedMemberIds.includes(member.id)}
@@ -124,7 +134,10 @@ export const MembersTable = ({ members, onDeleteMember, selectedMemberIds, onSel
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-3">
                       <Avatar className="w-10 h-10">
-                        <AvatarImage src={member.profileImgUrl || undefined} alt={member.name} />
+                        <AvatarImage
+                          src={member.profileImgUrl || undefined}
+                          alt={member.name}
+                        />
                         <AvatarFallback className="bg-blue-100 text-blue-700">
                           {getInitials(member.name)}
                         </AvatarFallback>
@@ -190,9 +203,9 @@ export const MembersTable = ({ members, onDeleteMember, selectedMemberIds, onSel
           <AlertDialogHeader>
             <AlertDialogTitle>멤버 삭제</AlertDialogTitle>
             <AlertDialogDescription>
-              정말로 <strong>{selectedMember?.name}</strong> 멤버를 삭제하시겠습니까?
-              <br />
-              이 작업은 되돌릴 수 없습니다.
+              정말로 <strong>{selectedMember?.name}</strong> 멤버를
+              삭제하시겠습니까?
+              <br />이 작업은 되돌릴 수 없습니다.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -209,4 +222,3 @@ export const MembersTable = ({ members, onDeleteMember, selectedMemberIds, onSel
     </>
   );
 };
-

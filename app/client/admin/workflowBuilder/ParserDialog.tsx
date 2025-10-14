@@ -1,4 +1,10 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "~/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "~/components/ui/dialog";
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
 import { ResultParser } from "~/models/workflow/ResultParser";
@@ -25,28 +31,28 @@ export function ParserDialog({
 
   const handlePreview = async () => {
     if (!sampleResult) {
-      setPreviewError('워크플로우를 먼저 실행해주세요');
+      setPreviewError("워크플로우를 먼저 실행해주세요");
       setHasResult(false);
       return;
     }
 
-    console.log('🔍 Sample Result:', sampleResult);
-    console.log('🔍 Expression:', expression);
+    console.log("🔍 Sample Result:", sampleResult);
+    console.log("🔍 Expression:", expression);
 
     try {
       const result = await ResultParser.parse(sampleResult, expression);
-      console.log('✅ Parsed Result:', result);
+      console.log("✅ Parsed Result:", result);
       setPreviewResult(result);
       setPreviewError(null);
       setHasResult(true);
     } catch (error: any) {
-      console.error('❌ Parse Error:', error);
+      console.error("❌ Parse Error:", error);
       setPreviewError(error.message);
       setPreviewResult(null);
       setHasResult(false);
     }
   };
-  
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
@@ -58,7 +64,7 @@ export function ParserDialog({
           {/* 왼쪽: 표현식 입력 */}
           <div className="flex flex-col gap-2 min-h-0">
             <label className="text-sm font-medium">JSONata 표현식:</label>
-            
+
             <Textarea
               placeholder={`예시:
 result.result.steps[0].result.data[attributes.id != null].{
@@ -110,12 +116,9 @@ result.result.steps[0].result.data[attributes.id != null].{
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             취소
           </Button>
-          <Button onClick={() => onOpenChange(false)}>
-            완료
-          </Button>
+          <Button onClick={() => onOpenChange(false)}>완료</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
-

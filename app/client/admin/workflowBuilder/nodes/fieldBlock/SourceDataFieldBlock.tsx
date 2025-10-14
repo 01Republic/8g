@@ -34,7 +34,7 @@ export const SourceDataFieldBlock = (props: SourceDataFieldBlockProps) => {
 
     // 현재 노드로 들어오는 edge들의 source를 큐에 추가
     const incomingEdges = allEdges.filter(
-      (edge) => edge.target === currentNodeId
+      (edge) => edge.target === currentNodeId,
     );
     incomingEdges.forEach((edge) => {
       if (!visited.has(edge.source)) {

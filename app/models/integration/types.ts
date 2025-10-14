@@ -1,6 +1,5 @@
 import type { WorkflowStep } from "8g-extension";
 
-
 export type FormWorkflow = {
   version: string;
   start: string;

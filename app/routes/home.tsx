@@ -56,5 +56,12 @@ export default function Home() {
     }
   }, [fetcher.state, fetcher.data]);
 
-  return <HomePage apps={apps} isLoading={isLoading} onSearch={handleSearch} onGoToAppDetailPage={goToAppDetailPage} />;
+  return (
+    <HomePage
+      apps={apps}
+      isLoading={isLoading}
+      onSearch={handleSearch}
+      onGoToAppDetailPage={goToAppDetailPage}
+    />
+  );
 }

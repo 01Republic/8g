@@ -71,7 +71,7 @@ export interface AppDetailResponseDto {
   category: string;
   status: string;
   connectStatus: string;
-  
+
   workspace: {
     id: number;
     displayName: string;
@@ -80,10 +80,10 @@ export interface AppDetailResponseDto {
     publicEmail: string | null;
     description: string | null;
   } | null;
-  
+
   paidMemberCount: number;
   usedMemberCount: number;
-  
+
   seats: Array<{
     id: number;
     name: string;
@@ -94,7 +94,7 @@ export interface AppDetailResponseDto {
     finishAt: Date | null;
     profileImageUrl: string | null;
   }>;
-  
+
   paymentInfo: {
     creditCard: {
       lastFourDigits: string;
@@ -106,14 +106,14 @@ export interface AppDetailResponseDto {
     currentBillingAmount: number;
     currency: string;
   };
-  
+
   registeredAt: Date | null;
   nextBillingDate: Date | null;
   nextBillingAmount: number;
   lastPaidAt: Date | null;
   startAt: string | null;
   finishAt: string | null;
-  
+
   billingHistories: Array<{
     id: number;
     paidAt: Date | null;
@@ -123,7 +123,7 @@ export interface AppDetailResponseDto {
     invoiceUrl: string | null;
     paymentMethod: string;
   }>;
-  
+
   description: string | null;
   connectMethod: string;
   utilizationRate: string;

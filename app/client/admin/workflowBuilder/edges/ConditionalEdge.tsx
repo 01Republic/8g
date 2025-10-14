@@ -33,9 +33,9 @@ export function ConditionalEdge({
 
   return (
     <>
-      <BaseEdge 
-        id={id} 
-        path={edgePath} 
+      <BaseEdge
+        id={id}
+        path={edgePath}
         markerEnd={markerEnd}
         style={{
           strokeWidth: 2,

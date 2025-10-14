@@ -13,43 +13,46 @@ interface AvailableVariablesCardProps {
   sections: any[];
 }
 
-export function AvailableVariablesCard({ sectionIndex, sections }: AvailableVariablesCardProps) {
+export function AvailableVariablesCard({
+  sectionIndex,
+  sections,
+}: AvailableVariablesCardProps) {
   const [copied, setCopied] = useState<string | null>(null);
 
   // 현재 섹션 이전의 모든 섹션에서 생성될 variables 추출
   const availableVariables: AvailableVariable[] = [];
-  
+
   for (let i = 0; i < sectionIndex; i++) {
     const section = sections[i];
     const type = section.uiSchema?.type;
-    
-    if (type === 'workspace-select') {
+
+    if (type === "workspace-select") {
       const sectionName = section.uiSchema?.title || `Section ${i + 1}`;
       availableVariables.push(
         {
-          name: 'workspaceSelectId',
+          name: "workspaceSelectId",
           source: sectionName,
-          description: '선택한 워크스페이스 ID'
+          description: "선택한 워크스페이스 ID",
         },
         {
-          name: 'workspaceSelectName',
+          name: "workspaceSelectName",
           source: sectionName,
-          description: '선택한 워크스페이스 이름'
-        }
+          description: "선택한 워크스페이스 이름",
+        },
       );
-    } else if (type === 'member-table') {
+    } else if (type === "member-table") {
       const sectionName = section.uiSchema?.title || `Section ${i + 1}`;
       availableVariables.push({
-        name: 'memberTable',
+        name: "memberTable",
         source: sectionName,
-        description: '멤버 목록 배열'
+        description: "멤버 목록 배열",
       });
-    } else if (type === 'permission-check') {
+    } else if (type === "permission-check") {
       const sectionName = section.uiSchema?.title || `Section ${i + 1}`;
       availableVariables.push({
-        name: 'permissionCheck',
+        name: "permissionCheck",
         source: sectionName,
-        description: '권한 확인 결과'
+        description: "권한 확인 결과",
       });
     }
   }
@@ -92,7 +95,9 @@ export function AvailableVariablesCard({ sectionIndex, sections }: AvailableVari
           >
             <div className="flex items-center justify-between mb-1">
               <code className="text-xs font-mono text-blue-600">
-                ${'{vars.'}{variable.name}{'}'}
+                ${"{vars."}
+                {variable.name}
+                {"}"}
               </code>
               <Button
                 variant="ghost"
@@ -100,25 +105,23 @@ export function AvailableVariablesCard({ sectionIndex, sections }: AvailableVari
                 className="h-6 px-2 text-xs"
                 onClick={() => copyVariable(variable.name)}
               >
-                {copied === variable.name ? '✓' : '📋'}
+                {copied === variable.name ? "✓" : "📋"}
               </Button>
             </div>
-            <div className="text-xs text-gray-600">
-              {variable.description}
-            </div>
+            <div className="text-xs text-gray-600">{variable.description}</div>
             <div className="text-xs text-gray-400 mt-0.5">
               from: {variable.source}
             </div>
           </div>
         ))}
-        
+
         <div className="mt-3 p-2 bg-blue-100 rounded text-xs space-y-1">
           <div className="font-medium text-blue-900">💡 사용법:</div>
           <div className="text-blue-700">
             Workflow의 selector, targetUrl 등에서 사용하세요
           </div>
           <div className="text-blue-700">
-            예: selector: "#workspace-${'${vars.workspaceSelectId}'}"
+            예: selector: "#workspace-${"${vars.workspaceSelectId}"}"
           </div>
         </div>
       </CardContent>

@@ -1,5 +1,9 @@
 import { Like } from "typeorm";
-import type { AppDetailResponseDto, AppResponseDto, FindAllAppDto } from "~/routes/dto/app";
+import type {
+  AppDetailResponseDto,
+  AppResponseDto,
+  FindAllAppDto,
+} from "~/routes/dto/app";
 import { initializeDatabase, Subscriptions } from "~/.server/db";
 import { isKorean, isEnglish } from "~/.server/utils";
 
@@ -69,9 +73,11 @@ const createProductCondition = (query?: string) => {
   return conditions;
 };
 
-export async function getSubscriptionDetail(id: number): Promise<AppDetailResponseDto> {
+export async function getSubscriptionDetail(
+  id: number,
+): Promise<AppDetailResponseDto> {
   await initializeDatabase();
-  
+
   const subscription = await Subscriptions.findOne({
     where: {
       id: id,
@@ -99,51 +105,57 @@ export async function getSubscriptionDetail(id: number): Promise<AppDetailRespon
   return {
     id: subscription.id,
     appLogo: subscription.product?.image || "https://via.placeholder.com/40",
-    appKoreanName: subscription.alias || subscription.product?.nameKo || "Unknown App",
+    appKoreanName:
+      subscription.alias || subscription.product?.nameKo || "Unknown App",
     appEnglishName: subscription.product?.nameEn || "Unknown App",
     category: "SaaS",
     status: subscription.status,
     connectStatus: subscription.connectStatus,
-    
+
     // Workspace info
-    workspace: subscription.workspace ? {
-      id: subscription.workspace.id,
-      displayName: subscription.workspace.displayName,
-      profileImageUrl: subscription.workspace.profileImageUrl,
-      billingEmail: subscription.workspace.billingEmail,
-      publicEmail: subscription.workspace.publicEmail,
-      description: subscription.workspace.description,
-    } : null,
-    
+    workspace: subscription.workspace
+      ? {
+          id: subscription.workspace.id,
+          displayName: subscription.workspace.displayName,
+          profileImageUrl: subscription.workspace.profileImageUrl,
+          billingEmail: subscription.workspace.billingEmail,
+          publicEmail: subscription.workspace.publicEmail,
+          description: subscription.workspace.description,
+        }
+      : null,
+
     // Member stats
     paidMemberCount: subscription.paidMemberCount || 0,
     usedMemberCount: subscription.usedMemberCount || 0,
-    
+
     // Members list
-    seats: subscription.subscriptionSeats?.map((seat: any) => ({
-      id: seat.id,
-      name: seat.teamMember?.name || "Unknown",
-      email: seat.teamMember?.email || "",
-      status: seat.status,
-      isPaid: seat.isPaid === 1,
-      startAt: seat.startAt,
-      finishAt: seat.finishAt,
-      profileImageUrl: seat.teamMember?.profileImageUrl || null,
-    })) || [],
-    
+    seats:
+      subscription.subscriptionSeats?.map((seat: any) => ({
+        id: seat.id,
+        name: seat.teamMember?.name || "Unknown",
+        email: seat.teamMember?.email || "",
+        status: seat.status,
+        isPaid: seat.isPaid === 1,
+        startAt: seat.startAt,
+        finishAt: seat.finishAt,
+        profileImageUrl: seat.teamMember?.profileImageUrl || null,
+      })) || [],
+
     // Payment info
     paymentInfo: {
-      creditCard: subscription.creditCard ? {
-        lastFourDigits: subscription.creditCard.number_4 || "",
-        cardName: subscription.creditCard.name || "",
-      } : null,
+      creditCard: subscription.creditCard
+        ? {
+            lastFourDigits: subscription.creditCard.number_4 || "",
+            cardName: subscription.creditCard.name || "",
+          }
+        : null,
       planName: subscription.paymentPlan?.name || "N/A",
       billingCycleType: subscription.billingCycleType,
       pricingModel: subscription.pricingModel,
       currentBillingAmount: subscription.currentBillingAmount?.amount || 0,
       currency: subscription.currentBillingAmount?.code || "KRW",
     },
-    
+
     // Billing dates
     registeredAt: subscription.registeredAt,
     nextBillingDate: subscription.nextBillingDate,
@@ -151,29 +163,35 @@ export async function getSubscriptionDetail(id: number): Promise<AppDetailRespon
     lastPaidAt: subscription.lastPaidAt,
     startAt: subscription.startAt,
     finishAt: subscription.finishAt,
-    
+
     // Billing history
-    billingHistories: subscription.billingHistories?.map((history: any) => ({
-      id: history.id,
-      paidAt: history.paidAt,
-      issuedAt: history.issuedAt,
-      amount: history.payAmount?.amount || 0,
-      currency: history.payAmount?.code || "KRW",
-      invoiceUrl: history.invoiceUrl,
-      paymentMethod: history.paymentMethod,
-    })) || [],
-    
+    billingHistories:
+      subscription.billingHistories?.map((history: any) => ({
+        id: history.id,
+        paidAt: history.paidAt,
+        issuedAt: history.issuedAt,
+        amount: history.payAmount?.amount || 0,
+        currency: history.payAmount?.code || "KRW",
+        invoiceUrl: history.invoiceUrl,
+        paymentMethod: history.paymentMethod,
+      })) || [],
+
     // Additional info
     description: subscription.desc,
     connectMethod: subscription.connectMethod,
-    utilizationRate: subscription.paidMemberCount > 0
-      ? ((subscription.usedMemberCount / subscription.organization.teamMembers.length) * 100).toFixed(
-          1
-        )
-      : "0",
-    costPerUser: subscription.usedMemberCount > 0
-      ? subscription.currentBillingAmount?.amount / subscription.usedMemberCount
-      : 0,
+    utilizationRate:
+      subscription.paidMemberCount > 0
+        ? (
+            (subscription.usedMemberCount /
+              subscription.organization.teamMembers.length) *
+            100
+          ).toFixed(1)
+        : "0",
+    costPerUser:
+      subscription.usedMemberCount > 0
+        ? subscription.currentBillingAmount?.amount /
+          subscription.usedMemberCount
+        : 0,
     totalTeamMemberCount: subscription.organization.teamMembers.length,
   };
 }

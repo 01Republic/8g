@@ -43,7 +43,10 @@ export function MemberTableSection({
     return generateVariablesFromSectionResults();
   }, []);
 
-  const { loading, error, parsed, run } = useWorkflowExecution(workflow, variables);
+  const { loading, error, parsed, run } = useWorkflowExecution(
+    workflow,
+    variables,
+  );
 
   useEffect(() => {
     if (!Array.isArray(parsed)) return;
@@ -94,17 +97,13 @@ export function MemberTableSection({
                   <TableCell className="text-sm">
                     <Avatar className="w-10 h-10">
                       <AvatarImage src={member.profileImgUrl ?? ""} />
-                      <AvatarFallback>
-                        {member.name?.charAt(0)}
-                      </AvatarFallback>
+                      <AvatarFallback>{member.name?.charAt(0)}</AvatarFallback>
                     </Avatar>
                   </TableCell>
                   <TableCell className="text-sm">
                     {member.email ?? ""}
                   </TableCell>
-                  <TableCell className="text-sm">
-                    {member.name ?? ""}
-                  </TableCell>
+                  <TableCell className="text-sm">{member.name ?? ""}</TableCell>
                   <TableCell className="text-sm">
                     {member.joinDate ?? "N/A"}
                   </TableCell>

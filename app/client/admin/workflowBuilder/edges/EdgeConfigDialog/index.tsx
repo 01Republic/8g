@@ -23,7 +23,6 @@ import type {
   SingleConditionType,
   SubCondition,
   SubConditionType,
-  WorkflowNode,
 } from "./types";
 import { SingleEquals } from "./SingleEquals";
 import { SingleExists } from "./SingleExists";
@@ -36,7 +35,7 @@ interface EdgeConfigDialogProps {
   onOpenChange: (open: boolean) => void;
   edgeData?: SwitchEdgeData;
   onSave: (data: SwitchEdgeData) => void;
-  nodes?: WorkflowNode[];
+  targetNodeId: string;
 }
 
 export function EdgeConfigDialog({
@@ -44,11 +43,11 @@ export function EdgeConfigDialog({
   onOpenChange,
   edgeData,
   onSave,
-  nodes = [],
+  targetNodeId,
 }: EdgeConfigDialogProps) {
   // 조건 모드: 단일 vs 복합
   const [conditionMode, setConditionMode] = useState<ConditionMode>(
-    edgeData?.when?.and || edgeData?.when?.or ? "multiple" : "single"
+    edgeData?.when?.and || edgeData?.when?.or ? "multiple" : "single",
   );
 
   // 단일 조건 타입
@@ -66,7 +65,7 @@ export function EdgeConfigDialog({
                 ? "regex"
                 : edgeData?.when?.contains
                   ? "contains"
-                  : "default"
+                  : "default",
     );
 
   // 복합 조건 타입 (AND/OR)
@@ -76,7 +75,7 @@ export function EdgeConfigDialog({
   // 노드 선택용 (equals, exists, regex에서 사용)
   const extractNodeIdFromPath = (path: string) => {
     const match = path.match(/\$\.steps\.([^.]+)/);
-    return match ? match[1] : nodes[0]?.id || "";
+    return match ? match[1] : "";
   };
 
   const [selectedNodeId, setSelectedNodeId] = useState<string>(
@@ -84,15 +83,15 @@ export function EdgeConfigDialog({
       edgeData?.when?.equals?.left ||
         edgeData?.when?.exists ||
         edgeData?.when?.regex?.value ||
-        ""
-    )
+        "",
+    ),
   );
 
   const [resultPath, setResultPath] = useState("result.data");
 
   // equals 조건용
   const [rightValue, setRightValue] = useState(
-    edgeData?.when?.equals?.right || ""
+    edgeData?.when?.equals?.right || "",
   );
 
   // exists 조건용 - 이제 노드 선택과 경로 조합으로 처리
@@ -104,13 +103,13 @@ export function EdgeConfigDialog({
   // regex 조건용
   const [regexResultPath, setRegexResultPath] = useState("result.data");
   const [regexPattern, setRegexPattern] = useState(
-    edgeData?.when?.regex?.pattern || ""
+    edgeData?.when?.regex?.pattern || "",
   );
 
   // contains 조건용
   const [containsResultPath, setContainsResultPath] = useState("result.data");
   const [containsSearch, setContainsSearch] = useState(
-    edgeData?.when?.contains?.search || ""
+    edgeData?.when?.contains?.search || "",
   );
 
   const initializeSubConditions = (): SubCondition[] => {
@@ -124,7 +123,7 @@ export function EdgeConfigDialog({
         return {
           id,
           type: "equals" as SubConditionType,
-          nodeId: match?.[1] || nodes[0]?.id || "",
+          nodeId: match?.[1] || "",
           path: match?.[2] || "result.data",
           value: cond.equals.right || "",
         };
@@ -133,7 +132,7 @@ export function EdgeConfigDialog({
         return {
           id,
           type: "contains" as SubConditionType,
-          nodeId: match?.[1] || nodes[0]?.id || "",
+          nodeId: match?.[1] || "",
           path: match?.[2] || "result.data",
           value: cond.contains.search || "",
         };
@@ -142,7 +141,7 @@ export function EdgeConfigDialog({
         return {
           id,
           type: "exists" as SubConditionType,
-          nodeId: match?.[1] || nodes[0]?.id || "",
+          nodeId: match?.[1] || "",
           path: match?.[2] || "result",
         };
       } else if (cond.regex) {
@@ -150,7 +149,7 @@ export function EdgeConfigDialog({
         return {
           id,
           type: "regex" as SubConditionType,
-          nodeId: match?.[1] || nodes[0]?.id || "",
+          nodeId: match?.[1] || "",
           path: match?.[2] || "result.data",
           value: cond.regex.pattern || "",
         };
@@ -158,7 +157,7 @@ export function EdgeConfigDialog({
       return {
         id,
         type: "equals" as SubConditionType,
-        nodeId: nodes[0]?.id || "",
+        nodeId: "",
         path: "result.data",
         value: "",
       };
@@ -166,7 +165,7 @@ export function EdgeConfigDialog({
   };
 
   const [subConditions, setSubConditions] = useState<SubCondition[]>(
-    initializeSubConditions
+    initializeSubConditions,
   );
 
   const handleSave = () => {
@@ -364,7 +363,7 @@ export function EdgeConfigDialog({
           {/* 단일 조건 상세 설정 */}
           {conditionMode === "single" && singleConditionType === "equals" && (
             <SingleEquals
-              nodes={nodes}
+              targetNodeId={targetNodeId}
               selectedNodeId={selectedNodeId}
               setSelectedNodeId={setSelectedNodeId}
               resultPath={resultPath}
@@ -376,7 +375,7 @@ export function EdgeConfigDialog({
 
           {conditionMode === "single" && singleConditionType === "exists" && (
             <SingleExists
-              nodes={nodes}
+              targetNodeId={targetNodeId}
               selectedNodeId={selectedNodeId}
               setSelectedNodeId={setSelectedNodeId}
               existsResultPath={existsResultPath}
@@ -386,7 +385,7 @@ export function EdgeConfigDialog({
 
           {conditionMode === "single" && singleConditionType === "contains" && (
             <SingleContains
-              nodes={nodes}
+              targetNodeId={targetNodeId}
               selectedNodeId={selectedNodeId}
               setSelectedNodeId={setSelectedNodeId}
               containsResultPath={containsResultPath}
@@ -408,7 +407,7 @@ export function EdgeConfigDialog({
 
           {conditionMode === "multiple" && (
             <Multiple
-              nodes={nodes}
+              targetNodeId={targetNodeId}
               multipleConditionType={multipleConditionType}
               subConditions={subConditions}
               setSubConditions={setSubConditions}
@@ -417,7 +416,7 @@ export function EdgeConfigDialog({
 
           {conditionMode === "single" && singleConditionType === "regex" && (
             <SingleRegex
-              nodes={nodes}
+              targetNodeId={targetNodeId}
               selectedNodeId={selectedNodeId}
               setSelectedNodeId={setSelectedNodeId}
               regexResultPath={regexResultPath}

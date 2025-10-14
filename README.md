@@ -21,7 +21,9 @@ DB_NAME=mydb
 ```
 
 ### 3. 그리고 migration를 따로 추가하지 않았기 때문에 아래 쿼리 들로 해당 패키지에 필요한 테이블을 만듭니다
+
 - 이 부분은 차후 논의 필요 / 테이블 이름 및 마이그레이션 여부 등등
+
 ```sql
 CREATE TABLE IF NOT EXISTS integration_app_form_metadata (
   id INT NOT NULL AUTO_INCREMENT,
@@ -43,19 +45,20 @@ pnpm run dev
 
 ### 1. 로그인 {subdomain}.localhost:3000/login
 
-우선 기본적으로 8g는 scodi user & org 테이블을 같이 씁니다. 그리고 개인 서비스라기 보단 조직 단위 서비스 이기 때문에 slug를 활용해서 subdomain url을 제공합니다! 따라서 org의 slug를 알아야합니다!! 이 부분은 데이터베이스의 organizations의 slug 컬럼을 확인해주세요! 
+우선 기본적으로 8g는 scodi user & org 테이블을 같이 씁니다. 그리고 개인 서비스라기 보단 조직 단위 서비스 이기 때문에 slug를 활용해서 subdomain url을 제공합니다! 따라서 org의 slug를 알아야합니다!! 이 부분은 데이터베이스의 organizations의 slug 컬럼을 확인해주세요!
+
 - (추가로 slug는 현재 스코디 내에서 수정할 수 없어서 디비로 확인해야합니다. 또는 {name}-{id} 방식으로 자동 생성되기 때문에 그거로 해주셔도 됩니다.)
 - 그리고 subdomain은 영어로만 해야합니다
 - 멀티 테넌트 방식
-
 
 그러면 아래와 같이 로그인 화면이 뜹니다.
 ![로그인 화면](.github/login.png)
 
 ### 2. 홈 화면 {subdomain}.localhost:3000
 
-로그인 후에는 다음과 같이 홈 화면으로 이동합니다. 여기서는 내가 등록한 앱(scordi api에서는 subscription 개념)을 보여주고 검색할 수 있습니다. 
+로그인 후에는 다음과 같이 홈 화면으로 이동합니다. 여기서는 내가 등록한 앱(scordi api에서는 subscription 개념)을 보여주고 검색할 수 있습니다.
 검색 결과는 아래의 나의 구독 앱 쪽에서 카드 형식으로 보여주게 됩니다.
+
 - 추가로 현재 카드에 product 이름과 아이콘 등을 보여주는데, 이렇게 보여주면 어떤 구독인지 알 수 없어서 추가 정보를 보여주는 것이 필요
 
 ![홈 화면](.github/home.png)
@@ -65,7 +68,6 @@ pnpm run dev
 좌측에 apps 버튼을 클릭하면 이동하는 페이지로 내가 등록한 앱(subscription) 리스트를 보여줍니다.
 클릭하면 모달이나 새 탭으로 정보를 보여줘야하는데 아직 어떤 정보를 보여줘야할 지 정해지지 않아서 따로 구현이 되지 않았습니다.
 ![앱 화면](.github/apps.png)
-
 
 ### 4. 연동 화면 {subdomain}.localhost:3000/integration
 
@@ -99,9 +101,7 @@ Connect 버튼을 클릭했을 때 나오는 폼 모달를 설정할 수 있는 
 
 실제 Run workflow을 클릭하면 실행이 되며 상단에 있는 url이 타겟 url이 되서 동작하게 됩니다.
 
-
 ## 프로젝트 구조
-
 
 ### 전체 구조 한눈에
 
@@ -131,12 +131,14 @@ Connect 버튼을 클릭했을 때 나오는 폼 모달를 설정할 수 있는 
 ```
 
 ### 라우팅 & 페이지
+
 - **라우트 엔트리**는 `app/routes.ts`에서 레이아웃 기반으로 선언합니다. 공통 레이아웃(`layouts/sidebar`, `layouts/common`)에 따라 child 라우트가 묶입니다.
 - **라우트 구현체**는 `app/routes/*.tsx`에 위치하며, 여기서 메타/loader/action 등을 정의합니다.
 - **클라이언트 전용 페이지**는 `app/client`에 분리해 둡니다. Remix 라우트 파일에서는 이 컴포넌트를 불러와 구성만 합니다.
 - **로그인 이후 화면**은 `app/client/private`, **로그인 이전 화면**은 `app/client/public`, **빌더/관리 화면**은 `app/client/admin`에 나눠 관리합니다.
 
 ### 데이터 함수(loader/action)
+
 - **loader**: 서버에서만 실행되는 데이터 패칭. 방문 시 필요한 초기 데이터를 모읍니다. 예) `integration.tsx`에서 연동 가능한 product 리스트/메타데이터 로딩.
 - **action**: 폼 제출/뮤테이션 처리. 서버에서 실행되며 DB 연동 등 부수효과를 담당합니다. 예) `home.tsx`에서 검색 폼 제출 후 결과 리스트 응답.
 - **clientLoader / clientAction**: React Router 7의 클라이언트 전용 데이터 API. 서버 round-trip 없이 브라우저 상태만으로 처리할 작업에 사용합니다(추후 캐싱이나 purely client-side 데이터가 필요할 때 도입 예정).
@@ -158,17 +160,21 @@ export async function action({ request, context }: Route.ActionArgs) {
 ```
 
 ### 도메인 로직(models)
+
 - `app/models/integration`에 연동 관련 타입/실행기/슬랙 메타데이터 관리가 있습니다. 실제 폼 메타(`integration_app_form_metadata`)를 읽어 UI 모달을 구성하는 흐름을 가집니다.
 - `app/models/workflow`에는 워크플로우 UI 노드 컴포넌트 및 실행 관련 베이스 로직이 정리되어 있습니다.
 
 ### UI 컴포넌트
+
 - 기본 UI는 `app/components/ui`에 shadcn/ui를 베이스로 커스텀한 컴포넌트를 사용합니다. 가능한 한 공용 컴포넌트로 끌어올려 중복을 줄입니다.
 - 재사용 가능한 복합 컴포넌트(예: `Reorderable`, `stepper`)는 `app/components` 루트 하위에 있습니다.
 
 ### 인증/세션
+
 - 세션 관련 로직은 `app/session.ts`에 모아두고, 경로 보호는 `app/middleware/auth.ts`를 통해 처리합니다.
 
 ### DB/메타데이터
+
 - 현재 마이그레이션 도구는 붙여두지 않았고, 필수 테이블 `integration_app_form_metadata`는 README의 SQL로 생성합니다.
 - 해당 테이블의 `meta`(JSON) 기반으로 Integration 모달/섹션 구성이 동적으로 이뤄집니다.
 

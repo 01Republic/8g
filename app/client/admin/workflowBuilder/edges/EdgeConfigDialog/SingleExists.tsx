@@ -7,10 +7,10 @@ import {
 } from "~/components/ui/select";
 import { EdgFieldContentBox } from "./EdgFieldContentBox";
 import { Input } from "~/components/ui/input";
-import type { WorkflowNode } from "./types";
+import { usePreviousNodes } from "~/hooks/use-previous-nodes";
 
 interface SingleExistsProps {
-  nodes: WorkflowNode[];
+  targetNodeId: string;
   selectedNodeId: string;
   setSelectedNodeId: React.Dispatch<React.SetStateAction<string>>;
   existsResultPath: string;
@@ -18,8 +18,11 @@ interface SingleExistsProps {
 }
 
 export const SingleExists = (props: SingleExistsProps) => {
-  const { nodes, selectedNodeId, setSelectedNodeId } = props;
+  const { targetNodeId, selectedNodeId, setSelectedNodeId } = props;
   const { existsResultPath, setExistsResultPath } = props;
+
+  const { previousNodes, getNodeDisplayName } = usePreviousNodes(targetNodeId);
+
   return (
     <>
       <EdgFieldContentBox label="확인할 노드">
@@ -28,9 +31,9 @@ export const SingleExists = (props: SingleExistsProps) => {
             <SelectValue placeholder="노드 선택" />
           </SelectTrigger>
           <SelectContent>
-            {nodes.map((node) => (
+            {previousNodes.map((node) => (
               <SelectItem key={node.id} value={node.id}>
-                {node.data?.title || node.data?.block?.name || node.id}
+                {getNodeDisplayName(node)}
               </SelectItem>
             ))}
           </SelectContent>

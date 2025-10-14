@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export type FieldType = 
+export type FieldType =
   | "string"
   | "number"
   | "boolean"
@@ -35,13 +35,13 @@ export interface ParsedSchema {
  */
 export function parseZodSchema(schema: any): ParsedSchema {
   const fields: ParsedField[] = [];
-  
+
   if (!(schema instanceof z.ZodObject)) {
     return { fields };
   }
 
   const shape = schema.shape;
-  
+
   for (const [fieldName, fieldSchema] of Object.entries(shape)) {
     const parsed = parseField(fieldName, fieldSchema as any);
     if (parsed) {
@@ -58,10 +58,10 @@ export function parseZodSchema(schema: any): ParsedSchema {
 function parseField(name: string, schema: any): ParsedField | null {
   // 1. Wrapper 벗기기
   const { unwrapped, optional, defaultValue } = unwrapZodSchema(schema);
-  
+
   // 2. 타입 결정
   const typeInfo = determineFieldType(unwrapped);
-  
+
   // 3. 필드 객체 조합
   const field: ParsedField = {
     name,
@@ -90,22 +90,22 @@ function unwrapZodSchema(schema: any): {
   let state = { optional: false, defaultValue: undefined };
 
   while (true) {
-    const handler = unwrapHandlers.find(h => h.check(currentSchema));
-    
+    const handler = unwrapHandlers.find((h) => h.check(currentSchema));
+
     if (!handler) break;
-    
+
     const result = handler.unwrap(currentSchema, state);
     currentSchema = result.schema;
-    state = { 
-      optional: result.optional, 
-      defaultValue: result.defaultValue 
+    state = {
+      optional: result.optional,
+      defaultValue: result.defaultValue,
     };
   }
 
-  return { 
-    unwrapped: currentSchema, 
-    optional: state.optional, 
-    defaultValue: state.defaultValue 
+  return {
+    unwrapped: currentSchema,
+    optional: state.optional,
+    defaultValue: state.defaultValue,
   };
 }
 
@@ -114,7 +114,10 @@ function unwrapZodSchema(schema: any): {
  */
 type UnwrapHandler = {
   check: (schema: any) => boolean;
-  unwrap: (schema: any, state: { optional: boolean; defaultValue?: any }) => {
+  unwrap: (
+    schema: any,
+    state: { optional: boolean; defaultValue?: any },
+  ) => {
     schema: any;
     optional: boolean;
     defaultValue?: any;
@@ -135,9 +138,10 @@ const unwrapHandlers: UnwrapHandler[] = [
     unwrap: (s, state) => ({
       schema: s._def.innerType,
       optional: state.optional,
-      defaultValue: typeof s._def.defaultValue === 'function' 
-        ? s._def.defaultValue() 
-        : s._def.defaultValue,
+      defaultValue:
+        typeof s._def.defaultValue === "function"
+          ? s._def.defaultValue()
+          : s._def.defaultValue,
     }),
   },
   {
@@ -150,13 +154,16 @@ const unwrapHandlers: UnwrapHandler[] = [
   },
 ];
 
-
-
 /**
  * Zod schema의 타입을 결정하고 추가 정보 추출
  */
-function determineFieldType(schema: any): Pick<ParsedField, 'type' | 'enumValues' | 'arrayItemType' | 'unionTypes' | 'defaultValue'> {
-  const handler = typeHandlers.find(h => h.check(schema));
+function determineFieldType(
+  schema: any,
+): Pick<
+  ParsedField,
+  "type" | "enumValues" | "arrayItemType" | "unionTypes" | "defaultValue"
+> {
+  const handler = typeHandlers.find((h) => h.check(schema));
   return handler ? handler.handle(schema) : { type: "string" }; // default
 }
 
@@ -165,7 +172,12 @@ function determineFieldType(schema: any): Pick<ParsedField, 'type' | 'enumValues
  */
 type TypeHandler = {
   check: (schema: any) => boolean;
-  handle: (schema: any) => Pick<ParsedField, 'type' | 'enumValues' | 'arrayItemType' | 'unionTypes' | 'defaultValue'>;
+  handle: (
+    schema: any,
+  ) => Pick<
+    ParsedField,
+    "type" | "enumValues" | "arrayItemType" | "unionTypes" | "defaultValue"
+  >;
 };
 
 const typeHandlers: TypeHandler[] = [
@@ -201,9 +213,12 @@ const typeHandlers: TypeHandler[] = [
       const itemType = s._def.element || s.element;
       return {
         type: "array",
-        arrayItemType: itemType instanceof z.ZodString ? "string" 
-                     : itemType instanceof z.ZodNumber ? "number" 
-                     : undefined,
+        arrayItemType:
+          itemType instanceof z.ZodString
+            ? "string"
+            : itemType instanceof z.ZodNumber
+              ? "number"
+              : undefined,
       };
     },
   },
@@ -216,7 +231,7 @@ const typeHandlers: TypeHandler[] = [
     handle: () => ({ type: "object" }),
   },
   {
-    check: (s) => s._def?.typeName === 'ZodUnion',
+    check: (s) => s._def?.typeName === "ZodUnion",
     handle: (s) => ({
       type: "union",
       unionTypes: s._def.options.map((opt: any) => {

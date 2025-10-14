@@ -17,9 +17,7 @@ export async function action({ request }: Route.ActionArgs) {
   await deleteWorkflows(workflowId);
 }
 
-export default function Workflows({
-    loaderData
-}: Route.ComponentProps) {
+export default function Workflows({ loaderData }: Route.ComponentProps) {
   const { workflows } = loaderData;
   const fetcher = useFetcher();
 
@@ -29,5 +27,7 @@ export default function Workflows({
     fetcher.submit(formData, { method: "POST" });
   };
 
-  return <WorkflowsPage workflows={workflows as any} deleteWorkflows={onDelete} />;
+  return (
+    <WorkflowsPage workflows={workflows as any} deleteWorkflows={onDelete} />
+  );
 }

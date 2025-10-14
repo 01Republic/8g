@@ -5,7 +5,13 @@ import { PermissionCheckSection } from "./sections/PermissionCheckSection";
 import { MemberTableSection } from "./sections/MemberTableSection";
 import { InitialCheckSection } from "./sections/InitialCheckSection";
 import { CompletionSection } from "./sections/CompletionSection";
-import type { PaymentInfo, PaymentInfoSectionSchema, PaymentHistory, PaymentHistorySectionSchema, SelectedWorkspace } from "~/models/integration/types";
+import type {
+  PaymentInfo,
+  PaymentInfoSectionSchema,
+  PaymentHistory,
+  PaymentHistorySectionSchema,
+  SelectedWorkspace,
+} from "~/models/integration/types";
 import type { SelectedMembers } from "~/models/integration/types";
 import type { AppFormMetadata } from "~/models/integration/types";
 import type {
@@ -105,9 +111,13 @@ export const buildSection = (
           key={`section-${keyId}`}
           title={uiSchema.title}
           workflow={(uiSchema as PermissionCheckSectionSchema).workflow}
-          loadingMessage={(uiSchema as PermissionCheckSectionSchema).loadingMessage}
+          loadingMessage={
+            (uiSchema as PermissionCheckSectionSchema).loadingMessage
+          }
           errorMessage={(uiSchema as PermissionCheckSectionSchema).errorMessage}
-          successMessage={(uiSchema as PermissionCheckSectionSchema).successMessage}
+          successMessage={
+            (uiSchema as PermissionCheckSectionSchema).successMessage
+          }
           onPrevious={onPrevious}
           onNext={onNext as () => void}
           hasPrevious={hasPrevious}

@@ -1,3 +1,3 @@
 export interface FindAllTeamMembersDto {
-    orgId: number;
+  orgId: number;
 }

@@ -6,7 +6,9 @@ interface VariablesPreviewPanelProps {
   variables: Record<string, any>;
 }
 
-export function VariablesPreviewPanel({ variables }: VariablesPreviewPanelProps) {
+export function VariablesPreviewPanel({
+  variables,
+}: VariablesPreviewPanelProps) {
   const [copied, setCopied] = useState<string | null>(null);
 
   const copyVariable = (varName: string) => {
@@ -37,7 +39,9 @@ export function VariablesPreviewPanel({ variables }: VariablesPreviewPanelProps)
               >
                 <div className="flex items-center justify-between mb-1">
                   <code className="text-xs font-mono text-blue-600">
-                    ${'{vars.'}{key}{'}'}
+                    ${"{vars."}
+                    {key}
+                    {"}"}
                   </code>
                   <Button
                     variant="ghost"
@@ -45,11 +49,14 @@ export function VariablesPreviewPanel({ variables }: VariablesPreviewPanelProps)
                     className="h-6 px-2 text-xs"
                     onClick={() => copyVariable(key)}
                   >
-                    {copied === key ? '✓' : '📋'}
+                    {copied === key ? "✓" : "📋"}
                   </Button>
                 </div>
                 <div className="text-xs text-gray-600 font-mono break-all">
-                  = {typeof value === 'string' ? `"${value}"` : JSON.stringify(value)}
+                  ={" "}
+                  {typeof value === "string"
+                    ? `"${value}"`
+                    : JSON.stringify(value)}
                 </div>
               </div>
             ))}
@@ -62,9 +69,7 @@ export function VariablesPreviewPanel({ variables }: VariablesPreviewPanelProps)
             <div className="text-blue-700">
               • Step의 selector, targetUrl 등에서 사용
             </div>
-            <div className="text-blue-700">
-              • 변수를 클릭하면 복사됩니다
-            </div>
+            <div className="text-blue-700">• 변수를 클릭하면 복사됩니다</div>
           </div>
         )}
       </CardContent>

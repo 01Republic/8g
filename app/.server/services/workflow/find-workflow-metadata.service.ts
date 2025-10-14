@@ -3,7 +3,7 @@ import { IntegrationAppWorkflowMetadata } from "~/.server/db/entities/Integratio
 
 export async function findWorkflowMetadata(workflowId: number) {
   await initializeDatabase();
-  
+
   const workflow = await IntegrationAppWorkflowMetadata.findOne({
     where: { id: workflowId },
   });

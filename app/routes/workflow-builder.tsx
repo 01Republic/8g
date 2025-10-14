@@ -1,23 +1,34 @@
 import "@xyflow/react/dist/style.css";
 import WorkflowBuilderPage from "~/client/admin/workflowBuilder/WorkflowBuilderPage";
 import type { Route } from "./+types/workflow-builder";
-import { upsertWorkflowMetadata, findWorkflowMetadata } from "~/.server/services";
+import {
+  upsertWorkflowMetadata,
+  findWorkflowMetadata,
+} from "~/.server/services";
 import type { FormWorkflow } from "~/models/integration/types";
 import { useFetcher } from "react-router";
 import { useEffect } from "react";
 import { redirect } from "react-router";
 
 export async function loader({ params }: Route.LoaderArgs) {
-  const workflowId = params.workflowId ? parseInt(params.workflowId) : undefined;
-  
+  const workflowId = params.workflowId
+    ? parseInt(params.workflowId)
+    : undefined;
+
   if (workflowId) {
     const workflow = await findWorkflowMetadata(workflowId);
     return {
       workflowId,
-      workflow: workflow ? { id: workflow.id, description: workflow.description, meta: workflow.meta } : null,
+      workflow: workflow
+        ? {
+            id: workflow.id,
+            description: workflow.description,
+            meta: workflow.meta,
+          }
+        : null,
     };
   }
-  
+
   return {
     workflowId: undefined,
     workflow: null,
@@ -32,7 +43,7 @@ export async function action({ request }: Route.ActionArgs) {
   const meta = JSON.parse(formData.get("meta")!.toString()) as FormWorkflow;
 
   await upsertWorkflowMetadata({ workflowId, description, meta });
-  
+
   return redirect("/workflows");
 }
 
@@ -64,11 +75,11 @@ export default function WorkflowBuilder({ loaderData }: Route.ComponentProps) {
   }, [fetcher.state, fetcher.data]);
 
   return (
-    <WorkflowBuilderPage 
+    <WorkflowBuilderPage
       workflowId={loaderData.workflowId}
       initialWorkflow={loaderData.workflow}
-      onSave={onSave} 
-      isSaving={isSaving} 
+      onSave={onSave}
+      isSaving={isSaving}
     />
   );
 }

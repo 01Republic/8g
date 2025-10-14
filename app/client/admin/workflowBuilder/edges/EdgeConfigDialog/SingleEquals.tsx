@@ -7,10 +7,10 @@ import {
 } from "~/components/ui/select";
 import { EdgFieldContentBox } from "./EdgFieldContentBox";
 import { Input } from "~/components/ui/input";
-import type { WorkflowNode } from "./types";
+import { usePreviousNodes } from "~/hooks/use-previous-nodes";
 
 interface SingleEqualsProps {
-  nodes: WorkflowNode[];
+  targetNodeId: string;
   selectedNodeId: string;
   setSelectedNodeId: React.Dispatch<React.SetStateAction<string>>;
   resultPath: string;
@@ -20,9 +20,12 @@ interface SingleEqualsProps {
 }
 
 export const SingleEquals = (props: SingleEqualsProps) => {
-  const { nodes, selectedNodeId, setSelectedNodeId } = props;
+  const { targetNodeId, selectedNodeId, setSelectedNodeId } = props;
   const { resultPath, setResultPath } = props;
   const { rightValue, setRightValue } = props;
+
+  const { previousNodes, getNodeDisplayName } = usePreviousNodes(targetNodeId);
+
   return (
     <>
       <EdgFieldContentBox label="비교할 노드">
@@ -31,9 +34,9 @@ export const SingleEquals = (props: SingleEqualsProps) => {
             <SelectValue placeholder="노드 선택" />
           </SelectTrigger>
           <SelectContent>
-            {nodes.map((node) => (
+            {previousNodes.map((node) => (
               <SelectItem key={node.id} value={node.id}>
-                {node.data?.title || node.data?.block?.name || node.id}
+                {getNodeDisplayName(node)}
               </SelectItem>
             ))}
           </SelectContent>

@@ -21,7 +21,7 @@ export type TeamMemberAddPayload = {
   phone: string;
   position: string;
   subscriptionCount: number;
-}
+};
 
 interface MembersPageProps {
   members: TeamMembers[];
@@ -40,7 +40,7 @@ export default function MembersPage(props: MembersPageProps) {
     setSelectedMemberIds((prev) =>
       prev.includes(memberId)
         ? prev.filter((id) => id !== memberId)
-        : [...prev, memberId]
+        : [...prev, memberId],
     );
   };
 
@@ -73,7 +73,11 @@ export default function MembersPage(props: MembersPageProps) {
             <div>
               <h1 className="text-2xl font-semibold">팀 멤버 관리</h1>
               <p className="text-sm text-gray-500">
-                총 <span className="font-semibold text-gray-700">{members.length}명</span>의 멤버가 등록되어 있습니다
+                총{" "}
+                <span className="font-semibold text-gray-700">
+                  {members.length}명
+                </span>
+                의 멤버가 등록되어 있습니다
               </p>
             </div>
           </div>
@@ -88,10 +92,7 @@ export default function MembersPage(props: MembersPageProps) {
                 선택 삭제 ({selectedMemberIds.length})
               </Button>
             )}
-            <Button
-              onClick={() => setAddDialogOpen(true)}
-              className="gap-2"
-            >
+            <Button onClick={() => setAddDialogOpen(true)} className="gap-2">
               <UserPlus className="w-4 h-4" />
               멤버 추가
             </Button>
@@ -110,14 +111,17 @@ export default function MembersPage(props: MembersPageProps) {
           onOpenChange={setAddDialogOpen}
           onAddMember={addMember}
         />
-        <AlertDialog open={deleteAllDialogOpen} onOpenChange={setDeleteAllDialogOpen}>
+        <AlertDialog
+          open={deleteAllDialogOpen}
+          onOpenChange={setDeleteAllDialogOpen}
+        >
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>선택한 멤버 일괄 삭제</AlertDialogTitle>
               <AlertDialogDescription>
-                정말로 선택한 <strong>{selectedMemberIds.length}명</strong>의 멤버를 삭제하시겠습니까?
-                <br />
-                이 작업은 되돌릴 수 없습니다.
+                정말로 선택한 <strong>{selectedMemberIds.length}명</strong>의
+                멤버를 삭제하시겠습니까?
+                <br />이 작업은 되돌릴 수 없습니다.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -135,4 +139,3 @@ export default function MembersPage(props: MembersPageProps) {
     </div>
   );
 }
-

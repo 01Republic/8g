@@ -37,9 +37,10 @@ const PaymentHistorySectionConfigPanel = ({
   allSections,
 }: PaymentHistorySectionConfigPanelProps) => {
   const handleWorkflowChange = (selectedWorkflowId: number | undefined) => {
-    const selectedWorkflow = workflows.find(w => w.id === selectedWorkflowId);
+    const selectedWorkflow = workflows.find((w) => w.id === selectedWorkflowId);
     withMeta((draft) => {
-      (draft.sections[index].uiSchema as any).workflow = selectedWorkflow?.meta as Workflow;
+      (draft.sections[index].uiSchema as any).workflow =
+        selectedWorkflow?.meta as Workflow;
       (draft.sections[index].uiSchema as any).workflowId = selectedWorkflowId;
     });
   };
@@ -57,7 +58,7 @@ const PaymentHistorySectionConfigPanel = ({
         </AccordionTrigger>
         <AccordionContent>
           <div className="space-y-3">
-            <AvailableVariablesCard 
+            <AvailableVariablesCard
               sectionIndex={index}
               sections={allSections}
             />
@@ -100,5 +101,3 @@ const PaymentHistorySectionConfigPanel = ({
 };
 
 export default PaymentHistorySectionConfigPanel;
-
-

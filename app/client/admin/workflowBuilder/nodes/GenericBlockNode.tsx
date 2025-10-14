@@ -30,11 +30,11 @@ export default function GenericBlockNode({
   // Repeat 뱃지 텍스트 생성
   const repeatBadgeText = useMemo(() => {
     if (!repeat) return null;
-    if ('forEach' in repeat) {
+    if ("forEach" in repeat) {
       return `forEach`;
     }
-    if ('count' in repeat) {
-      const count = typeof repeat.count === 'string' ? '변수' : repeat.count;
+    if ("count" in repeat) {
+      const count = typeof repeat.count === "string" ? "변수" : repeat.count;
       return `×${count}`;
     }
     return null;
@@ -44,7 +44,7 @@ export default function GenericBlockNode({
     <div
       className={cn(
         "border rounded-md bg-white shadow overflow-hidden",
-        selected ? " border-primary-700" : "border-gray-200"
+        selected ? " border-primary-700" : "border-gray-200",
       )}
     >
       <div className="px-3 py-2 flex items-center justify-between gap-2 border-b border-gray-200 bg-gray-100">

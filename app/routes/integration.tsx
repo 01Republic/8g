@@ -2,11 +2,18 @@ import { authMiddleware } from "~/middleware/auth";
 import { userContext } from "~/context";
 import { useFetcher } from "react-router";
 import type { Route } from "./+types/integration";
-import type { PaymentHistory, PaymentInfo, SelectedWorkspace } from "~/models/integration/types";
+import type {
+  PaymentHistory,
+  PaymentInfo,
+  SelectedWorkspace,
+} from "~/models/integration/types";
 import type { SelectedMembers } from "~/models/integration/types";
 import type { AppFormMetadata } from "~/models/integration/types";
 import IntegrationPage from "~/client/private/integration/IntegrationPage";
-import { findActiveIntegrationProducts, integrateApp } from "~/.server/services";
+import {
+  findActiveIntegrationProducts,
+  integrateApp,
+} from "~/.server/services";
 
 export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
 
@@ -47,7 +54,8 @@ export default function Integration({ loaderData }: Route.ComponentProps) {
     paymentInfo: PaymentInfo;
     paymentHistory: PaymentHistory[];
   }) => {
-    const { workspace, members, productId, paymentInfo, paymentHistory } = payload;
+    const { workspace, members, productId, paymentInfo, paymentHistory } =
+      payload;
 
     const formData = new FormData();
     formData.append("workspace", JSON.stringify(workspace));

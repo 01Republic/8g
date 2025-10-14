@@ -3,7 +3,9 @@ import { authMiddleware } from "~/middleware/auth";
 import { useFetcher, useLoaderData } from "react-router";
 import { userContext } from "~/context";
 import { findAllTeamMembers } from "~/.server/services";
-import MembersPage, { type TeamMemberAddPayload } from "~/client/private/members/MembersPage";
+import MembersPage, {
+  type TeamMemberAddPayload,
+} from "~/client/private/members/MembersPage";
 import { deleteTeamMembers } from "~/.server/services/member/delete-all-team-members.service";
 import { createTeamMembers } from "~/.server/services/member/create-team-members.service";
 
@@ -14,13 +16,15 @@ export async function action({ request, context }: Route.ActionArgs) {
   const user = context.get(userContext);
   const organizationId = user!.orgId;
 
-  if(request.method === "DELETE")  {
+  if (request.method === "DELETE") {
     const teamMemberIdStr = formData.get("teamMemberId")?.toString();
     const teamMemberIdsStr = formData.get("teamMemberIds")?.toString();
-    
+
     if (teamMemberIdsStr) {
       // 일괄 삭제
-      const teamMemberIds = JSON.parse(teamMemberIdsStr).map((id: string) => parseInt(id));
+      const teamMemberIds = JSON.parse(teamMemberIdsStr).map((id: string) =>
+        parseInt(id),
+      );
       await deleteTeamMembers(teamMemberIds);
     } else if (teamMemberIdStr) {
       // 단일 삭제
@@ -29,7 +33,7 @@ export async function action({ request, context }: Route.ActionArgs) {
     return null;
   }
 
-  if(request.method === "POST") {
+  if (request.method === "POST") {
     const payload = {
       name: formData.get("name")!.toString(),
       email: formData.get("email")!.toString(),
@@ -67,8 +71,18 @@ export default function Members() {
   };
 
   const onDeleteAllMembers = (teamMemberIds: number[]) => {
-    fetcher.submit({ teamMemberIds: JSON.stringify(teamMemberIds) }, { method: "DELETE" });
+    fetcher.submit(
+      { teamMemberIds: JSON.stringify(teamMemberIds) },
+      { method: "DELETE" },
+    );
   };
 
-  return <MembersPage members={members} addMember={onAddMember} deleteMember={onDeleteMember} deleteAllMembers={onDeleteAllMembers} />;
+  return (
+    <MembersPage
+      members={members}
+      addMember={onAddMember}
+      deleteMember={onDeleteMember}
+      deleteAllMembers={onDeleteAllMembers}
+    />
+  );
 }

@@ -35,7 +35,11 @@ export default function HomePage(props: HomePageProps) {
           <AppSearch query={query} onQueryChange={setQuery} />
         </section>
 
-        <AppItemsSection apps={apps} isLoading={isLoading} onGoToAppDetailPage={onGoToAppDetailPage} />
+        <AppItemsSection
+          apps={apps}
+          isLoading={isLoading}
+          onGoToAppDetailPage={onGoToAppDetailPage}
+        />
       </div>
     </div>
   );

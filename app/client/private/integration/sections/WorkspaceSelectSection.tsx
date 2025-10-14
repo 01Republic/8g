@@ -51,7 +51,7 @@ export const WorkspaceSelectSection = ({
   // 🔥 선택한 workspace를 SectionResultManager에 저장
   useEffect(() => {
     if (selectedWorkspace) {
-      setSectionResult('workspaceSelect', selectedWorkspace);
+      setSectionResult("workspaceSelect", selectedWorkspace);
     }
   }, [selectedWorkspace]);
 

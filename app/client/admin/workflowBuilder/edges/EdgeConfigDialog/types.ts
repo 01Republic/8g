@@ -1,13 +1,3 @@
-export interface WorkflowNode {
-  id: string;
-  data?: {
-    title?: string;
-    block?: {
-      name?: string;
-    };
-  };
-}
-
 // and/or 조건용 - 동적 UI로 관리
 export type SubConditionType = "equals" | "contains" | "exists" | "regex";
 

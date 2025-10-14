@@ -1,7 +1,9 @@
 import { initializeDatabase, Organizations, TeamMembers } from "~/.server/db";
 import type { FindAllTeamMembersDto } from "~/routes/dto/member";
 
-export async function findAllTeamMembers(dto: FindAllTeamMembersDto): Promise<TeamMembers[]> {
+export async function findAllTeamMembers(
+  dto: FindAllTeamMembersDto,
+): Promise<TeamMembers[]> {
   const { orgId } = dto;
 
   await initializeDatabase();

@@ -6,7 +6,7 @@ interface AppItemProps {
 }
 
 export const AppItem = (props: AppItemProps) => {
-  const { apps, onGoToAppDetailPage  } = props;
+  const { apps, onGoToAppDetailPage } = props;
 
   const { appKoreanName, appEnglishName, appLogo, registeredAt } = apps;
 
@@ -27,7 +27,10 @@ export const AppItem = (props: AppItemProps) => {
   };
 
   return (
-    <div className="border border-gray-200 rounded-2xl overflow-hidden cursor-pointer hover:shadow-lg p-4 flex gap-5 items-center" onClick={onClick}>
+    <div
+      className="border border-gray-200 rounded-2xl overflow-hidden cursor-pointer hover:shadow-lg p-4 flex gap-5 items-center"
+      onClick={onClick}
+    >
       <div className="w-15.5 h-15.5 overflow-hidden rounded-sm">
         <img
           src={appLogo}

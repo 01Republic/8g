@@ -1,4 +1,4 @@
-import jsonata from 'jsonata';
+import jsonata from "jsonata";
 
 export class ResultParser {
   /**
@@ -8,12 +8,11 @@ export class ResultParser {
     try {
       const compiledExpr = jsonata(expression);
       const result = await compiledExpr.evaluate(rawResult);
-      
+
       return result;
     } catch (error: any) {
-      console.error('JSONata parsing failed:', error);
+      console.error("JSONata parsing failed:", error);
       throw new Error(`파싱 실패: ${error.message}`);
     }
   }
 }
-

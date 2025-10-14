@@ -1,8 +1,8 @@
-import type { Node } from '@xyflow/react';
-import type { Workflow, WorkflowStep } from '8g-extension';
-import { AllBlockSchemas } from '8g-extension';
-import type { WorkflowEdge } from '~/models/workflow/types';
-import { getLayoutedElements } from './autoLayout';
+import type { Node } from "@xyflow/react";
+import type { Workflow, WorkflowStep } from "8g-extension";
+import { AllBlockSchemas } from "8g-extension";
+import type { WorkflowEdge } from "~/models/workflow/types";
+import { getLayoutedElements } from "./autoLayout";
 
 interface ConvertedWorkflow {
   nodes: Node[];
@@ -12,15 +12,18 @@ interface ConvertedWorkflow {
 /**
  * Workflow JSON을 React Flow의 노드/엣지로 변환
  */
-export function convertWorkflowToNodesAndEdges(workflow: Workflow): ConvertedWorkflow {
+export function convertWorkflowToNodesAndEdges(
+  workflow: Workflow,
+): ConvertedWorkflow {
   const nodes: Node[] = [];
   const edges: WorkflowEdge[] = [];
 
   // Steps를 노드로 변환
   workflow.steps.forEach((step: WorkflowStep, index: number) => {
-    const blockName = step.block?.name || 'generic-block';
-    const schema = AllBlockSchemas[blockName as keyof typeof AllBlockSchemas] || null;
-    
+    const blockName = step.block?.name || "generic-block";
+    const schema =
+      AllBlockSchemas[blockName as keyof typeof AllBlockSchemas] || null;
+
     const node: Node = {
       id: step.id,
       type: blockName,
@@ -44,7 +47,7 @@ export function convertWorkflowToNodesAndEdges(workflow: Workflow): ConvertedWor
           id: `${step.id}-${switchCase.next}-switch-${index}`,
           source: step.id,
           target: switchCase.next,
-          type: 'conditional',
+          type: "conditional",
           data: {
             when: switchCase.when,
             isDefault: false,
@@ -61,10 +64,10 @@ export function convertWorkflowToNodesAndEdges(workflow: Workflow): ConvertedWor
         id: `${step.id}-${step.next}-next`,
         source: step.id,
         target: step.next,
-        type: 'conditional',
+        type: "conditional",
         data: {
           isDefault: true,
-          conditionLabel: 'default',
+          conditionLabel: "default",
         },
       };
       edges.push(edge);
@@ -76,10 +79,10 @@ export function convertWorkflowToNodesAndEdges(workflow: Workflow): ConvertedWor
         id: `${step.id}-${step.onSuccess}-success`,
         source: step.id,
         target: step.onSuccess,
-        type: 'conditional',
+        type: "conditional",
         data: {
           isDefault: false,
-          conditionLabel: 'onSuccess',
+          conditionLabel: "onSuccess",
         },
       };
       edges.push(edge);
@@ -91,10 +94,10 @@ export function convertWorkflowToNodesAndEdges(workflow: Workflow): ConvertedWor
         id: `${step.id}-${step.onFailure}-failure`,
         source: step.id,
         target: step.onFailure,
-        type: 'conditional',
+        type: "conditional",
         data: {
           isDefault: false,
-          conditionLabel: 'onFailure',
+          conditionLabel: "onFailure",
         },
       };
       edges.push(edge);
@@ -102,7 +105,7 @@ export function convertWorkflowToNodesAndEdges(workflow: Workflow): ConvertedWor
   });
 
   // 자동 레이아웃 적용
-  const layouted = getLayoutedElements(nodes, edges, 'TB');
+  const layouted = getLayoutedElements(nodes, edges, "TB");
 
   return {
     nodes: layouted.nodes,
@@ -114,7 +117,7 @@ export function convertWorkflowToNodesAndEdges(workflow: Workflow): ConvertedWor
  * 조건을 라벨로 변환
  */
 function getConditionLabel(when: any): string {
-  if (!when) return 'condition';
+  if (!when) return "condition";
 
   if (when.equals) {
     return `== ${when.equals.right}`;
@@ -123,13 +126,15 @@ function getConditionLabel(when: any): string {
     return `contains ${when.contains.search}`;
   }
   if (when.exists) {
-    return 'exists';
+    return "exists";
   }
   if (when.regex) {
     return `~= ${when.regex.pattern}`;
   }
   if (when.expr) {
-    return when.expr.length > 15 ? when.expr.substring(0, 15) + '...' : when.expr;
+    return when.expr.length > 15
+      ? when.expr.substring(0, 15) + "..."
+      : when.expr;
   }
   if (when.and) {
     return `AND (${when.and.length})`;
@@ -138,5 +143,5 @@ function getConditionLabel(when: any): string {
     return `OR (${when.or.length})`;
   }
 
-  return 'condition';
+  return "condition";
 }

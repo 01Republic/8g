@@ -35,9 +35,7 @@ export const WorkflowsTable = (props: WorkflowsTableProps) => {
         <TableHeader className="bg-gray-50">
           <TableRow>
             <TableHead className="font-semibold text-gray-900">ID</TableHead>
-            <TableHead className="font-semibold text-gray-900">
-              설명
-            </TableHead>
+            <TableHead className="font-semibold text-gray-900">설명</TableHead>
             <TableHead className="font-semibold text-gray-900">
               Steps 수
             </TableHead>
@@ -63,9 +61,7 @@ export const WorkflowsTable = (props: WorkflowsTableProps) => {
                 <TableCell>
                   <div className="font-medium">{workflow.description}</div>
                 </TableCell>
-                <TableCell>
-                  {workflow.meta?.steps?.length || 0} steps
-                </TableCell>
+                <TableCell>{workflow.meta?.steps?.length || 0} steps</TableCell>
                 <TableCell className="text-sm text-gray-600">
                   {formatDate(workflow.updatedAt || workflow.createdAt || null)}
                 </TableCell>
@@ -75,7 +71,11 @@ export const WorkflowsTable = (props: WorkflowsTableProps) => {
                       수정
                     </Button>
                   </Link>
-                  <Button variant="outline" size="sm" onClick={() => deleteWorkflows(workflow.id)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => deleteWorkflows(workflow.id)}
+                  >
                     삭제
                   </Button>
                 </TableCell>

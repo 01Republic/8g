@@ -11,7 +11,7 @@ export function generateVariablesFromSectionResults(): Record<string, any> {
     const result = sectionResult.result;
 
     // 결과가 객체인 경우 flatten
-    if (result && typeof result === 'object' && !Array.isArray(result)) {
+    if (result && typeof result === "object" && !Array.isArray(result)) {
       Object.entries(result).forEach(([key, value]) => {
         variables[key] = value;
       });

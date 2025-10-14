@@ -16,7 +16,7 @@ selectBoxSection의 result가 "apple"이라면, 워크플로우에 전달되는 
 
 function resolveTemplateString(
   template?: string,
-  variables?: Record<string, any>
+  variables?: Record<string, any>,
 ): string | undefined {
   if (!template || typeof template !== "string") return template;
 
@@ -35,8 +35,9 @@ function resolveTemplateString(
   // 2. 새로운 ${vars.변수명} 패턴 치환
   if (variables) {
     Object.entries(variables).forEach(([key, value]) => {
-      const regex = new RegExp(`\\$\\{vars\\.${key}\\}`, 'g');
-      const replacement = typeof value === 'string' ? value : JSON.stringify(value);
+      const regex = new RegExp(`\\$\\{vars\\.${key}\\}`, "g");
+      const replacement =
+        typeof value === "string" ? value : JSON.stringify(value);
       resolved = resolved.replace(regex, replacement);
     });
   }
@@ -46,7 +47,7 @@ function resolveTemplateString(
 
 export function useWorkflowExecution(
   workflow: FormWorkflow,
-  variables?: Record<string, any>
+  variables?: Record<string, any>,
 ) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -74,25 +75,24 @@ export function useWorkflowExecution(
     try {
       setLoading(true);
       setError(null);
-      const workflowResult = await runWorkflow({ 
-        evaluatedUrl, 
+      const workflowResult = await runWorkflow({
+        evaluatedUrl,
         workflow,
-        variables  // 변수 전달
+        variables, // 변수 전달
       });
-      
+
       if (cancelledRef.current) return;
       setRaw(workflowResult.result);
-      
+
       if (workflow.parser?.expression) {
         try {
           const parsed = await ResultParser.parse(
-            workflowResult,  // { result: {...} } 형태로 전달
-            workflow.parser.expression
+            workflowResult, // { result: {...} } 형태로 전달
+            workflow.parser.expression,
           );
           setParsed(parsed);
-          
         } catch (parseError: any) {
-          console.error('❌ Parse failed:', parseError);
+          console.error("❌ Parse failed:", parseError);
           setParsed(workflowResult.result); // 실패시 원본 반환
         }
       } else {

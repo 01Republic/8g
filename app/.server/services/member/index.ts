@@ -1,1 +1,1 @@
-export { findAllTeamMembers } from './find-all-team-members.service';
+export { findAllTeamMembers } from "./find-all-team-members.service";

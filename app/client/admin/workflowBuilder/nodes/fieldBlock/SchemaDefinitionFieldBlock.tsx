@@ -19,7 +19,7 @@ interface SchemaDefinitionFieldBlockProps {
 }
 
 export const SchemaDefinitionFieldBlock = (
-  props: SchemaDefinitionFieldBlockProps
+  props: SchemaDefinitionFieldBlockProps,
 ) => {
   const { field, formData, updateFormField } = props;
   const { name } = field;

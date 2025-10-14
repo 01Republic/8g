@@ -16,7 +16,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
         "[&:-webkit-autofill]:[box-shadow:inset_0_0_0_1000px_var(--color-primary-bg)]",
         "[&:-webkit-autofill]:[-webkit-text-fill-color:var(--color-gray-900)]",
-        className
+        className,
       )}
       {...props}
     />

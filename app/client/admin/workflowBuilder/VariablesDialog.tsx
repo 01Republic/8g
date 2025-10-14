@@ -1,4 +1,11 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "~/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "~/components/ui/dialog";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { useState } from "react";
@@ -17,11 +24,11 @@ export function VariablesDialog({
   onVariablesChange,
 }: VariablesDialogProps) {
   const [entries, setEntries] = useState<Array<[string, string]>>(
-    Object.entries(variables || {}).map(([k, v]) => [k, String(v)])
+    Object.entries(variables || {}).map(([k, v]) => [k, String(v)]),
   );
 
   const handleAdd = () => {
-    const newEntries = [...entries, ['newVar', ''] as [string, string]];
+    const newEntries = [...entries, ["newVar", ""] as [string, string]];
     setEntries(newEntries);
   };
 
@@ -44,7 +51,8 @@ export function VariablesDialog({
         <DialogHeader>
           <DialogTitle>Workflow Variables</DialogTitle>
           <DialogDescription>
-            워크플로우에서 사용할 변수를 정의하세요. Step에서 ${'${vars.변수명}'} 형식으로 참조할 수 있습니다.
+            워크플로우에서 사용할 변수를 정의하세요. Step에서 $
+            {"${vars.변수명}"} 형식으로 참조할 수 있습니다.
           </DialogDescription>
         </DialogHeader>
 
@@ -73,8 +81,13 @@ export function VariablesDialog({
               </Button>
             </div>
           ))}
-          
-          <Button onClick={handleAdd} variant="outline" size="sm" className="w-full">
+
+          <Button
+            onClick={handleAdd}
+            variant="outline"
+            size="sm"
+            className="w-full"
+          >
             + 변수 추가
           </Button>
         </div>
@@ -83,13 +96,13 @@ export function VariablesDialog({
           <div className="font-medium">사용 예시:</div>
           <div className="space-y-1">
             <code className="text-xs block">
-              selector: "#workspace-${'${vars.workspaceId}'}-permission"
+              selector: "#workspace-${"${vars.workspaceId}"}-permission"
             </code>
             <code className="text-xs block">
-              targetUrl: "https://api.com/${'${vars.workspaceId}'}/data"
+              targetUrl: "https://api.com/${"${vars.workspaceId}"}/data"
             </code>
             <code className="text-xs block">
-              setValue: "${'${vars.userName}'}"
+              setValue: "${"${vars.userName}"}"
             </code>
           </div>
         </div>
@@ -98,9 +111,7 @@ export function VariablesDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             취소
           </Button>
-          <Button onClick={() => onOpenChange(false)}>
-            완료
-          </Button>
+          <Button onClick={() => onOpenChange(false)}>완료</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

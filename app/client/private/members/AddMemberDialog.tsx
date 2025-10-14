@@ -19,7 +19,11 @@ interface AddMemberDialogProps {
   onAddMember: (payload: TeamMemberAddPayload) => void;
 }
 
-export const AddMemberDialog = ({ open, onOpenChange, onAddMember }: AddMemberDialogProps) => {
+export const AddMemberDialog = ({
+  open,
+  onOpenChange,
+  onAddMember,
+}: AddMemberDialogProps) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -29,7 +33,7 @@ export const AddMemberDialog = ({ open, onOpenChange, onAddMember }: AddMemberDi
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     onAddMember({
       name: formData.name,
       email: formData.email,
@@ -37,7 +41,7 @@ export const AddMemberDialog = ({ open, onOpenChange, onAddMember }: AddMemberDi
       position: formData.jobName,
       subscriptionCount: 0,
     });
-    
+
     // 폼 초기화 및 다이얼로그 닫기
     setFormData({
       name: "",
@@ -49,7 +53,7 @@ export const AddMemberDialog = ({ open, onOpenChange, onAddMember }: AddMemberDi
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setFormData({
       ...formData,
@@ -139,4 +143,3 @@ export const AddMemberDialog = ({ open, onOpenChange, onAddMember }: AddMemberDi
     </Dialog>
   );
 };
-

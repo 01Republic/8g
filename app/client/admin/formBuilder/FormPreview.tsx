@@ -2,7 +2,11 @@ import {
   DynamicFormBuilder,
   type FormComponentProps,
 } from "~/client/private/integration/DynamicFormBuilder";
-import type { AppFormMetadata, PaymentHistory, PaymentInfo } from "~/models/integration/types";
+import type {
+  AppFormMetadata,
+  PaymentHistory,
+  PaymentInfo,
+} from "~/models/integration/types";
 
 interface FormPreviewProps {
   meta: AppFormMetadata;
@@ -32,7 +36,7 @@ export const FormPreview = (props: FormPreviewProps) => {
   const paymentInfo = null as PaymentInfo | null;
   const onPaymentInfoChange = (_paymentInfo: PaymentInfo | null) => {};
   const paymentHistory = [] as PaymentHistory[];
-  const onPaymentHistoryChange = (_paymentHistory: PaymentHistory[]) => {}; 
+  const onPaymentHistoryChange = (_paymentHistory: PaymentHistory[]) => {};
 
   const sectionProps = {
     currentSection,

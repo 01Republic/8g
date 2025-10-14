@@ -13,7 +13,7 @@ import { Checkbox } from "~/components/ui/checkbox";
 import type { ParsedField } from "~/lib/schema-parser";
 import { useState, useRef, useEffect } from "react";
 import { Trash2, Plus } from "lucide-react";
-import { usePreviousNodes } from "./usePreviousNodes";
+import { usePreviousNodes } from "../../../../../hooks/use-previous-nodes";
 
 interface RecordFieldBlockProps {
   field: ParsedField;
@@ -22,13 +22,18 @@ interface RecordFieldBlockProps {
   currentNodeId?: string;
 }
 
-type ValueType = 'string' | 'number' | 'boolean' | 'array' | 'object';
+type ValueType = "string" | "number" | "boolean" | "array" | "object";
 
 export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
   const { field, formData, updateFormField, currentNodeId } = props;
   const { name } = field;
-  const { previousNodes, getNodeDisplayName, createNodeReference, repeatContextVariables, createRepeatReference } =
-    usePreviousNodes(currentNodeId || "");
+  const {
+    previousNodes,
+    getNodeDisplayName,
+    createNodeReference,
+    repeatContextVariables,
+    createRepeatReference,
+  } = usePreviousNodes(currentNodeId || "");
 
   // 각 키별 자동완성 상태
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -47,13 +52,13 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
     const types: Record<string, ValueType> = {};
     Object.entries(recordValue).forEach(([key, value]) => {
       if (Array.isArray(value)) {
-        types[key] = 'array';
-      } else if (typeof value === 'object' && value !== null) {
-        types[key] = 'object';
-      } else if (typeof value === 'boolean') {
-        types[key] = 'boolean';
-      } else if (typeof value === 'number') {
-        types[key] = 'number';
+        types[key] = "array";
+      } else if (typeof value === "object" && value !== null) {
+        types[key] = "object";
+      } else if (typeof value === "boolean") {
+        types[key] = "boolean";
+      } else if (typeof value === "number") {
+        types[key] = "number";
       } else {
         types[key] = "string";
       }
@@ -77,7 +82,7 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
     });
     updateFormField(
       name,
-      Object.keys(newRecord).length > 0 ? newRecord : undefined
+      Object.keys(newRecord).length > 0 ? newRecord : undefined,
     );
   };
 
@@ -97,7 +102,7 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
         return newTypes;
       });
     }
-    
+
     // 새 키로 값 설정 (이미 타입에 맞는 값이 들어옴)
     if (newKey.trim() !== "") {
       newRecord[newKey] = value;
@@ -105,7 +110,7 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
 
     updateFormField(
       name,
-      Object.keys(newRecord).length > 0 ? newRecord : undefined
+      Object.keys(newRecord).length > 0 ? newRecord : undefined,
     );
   };
 
@@ -132,20 +137,21 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
     if (newType === "number") {
       const numValue = Number(currentValue);
       newRecord[key] = isNaN(numValue) ? 0 : numValue;
-    } else if (newType === 'boolean') {
+    } else if (newType === "boolean") {
       // boolean으로 변환
-      if (typeof currentValue === 'boolean') {
+      if (typeof currentValue === "boolean") {
         newRecord[key] = currentValue;
-      } else if (typeof currentValue === 'string') {
-        newRecord[key] = currentValue.toLowerCase() === 'true' || currentValue === '1';
-      } else if (typeof currentValue === 'number') {
+      } else if (typeof currentValue === "string") {
+        newRecord[key] =
+          currentValue.toLowerCase() === "true" || currentValue === "1";
+      } else if (typeof currentValue === "number") {
         newRecord[key] = currentValue !== 0;
       } else {
         newRecord[key] = false;
       }
-    } else if (newType === 'array') {
+    } else if (newType === "array") {
       // 배열로 변환: 문자열이면 JSON 파싱 시도, 아니면 빈 배열
-      if (typeof currentValue === 'string') {
+      if (typeof currentValue === "string") {
         try {
           newRecord[key] = JSON.parse(currentValue);
         } catch {
@@ -156,16 +162,21 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
       } else {
         newRecord[key] = [];
       }
-    } else if (newType === 'object') {
+    } else if (newType === "object") {
       // 객체로 변환: 문자열이면 JSON 파싱 시도, 아니면 빈 객체
-      if (typeof currentValue === 'string') {
+      if (typeof currentValue === "string") {
         try {
           const parsed = JSON.parse(currentValue);
-          newRecord[key] = typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+          newRecord[key] =
+            typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
         } catch {
           newRecord[key] = {};
         }
-      } else if (typeof currentValue === 'object' && !Array.isArray(currentValue) && currentValue !== null) {
+      } else if (
+        typeof currentValue === "object" &&
+        !Array.isArray(currentValue) &&
+        currentValue !== null
+      ) {
         newRecord[key] = currentValue;
       } else {
         newRecord[key] = {};
@@ -181,7 +192,7 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
   const handleValueChange = (
     key: string,
     newValue: string,
-    cursorPos: number
+    cursorPos: number,
   ) => {
     const newRecord = { ...recordValue };
     const valueType = keyTypes[key] || "string";
@@ -190,12 +201,12 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
     if (valueType === "number") {
       const numValue = Number(newValue);
       newRecord[key] = isNaN(numValue) ? newValue : numValue; // 입력 중에는 문자열도 허용
-    } else if (valueType === 'array') {
+    } else if (valueType === "array") {
       // 배열 타입: 스마트 파싱
       const trimmed = newValue.trim();
-      
+
       // 배열 형태가 아니면 임시 문자열로 저장
-      if (!trimmed.startsWith('[') || !trimmed.endsWith(']')) {
+      if (!trimmed.startsWith("[") || !trimmed.endsWith("]")) {
         newRecord[key] = newValue;
       } else {
         try {
@@ -221,7 +232,7 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
 
     updateFormField(
       name,
-      Object.keys(newRecord).length > 0 ? newRecord : undefined
+      Object.keys(newRecord).length > 0 ? newRecord : undefined,
     );
     setCursorPositions((prev) => ({ ...prev, [key]: cursorPos }));
 
@@ -239,10 +250,11 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
   // 노드 선택 처리
   const handleNodeSelect = (key: string, nodeId: string) => {
     const nodeRef = createNodeReference(nodeId);
-    const valueType = keyTypes[key] || 'string';
-    const currentValue = valueType === 'array' && Array.isArray(recordValue[key])
-      ? JSON.stringify(recordValue[key])
-      : String(recordValue[key] || '');
+    const valueType = keyTypes[key] || "string";
+    const currentValue =
+      valueType === "array" && Array.isArray(recordValue[key])
+        ? JSON.stringify(recordValue[key])
+        : String(recordValue[key] || "");
     const cursorPos = cursorPositions[key] || 0;
 
     const beforeCursor = currentValue.slice(0, cursorPos - 2); // $. 제거
@@ -250,9 +262,9 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
     const newValue = beforeCursor + nodeRef + afterCursor;
 
     const newRecord = { ...recordValue };
-    
+
     // 배열 타입이면 JSON 파싱
-    if (valueType === 'array') {
+    if (valueType === "array") {
       try {
         newRecord[key] = JSON.parse(newValue);
       } catch {
@@ -261,7 +273,7 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
     } else {
       newRecord[key] = newValue;
     }
-    
+
     updateFormField(name, newRecord);
     setActiveDropdown(null);
 
@@ -279,20 +291,21 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
   // Repeat 컨텍스트 변수 선택 처리
   const handleRepeatContextSelect = (key: string, contextPath: string) => {
     const contextRef = createRepeatReference(contextPath);
-    const valueType = keyTypes[key] || 'string';
-    const currentValue = valueType === 'array' && Array.isArray(recordValue[key])
-      ? JSON.stringify(recordValue[key])
-      : String(recordValue[key] || '');
+    const valueType = keyTypes[key] || "string";
+    const currentValue =
+      valueType === "array" && Array.isArray(recordValue[key])
+        ? JSON.stringify(recordValue[key])
+        : String(recordValue[key] || "");
     const cursorPos = cursorPositions[key] || 0;
-    
+
     const beforeCursor = currentValue.slice(0, cursorPos - 2); // $. 제거
     const afterCursor = currentValue.slice(cursorPos);
     const newValue = beforeCursor + contextRef + afterCursor;
-    
+
     const newRecord = { ...recordValue };
-    
+
     // 배열 타입이면 JSON 파싱
-    if (valueType === 'array') {
+    if (valueType === "array") {
       try {
         newRecord[key] = JSON.parse(newValue);
       } catch {
@@ -301,10 +314,10 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
     } else {
       newRecord[key] = newValue;
     }
-    
+
     updateFormField(name, newRecord);
     setActiveDropdown(null);
-    
+
     // 커서 위치 복원
     setTimeout(() => {
       const inputElement = inputRefs.current[key];
@@ -324,7 +337,7 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
         !dropdownRef.current.contains(event.target as Node)
       ) {
         const clickedInput = Object.values(inputRefs.current).some(
-          (input) => input && input.contains(event.target as Node)
+          (input) => input && input.contains(event.target as Node),
         );
         if (!clickedInput) {
           setActiveDropdown(null);
@@ -365,17 +378,18 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
             {entries.map(([key, value], index) => {
               const valueType = keyTypes[key] || "string";
               // 배열 타입일 때는 JSON으로 표시
-              const valueStr = valueType === 'array' && Array.isArray(value)
-                ? JSON.stringify(value)
-                : valueType === 'object' && typeof value === 'object' && !Array.isArray(value)
-                ? JSON.stringify(value)
-                : String(value);
+              const valueStr =
+                valueType === "array" && Array.isArray(value)
+                  ? JSON.stringify(value)
+                  : valueType === "object" &&
+                      typeof value === "object" &&
+                      !Array.isArray(value)
+                    ? JSON.stringify(value)
+                    : String(value);
 
               return (
                 <div key={index} className="flex flex-col gap-2">
-                  <div
-                    className="flex gap-2 items-center justify-start"
-                  >
+                  <div className="flex gap-2 items-center justify-start">
                     <span className="w-5">{index + 1}.</span>
                     <Select
                       value={valueType}
@@ -403,7 +417,7 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
                       className="flex-1"
                     />
 
-                    {valueType === 'object' ? (
+                    {valueType === "object" ? (
                       <Button
                         type="button"
                         variant="ghost"
@@ -413,15 +427,17 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
                       >
                         <Trash2 className="size-4 text-red-500" />
                       </Button>
-                    ) : valueType === 'boolean' ? (
+                    ) : valueType === "boolean" ? (
                       <>
                         <div className="flex-1 flex items-center gap-2">
                           <Checkbox
                             checked={!!value}
-                            onCheckedChange={(checked) => handleBooleanChange(key, checked === true)}
+                            onCheckedChange={(checked) =>
+                              handleBooleanChange(key, checked === true)
+                            }
                           />
                           <span className="text-sm text-gray-600">
-                            {value ? 'true' : 'false'}
+                            {value ? "true" : "false"}
                           </span>
                         </div>
                         <Button
@@ -441,7 +457,11 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
                             ref={(el) => {
                               inputRefs.current[key] = el;
                             }}
-                            placeholder={valueType === 'array' ? '배열 (예: ["${$.forEach.item}"])' : '값 ($.로 노드 참조)'}
+                            placeholder={
+                              valueType === "array"
+                                ? '배열 (예: ["${$.forEach.item}"])'
+                                : "값 ($.로 노드 참조)"
+                            }
                             type={valueType === "number" ? "number" : "text"}
                             value={valueStr}
                             onChange={(e) => {
@@ -449,46 +469,57 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
                               handleValueChange(key, e.target.value, cursorPos);
                             }}
                           />
-                          {valueType === 'array' && (
+                          {valueType === "array" && (
                             <p className="text-xs text-gray-500 mt-1">
-                              배열 형태로 입력하세요 (예: [${'{'}$.forEach.item{'}'}] 또는 ["${'{'}$.forEach.item{'}'}"])
+                              배열 형태로 입력하세요 (예: [${"{"}$.forEach.item
+                              {"}"}] 또는 ["${"{"}$.forEach.item{"}"}"])
                             </p>
                           )}
-                          {activeDropdown === key && (previousNodes.length > 0 || repeatContextVariables.length > 0) && (
-                            <div
-                              ref={dropdownRef}
-                              className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
-                            >
-                              {repeatContextVariables.length > 0 && (
-                                <>
-                                  <div className="p-2 text-xs text-gray-500 border-b">반복 컨텍스트 변수</div>
-                                  {repeatContextVariables.map((ctx) => (
-                                    <div
-                                      key={ctx.id}
-                                      onClick={() => handleRepeatContextSelect(key, ctx.id)}
-                                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                                    >
-                                      {ctx.label}
+                          {activeDropdown === key &&
+                            (previousNodes.length > 0 ||
+                              repeatContextVariables.length > 0) && (
+                              <div
+                                ref={dropdownRef}
+                                className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+                              >
+                                {repeatContextVariables.length > 0 && (
+                                  <>
+                                    <div className="p-2 text-xs text-gray-500 border-b">
+                                      반복 컨텍스트 변수
                                     </div>
-                                  ))}
-                                </>
-                              )}
-                              {previousNodes.length > 0 && (
-                                <>
-                                  <div className="p-2 text-xs text-gray-500 border-b">이전 노드 선택</div>
-                                  {previousNodes.map((node) => (
-                                    <div
-                                      key={node.id}
-                                      onClick={() => handleNodeSelect(key, node.id)}
-                                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                                    >
-                                      {getNodeDisplayName(node)}
+                                    {repeatContextVariables.map((ctx) => (
+                                      <div
+                                        key={ctx.id}
+                                        onClick={() =>
+                                          handleRepeatContextSelect(key, ctx.id)
+                                        }
+                                        className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                                      >
+                                        {ctx.label}
+                                      </div>
+                                    ))}
+                                  </>
+                                )}
+                                {previousNodes.length > 0 && (
+                                  <>
+                                    <div className="p-2 text-xs text-gray-500 border-b">
+                                      이전 노드 선택
                                     </div>
-                                  ))}
-                                </>
-                              )}
-                            </div>
-                          )}
+                                    {previousNodes.map((node) => (
+                                      <div
+                                        key={node.id}
+                                        onClick={() =>
+                                          handleNodeSelect(key, node.id)
+                                        }
+                                        className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                                      >
+                                        {getNodeDisplayName(node)}
+                                      </div>
+                                    ))}
+                                  </>
+                                )}
+                              </div>
+                            )}
                         </div>
                         <Button
                           type="button"
@@ -502,19 +533,26 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
                       </>
                     )}
                   </div>
-                  
+
                   {/* 객체 타입일 때 중첩 레코드 편집기 렌더링 */}
-                  {valueType === 'object' && (
+                  {valueType === "object" && (
                     <div className="ml-7 p-2 bg-gray-50 rounded border border-gray-200">
                       <RecordFieldBlock
-                        field={{ 
-                          name: key, 
-                          type: 'record',
+                        field={{
+                          name: key,
+                          type: "record",
                           optional: false,
-                          description: `중첩 객체: ${key}`
+                          description: `중첩 객체: ${key}`,
                         }}
-                        formData={{ [key]: typeof value === 'object' && !Array.isArray(value) ? value : {} }}
-                        updateFormField={(_, nestedValue) => handleNestedObjectUpdate(key, nestedValue)}
+                        formData={{
+                          [key]:
+                            typeof value === "object" && !Array.isArray(value)
+                              ? value
+                              : {},
+                        }}
+                        updateFormField={(_, nestedValue) =>
+                          handleNestedObjectUpdate(key, nestedValue)
+                        }
                         currentNodeId={currentNodeId}
                       />
                     </div>

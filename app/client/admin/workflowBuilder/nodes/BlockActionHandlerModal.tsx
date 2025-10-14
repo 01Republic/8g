@@ -33,7 +33,7 @@ interface BlockActionHandlerModalProps {
 }
 
 export const BlockActionHandlerModal = (
-  props: BlockActionHandlerModalProps
+  props: BlockActionHandlerModalProps,
 ) => {
   const { id, title, parsedSchema, block, repeat: initialRepeat } = props;
 
@@ -116,7 +116,7 @@ export const BlockActionHandlerModal = (
             repeat, // ✅ repeat 데이터 저장
           },
         } as any;
-      })
+      }),
     );
     setOpen(false);
   };
@@ -152,8 +152,12 @@ export const BlockActionHandlerModal = (
         </DialogHeader>
         <div className="mt-2 flex flex-col gap-5">
           {/* ⭐ Repeat 설정 섹션 (상단 배치) */}
-          <RepeatFieldBlock repeat={repeat} onRepeatChange={setRepeat} currentNodeId={id} />
-          
+          <RepeatFieldBlock
+            repeat={repeat}
+            onRepeatChange={setRepeat}
+            currentNodeId={id}
+          />
+
           {(() => {
             console.log("🔍 Parsed Schema Fields:", parsedSchema.fields);
             return null;

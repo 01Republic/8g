@@ -3,10 +3,10 @@ import { IntegrationAppWorkflowMetadata } from "~/.server/db/entities/Integratio
 
 export async function findAllWorkflows() {
   await initializeDatabase();
-  
+
   const workflows = await IntegrationAppWorkflowMetadata.find({
     order: {
-      id: 'DESC', // 최신순
+      id: "DESC", // 최신순
     },
   });
 

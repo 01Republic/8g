@@ -2,7 +2,7 @@ import type { ParsedField } from "~/lib/schema-parser";
 import { Input } from "~/components/ui/input";
 import { FieldBlockContentBox } from "./FieldBlockContentBox";
 import { useState, useRef, useEffect } from "react";
-import { usePreviousNodes } from "./usePreviousNodes";
+import { usePreviousNodes } from "../../../../../hooks/use-previous-nodes";
 
 interface StringFieldBlockProps {
   field: ParsedField;
@@ -15,8 +15,13 @@ export const StringFieldBlock = (props: StringFieldBlockProps) => {
   const { field, formData, updateFormField, currentNodeId } = props;
   const { name, defaultValue } = field;
 
-  const { previousNodes, getNodeDisplayName, createNodeReference, repeatContextVariables, createRepeatReference } =
-    usePreviousNodes(currentNodeId || "");
+  const {
+    previousNodes,
+    getNodeDisplayName,
+    createNodeReference,
+    repeatContextVariables,
+    createRepeatReference,
+  } = usePreviousNodes(currentNodeId || "");
 
   const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -70,10 +75,10 @@ export const StringFieldBlock = (props: StringFieldBlockProps) => {
     const beforeCursor = currentValue.slice(0, cursorPosition - 2); // $. 제거
     const afterCursor = currentValue.slice(cursorPosition);
     const newValue = beforeCursor + contextRef + afterCursor;
-    
+
     updateFormField(name, newValue);
     setShowDropdown(false);
-    
+
     // 커서 위치를 삽입된 참조 뒤로 이동
     setTimeout(() => {
       if (inputRef.current) {
@@ -114,41 +119,46 @@ export const StringFieldBlock = (props: StringFieldBlockProps) => {
           onChange={handleInputChange}
           placeholder={defaultValue || "$.로 노드 참조"}
         />
-        {showDropdown && (previousNodes.length > 0 || repeatContextVariables.length > 0) && (
-          <div
-            ref={dropdownRef}
-            className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
-          >
-            {repeatContextVariables.length > 0 && (
-              <>
-                <div className="p-2 text-xs text-gray-500 border-b">반복 컨텍스트 변수</div>
-                {repeatContextVariables.map((ctx) => (
-                  <div
-                    key={ctx.id}
-                    onClick={() => handleRepeatContextSelect(ctx.id)}
-                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                  >
-                    {ctx.label}
+        {showDropdown &&
+          (previousNodes.length > 0 || repeatContextVariables.length > 0) && (
+            <div
+              ref={dropdownRef}
+              className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+            >
+              {repeatContextVariables.length > 0 && (
+                <>
+                  <div className="p-2 text-xs text-gray-500 border-b">
+                    반복 컨텍스트 변수
                   </div>
-                ))}
-              </>
-            )}
-            {previousNodes.length > 0 && (
-              <>
-                <div className="p-2 text-xs text-gray-500 border-b">이전 노드 선택</div>
-                {previousNodes.map((node) => (
-                  <div
-                    key={node.id}
-                    onClick={() => handleNodeSelect(node.id)}
-                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                  >
-                    {getNodeDisplayName(node)}
+                  {repeatContextVariables.map((ctx) => (
+                    <div
+                      key={ctx.id}
+                      onClick={() => handleRepeatContextSelect(ctx.id)}
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                    >
+                      {ctx.label}
+                    </div>
+                  ))}
+                </>
+              )}
+              {previousNodes.length > 0 && (
+                <>
+                  <div className="p-2 text-xs text-gray-500 border-b">
+                    이전 노드 선택
                   </div>
-                ))}
-              </>
-            )}
-          </div>
-        )}
+                  {previousNodes.map((node) => (
+                    <div
+                      key={node.id}
+                      onClick={() => handleNodeSelect(node.id)}
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                    >
+                      {getNodeDisplayName(node)}
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          )}
       </div>
     </FieldBlockContentBox>
   );

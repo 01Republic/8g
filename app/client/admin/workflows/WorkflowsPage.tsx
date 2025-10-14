@@ -8,7 +8,10 @@ interface WorkflowsPageProps {
   deleteWorkflows: (workflowId: number) => void;
 }
 
-export default function WorkflowsPage({ workflows, deleteWorkflows }: WorkflowsPageProps) {
+export default function WorkflowsPage({
+  workflows,
+  deleteWorkflows,
+}: WorkflowsPageProps) {
   return (
     <div className="h-full w-full p-8">
       <div className="max-w-7xl mx-auto">
@@ -18,7 +21,10 @@ export default function WorkflowsPage({ workflows, deleteWorkflows }: WorkflowsP
             <Button>+ 새 워크플로우</Button>
           </Link>
         </div>
-        <WorkflowsTable workflows={workflows} deleteWorkflows={deleteWorkflows} />
+        <WorkflowsTable
+          workflows={workflows}
+          deleteWorkflows={deleteWorkflows}
+        />
       </div>
     </div>
   );

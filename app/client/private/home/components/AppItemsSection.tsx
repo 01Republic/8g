@@ -24,7 +24,11 @@ export const AppItemsSection = (props: AppItemsSectionProps) => {
             {showItems ? (
               <div className="grid grid-cols-2 gap-3">
                 {apps.map((app) => (
-                  <AppItem key={app.id} apps={app} onGoToAppDetailPage={onGoToAppDetailPage} />
+                  <AppItem
+                    key={app.id}
+                    apps={app}
+                    onGoToAppDetailPage={onGoToAppDetailPage}
+                  />
                 ))}
               </div>
             ) : (

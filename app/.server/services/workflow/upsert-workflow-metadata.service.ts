@@ -8,14 +8,18 @@ interface UpsertWorkflowMetadataPayload {
   meta: FormWorkflow;
 }
 
-export async function upsertWorkflowMetadata({ workflowId, description, meta }: UpsertWorkflowMetadataPayload) {
+export async function upsertWorkflowMetadata({
+  workflowId,
+  description,
+  meta,
+}: UpsertWorkflowMetadataPayload) {
   await initializeDatabase();
 
   if (!workflowId) {
     await IntegrationAppWorkflowMetadata.save({
       description,
       meta,
-    });    
+    });
   }
 
   const existing = await IntegrationAppWorkflowMetadata.findOne({
@@ -23,6 +27,9 @@ export async function upsertWorkflowMetadata({ workflowId, description, meta }: 
   });
 
   if (existing) {
-    await IntegrationAppWorkflowMetadata.update({ id: workflowId }, { meta, description });
+    await IntegrationAppWorkflowMetadata.update(
+      { id: workflowId },
+      { meta, description },
+    );
   }
 }

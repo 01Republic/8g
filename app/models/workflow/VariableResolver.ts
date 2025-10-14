@@ -6,7 +6,7 @@ import type { FormWorkflow } from "../integration/types";
  */
 export function resolveWorkflowVariables(
   workflow: FormWorkflow,
-  injectedVars?: Record<string, any>
+  injectedVars?: Record<string, any>,
 ): FormWorkflow {
   // 최종 변수: workflow 기본값 + 주입된 값 (주입된 값이 우선)
   const finalVars = {
@@ -14,19 +14,20 @@ export function resolveWorkflowVariables(
     ...injectedVars,
   };
 
-  console.log('🔧 Resolving variables:', workflow);
+  console.log("🔧 Resolving variables:", workflow);
 
   // Workflow 전체를 JSON 문자열로 변환
   let workflowJson = JSON.stringify(workflow);
 
   // ${vars.변수명} 패턴 치환
   Object.entries(finalVars).forEach(([key, value]) => {
-    const regex = new RegExp(`\\$\\{vars\\.${key}\\}`, 'g');
-    const replacement = typeof value === 'string' ? value : JSON.stringify(value);
+    const regex = new RegExp(`\\$\\{vars\\.${key}\\}`, "g");
+    const replacement =
+      typeof value === "string" ? value : JSON.stringify(value);
     workflowJson = workflowJson.replace(regex, replacement);
   });
 
-  console.log(JSON.parse(workflowJson))
-  console.log('✅ Variables resolved');
+  console.log(JSON.parse(workflowJson));
+  console.log("✅ Variables resolved");
   return JSON.parse(workflowJson);
 }

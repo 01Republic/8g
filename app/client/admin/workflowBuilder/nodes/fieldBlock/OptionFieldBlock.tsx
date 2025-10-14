@@ -37,7 +37,7 @@ export const OptionFieldBlock = (props: OptionFieldBlockProps) => {
             onChange={(e) =>
               updateOptionField(
                 "waitSelectorTimeout",
-                e.target.value ? Number(e.target.value) : undefined
+                e.target.value ? Number(e.target.value) : undefined,
               )
             }
             placeholder="2000"

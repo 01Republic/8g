@@ -10,7 +10,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
-import { usePreviousNodes } from "./usePreviousNodes";
+import { usePreviousNodes } from "../../../../../hooks/use-previous-nodes";
 
 interface RepeatFieldBlockProps {
   repeat?: RepeatConfig;
@@ -20,28 +20,32 @@ interface RepeatFieldBlockProps {
 
 type RepeatType = "none" | "forEach" | "count";
 
-export function RepeatFieldBlock({ repeat, onRepeatChange, currentNodeId }: RepeatFieldBlockProps) {
-  const { previousNodes, getNodeDisplayName, createPathReference } = 
+export function RepeatFieldBlock({
+  repeat,
+  onRepeatChange,
+  currentNodeId,
+}: RepeatFieldBlockProps) {
+  const { previousNodes, getNodeDisplayName, createPathReference } =
     usePreviousNodes(currentNodeId || "");
 
   const [repeatType, setRepeatType] = useState<RepeatType>(() => {
     if (!repeat) return "none";
-    if ('forEach' in repeat) return "forEach";
-    if ('count' in repeat) return "count";
+    if ("forEach" in repeat) return "forEach";
+    if ("count" in repeat) return "count";
     return "none";
   });
 
   const [forEachPath, setForEachPath] = useState<string>(
-    repeat && 'forEach' in repeat ? repeat.forEach : ""
+    repeat && "forEach" in repeat ? repeat.forEach : "",
   );
   const [countValue, setCountValue] = useState<string>(
-    repeat && 'count' in repeat ? String(repeat.count) : "10"
+    repeat && "count" in repeat ? String(repeat.count) : "10",
   );
   const [continueOnError, setContinueOnError] = useState<boolean>(
-    repeat?.continueOnError ?? false
+    repeat?.continueOnError ?? false,
   );
   const [delayBetween, setDelayBetween] = useState<string>(
-    repeat?.delayBetween ? String(repeat.delayBetween) : ""
+    repeat?.delayBetween ? String(repeat.delayBetween) : "",
   );
 
   // 드롭다운 관련 상태
@@ -54,12 +58,15 @@ export function RepeatFieldBlock({ repeat, onRepeatChange, currentNodeId }: Repe
   const handleForEachPathChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     const cursorPos = e.target.selectionStart || 0;
-    
+
     setForEachPath(newValue);
     setCursorPosition(cursorPos);
 
     // $. 감지
-    if (newValue.slice(0, cursorPos).endsWith('$.') && previousNodes.length > 0) {
+    if (
+      newValue.slice(0, cursorPos).endsWith("$.") &&
+      previousNodes.length > 0
+    ) {
       setShowDropdown(true);
     } else {
       setShowDropdown(false);
@@ -72,10 +79,10 @@ export function RepeatFieldBlock({ repeat, onRepeatChange, currentNodeId }: Repe
     const beforeCursor = forEachPath.slice(0, cursorPosition - 2); // $. 제거
     const afterCursor = forEachPath.slice(cursorPosition);
     const newValue = beforeCursor + nodeRef + afterCursor;
-    
+
     setForEachPath(newValue);
     setShowDropdown(false);
-    
+
     // 커서 위치를 삽입된 참조 뒤로 이동
     setTimeout(() => {
       if (inputRef.current) {
@@ -100,8 +107,9 @@ export function RepeatFieldBlock({ repeat, onRepeatChange, currentNodeId }: Repe
     };
 
     if (showDropdown) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [showDropdown]);
 
@@ -126,10 +134,10 @@ export function RepeatFieldBlock({ repeat, onRepeatChange, currentNodeId }: Repe
     }
 
     if (repeatType === "count") {
-      const parsedCount = countValue.startsWith("$") 
-        ? countValue 
+      const parsedCount = countValue.startsWith("$")
+        ? countValue
         : parseInt(countValue) || 1;
-      
+
       const config: RepeatConfig = {
         count: parsedCount,
         ...(continueOnError && { continueOnError }),
@@ -138,14 +146,23 @@ export function RepeatFieldBlock({ repeat, onRepeatChange, currentNodeId }: Repe
       onRepeatChange(config);
       return;
     }
-  }, [repeatType, forEachPath, countValue, continueOnError, delayBetween, onRepeatChange]);
+  }, [
+    repeatType,
+    forEachPath,
+    countValue,
+    continueOnError,
+    delayBetween,
+    onRepeatChange,
+  ]);
 
   return (
     <Accordion type="single" collapsible className="border rounded-md">
       <AccordionItem value="repeat" className="border-none">
         <AccordionTrigger className="px-4 py-3 hover:no-underline">
           <div className="flex items-center gap-2">
-            <Label className="text-sm font-semibold cursor-pointer">반복 실행</Label>
+            <Label className="text-sm font-semibold cursor-pointer">
+              반복 실행
+            </Label>
             {repeatType !== "none" && (
               <span className="text-xs text-gray-500">
                 ({repeatType === "forEach" ? "배열 반복" : "횟수 반복"})
@@ -200,7 +217,9 @@ export function RepeatFieldBlock({ repeat, onRepeatChange, currentNodeId }: Repe
                       ref={dropdownRef}
                       className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
                     >
-                      <div className="p-2 text-xs text-gray-500 border-b">이전 노드 선택</div>
+                      <div className="p-2 text-xs text-gray-500 border-b">
+                        이전 노드 선택
+                      </div>
                       {previousNodes.map((node) => (
                         <div
                           key={node.id}
@@ -217,14 +236,17 @@ export function RepeatFieldBlock({ repeat, onRepeatChange, currentNodeId }: Repe
                   예: $.steps.getProducts.result.data ($.로 이전 노드 참조)
                 </p>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="forEach-continueOnError"
                   checked={continueOnError}
                   onCheckedChange={(checked) => setContinueOnError(!!checked)}
                 />
-                <Label htmlFor="forEach-continueOnError" className="text-xs font-normal cursor-pointer">
+                <Label
+                  htmlFor="forEach-continueOnError"
+                  className="text-xs font-normal cursor-pointer"
+                >
                   에러 발생 시 계속 실행 (continueOnError)
                 </Label>
               </div>
@@ -267,7 +289,10 @@ export function RepeatFieldBlock({ repeat, onRepeatChange, currentNodeId }: Repe
                   checked={continueOnError}
                   onCheckedChange={(checked) => setContinueOnError(!!checked)}
                 />
-                <Label htmlFor="count-continueOnError" className="text-xs font-normal cursor-pointer">
+                <Label
+                  htmlFor="count-continueOnError"
+                  className="text-xs font-normal cursor-pointer"
+                >
                   에러 발생 시 계속 실행 (continueOnError)
                 </Label>
               </div>
@@ -298,4 +323,3 @@ export function RepeatFieldBlock({ repeat, onRepeatChange, currentNodeId }: Repe
     </Accordion>
   );
 }
-
