@@ -23,6 +23,7 @@ export const buildWorkflowJson = (nodes: any[], edges: WorkflowEdge[], targetUrl
     const steps: WorkflowStep[] = nodes.map((n) => {
       const edges = outgoingEdges.get(n.id) ?? [];
       const block = (n.data as any).block as Block;
+      const repeat = (n.data as any).repeat; // ✅ repeat 데이터 추출
       
       const step: WorkflowStep = {
         id: n.id,
@@ -31,6 +32,11 @@ export const buildWorkflowJson = (nodes: any[], edges: WorkflowEdge[], targetUrl
           option: block.option ?? {},
         },
       };
+
+      // ✅ repeat 데이터가 있으면 추가
+      if (repeat) {
+        step.repeat = repeat;
+      }
 
       // switch 조건이 있는 edge들
       const conditionalEdges = edges.filter(e => e.data?.when && !e.data?.isDefault);

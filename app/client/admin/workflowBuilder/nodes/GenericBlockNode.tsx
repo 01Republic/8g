@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Handle, Position, type NodeProps, type Node } from "@xyflow/react";
 import type { z } from "zod";
-import type { Block } from "8g-extension";
+import type { Block, RepeatConfig } from "8g-extension";
 import { cn } from "~/lib/utils";
 import { parseZodSchema } from "~/lib/schema-parser";
 import { blockLabels, fieldLabels } from "./index";
@@ -11,6 +11,7 @@ type GenericBlockNodeData = {
   block: Block;
   title?: string;
   schema: z.ZodTypeAny;
+  repeat?: RepeatConfig;
 };
 
 type GenericBlockNodeType = Node<GenericBlockNodeData>;
@@ -20,11 +21,24 @@ export default function GenericBlockNode({
   data,
   selected,
 }: NodeProps<GenericBlockNodeType>) {
-  const { block, schema } = data;
+  const { block, schema, repeat } = data;
   const blockName = block.name;
   const { title } = blockLabels[blockName];
 
   const parsedSchema = useMemo(() => parseZodSchema(schema), [schema]);
+
+  // Repeat 뱃지 텍스트 생성
+  const repeatBadgeText = useMemo(() => {
+    if (!repeat) return null;
+    if ('forEach' in repeat) {
+      return `forEach`;
+    }
+    if ('count' in repeat) {
+      const count = typeof repeat.count === 'string' ? '변수' : repeat.count;
+      return `×${count}`;
+    }
+    return null;
+  }, [repeat]);
 
   return (
     <div
@@ -34,7 +48,14 @@ export default function GenericBlockNode({
       )}
     >
       <div className="px-3 py-2 flex items-center justify-between gap-2 border-b border-gray-200 bg-gray-100">
-        <span className="text-xs font-medium">{title}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-medium">{title}</span>
+          {repeatBadgeText && (
+            <span className="px-2 py-0.5 text-xxs bg-gray-100 text-gray-700 rounded border border-gray-300 font-medium">
+              {repeatBadgeText}
+            </span>
+          )}
+        </div>
 
         {/* 수정 버튼 */}
         <BlockActionHandlerModal
@@ -42,6 +63,7 @@ export default function GenericBlockNode({
           title={title}
           parsedSchema={parsedSchema}
           block={block}
+          repeat={repeat}
         />
       </div>
 

@@ -29,6 +29,7 @@ export function convertWorkflowToNodesAndEdges(workflow: Workflow): ConvertedWor
         title: step.title || blockName || step.id,
         block: step.block,
         schema, // ✅ AllBlockSchemas에서 스키마 매칭!
+        repeat: step.repeat, // ✅ repeat 데이터 역변환
       },
     };
     nodes.push(node);

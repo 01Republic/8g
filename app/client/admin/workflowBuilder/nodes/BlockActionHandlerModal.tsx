@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useReactFlow } from "@xyflow/react";
-import type { Block } from "8g-extension";
+import type { Block, RepeatConfig } from "8g-extension";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -22,18 +22,20 @@ import { SchemaDefinitionFieldBlock } from "./fieldBlock/SchemaDefinitionFieldBl
 import { SourceDataFieldBlock } from "./fieldBlock/SourceDataFieldBlock";
 import { RecordFieldBlock } from "./fieldBlock/RecordFieldBlock";
 import { CodeFieldBlock } from "./fieldBlock/CodeFieldBlock";
+import { RepeatFieldBlock } from "./fieldBlock/RepeatFieldBlock";
 
 interface BlockActionHandlerModalProps {
   id: string;
   title: string;
   block: Block;
   parsedSchema: ParsedSchema;
+  repeat?: RepeatConfig;
 }
 
 export const BlockActionHandlerModal = (
   props: BlockActionHandlerModalProps
 ) => {
-  const { id, title, parsedSchema, block } = props;
+  const { id, title, parsedSchema, block, repeat: initialRepeat } = props;
 
   const { setNodes } = useReactFlow();
   const blockName = block.name;
@@ -55,6 +57,9 @@ export const BlockActionHandlerModal = (
     return initial;
   });
 
+  // Repeat state
+  const [repeat, setRepeat] = useState<RepeatConfig | undefined>(initialRepeat);
+
   const onOpenChange = (next: boolean) => {
     setOpen(next);
     if (next) {
@@ -71,6 +76,8 @@ export const BlockActionHandlerModal = (
         }
       });
       setFormData(newFormData);
+      // Reset repeat from props
+      setRepeat(initialRepeat);
     }
   };
 
@@ -106,6 +113,7 @@ export const BlockActionHandlerModal = (
           data: {
             ...n.data,
             block: nextBlock,
+            repeat, // ✅ repeat 데이터 저장
           },
         } as any;
       })
@@ -143,6 +151,9 @@ export const BlockActionHandlerModal = (
           <DialogTitle className="text-xl">{title} 편집</DialogTitle>
         </DialogHeader>
         <div className="mt-2 flex flex-col gap-5">
+          {/* ⭐ Repeat 설정 섹션 (상단 배치) */}
+          <RepeatFieldBlock repeat={repeat} onRepeatChange={setRepeat} currentNodeId={id} />
+          
           {(() => {
             console.log("🔍 Parsed Schema Fields:", parsedSchema.fields);
             return null;

@@ -42,6 +42,15 @@ export function usePreviousNodes(currentNodeId: string) {
   };
 
   const previousNodes = getPreviousNodes();
+
+  // Repeat 컨텍스트 변수 정의
+  const repeatContextVariables = [
+    { id: 'forEach.item', label: 'forEach.item - 현재 배열 항목' },
+    { id: 'forEach.index', label: 'forEach.index - 현재 인덱스' },
+    { id: 'forEach.total', label: 'forEach.total - 전체 배열 길이' },
+    { id: 'loop.index', label: 'loop.index - 현재 반복 인덱스' },
+    { id: 'loop.count', label: 'loop.count - 전체 반복 횟수' },
+  ];
   
   // 노드 ID에서 표시 이름 가져오기
   const getNodeDisplayName = (node: any) => {
@@ -59,9 +68,19 @@ export function usePreviousNodes(currentNodeId: string) {
     return match ? match[1] : "";
   };
 
-  // 노드 ID를 템플릿 문자열로 변환
+  // 노드 ID를 템플릿 문자열로 변환 (블록 필드 값용)
   const createNodeReference = (nodeId: string) => {
     return `\${$.steps.${nodeId}.result.data}`;
+  };
+
+  // Repeat 컨텍스트 변수를 템플릿 문자열로 변환 (블록 필드 값용)
+  const createRepeatReference = (contextPath: string) => {
+    return `\${$.${contextPath}}`;
+  };
+
+  // 순수 경로 생성 (repeat.forEach 등 설정 필드용)
+  const createPathReference = (nodeId: string) => {
+    return `$.steps.${nodeId}.result.data`;
   };
 
   return {
@@ -69,6 +88,9 @@ export function usePreviousNodes(currentNodeId: string) {
     getNodeDisplayName,
     extractNodeId,
     createNodeReference,
+    repeatContextVariables,
+    createRepeatReference,
+    createPathReference,
   };
 }
 
