@@ -18,24 +18,23 @@ export class RegexStrategy extends BaseConditionStrategy {
   ): void {
     if (!when.regex) return;
 
-    formState.selectedNodeId = extractNodeIdFromPath(when.regex.value || "");
-    formState.regexResultPath =
-      extractPathFromJsonPath(when.regex.value || "") || "result.data";
-    formState.regexPattern = when.regex.pattern || "";
+    formState.regexData = {
+      nodeId: extractNodeIdFromPath(when.regex.value || ""),
+      path: extractPathFromJsonPath(when.regex.value || "") || "result.data",
+      pattern: when.regex.pattern || "",
+    };
   }
 
   buildWhen(formState: EdgeFormState): WhenCondition {
-    const regexPath = buildJsonPath(
-      formState.selectedNodeId,
-      formState.regexResultPath,
-    );
+    const { nodeId, path, pattern } = formState.regexData;
+    const regexPath = buildJsonPath(nodeId, path);
     return {
-      regex: { value: regexPath, pattern: formState.regexPattern },
+      regex: { value: regexPath, pattern },
     };
   }
 
   getLabel(formState: EdgeFormState): string {
-    return `~= ${formState.regexPattern}`;
+    return `~= ${formState.regexData.pattern}`;
   }
 
   buildFromSubCondition(sub: SubCondition): WhenCondition {

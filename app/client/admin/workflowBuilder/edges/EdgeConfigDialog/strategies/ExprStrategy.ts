@@ -12,19 +12,20 @@ export class ExprStrategy extends BaseConditionStrategy {
   ): void {
     if (!when.expr) return;
 
-    formState.exprValue = when.expr;
+    formState.exprData = {
+      expr: when.expr,
+    };
   }
 
   buildWhen(formState: EdgeFormState): WhenCondition {
     return {
-      expr: formState.exprValue,
+      expr: formState.exprData.expr,
     };
   }
 
   getLabel(formState: EdgeFormState): string {
-    return formState.exprValue.length > 15
-      ? formState.exprValue.substring(0, 15) + "..."
-      : formState.exprValue;
+    const expr = formState.exprData.expr;
+    return expr.length > 15 ? expr.substring(0, 15) + "..." : expr;
   }
 }
 

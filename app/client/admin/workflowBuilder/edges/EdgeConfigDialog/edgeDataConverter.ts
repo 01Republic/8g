@@ -8,21 +8,51 @@ import type {
 import { strategyRegistry } from "./strategies";
 
 /**
+ * 각 조건 타입별 데이터
+ */
+export interface EqualsData {
+  nodeId: string;
+  path: string;
+  value: string;
+}
+
+export interface ExistsData {
+  nodeId: string;
+  path: string;
+}
+
+export interface ContainsData {
+  nodeId: string;
+  path: string;
+  search: string;
+}
+
+export interface RegexData {
+  nodeId: string;
+  path: string;
+  pattern: string;
+}
+
+export interface ExprData {
+  expr: string;
+}
+
+/**
  * EdgeConfigDialog의 폼 상태를 표현하는 인터페이스
  */
 export interface EdgeFormState {
   conditionMode: ConditionMode;
   singleConditionType: SingleConditionType;
   multipleConditionType: MultipleConditionType;
-  selectedNodeId: string;
-  resultPath: string;
-  rightValue: string;
-  existsResultPath: string;
-  exprValue: string;
-  regexResultPath: string;
-  regexPattern: string;
-  containsResultPath: string;
-  containsSearch: string;
+  
+  // 각 조건 타입별 데이터 (해당 타입일 때만 사용)
+  equalsData: EqualsData;
+  existsData: ExistsData;
+  containsData: ContainsData;
+  regexData: RegexData;
+  exprData: ExprData;
+  
+  // 복합 조건
   subConditions: SubCondition[];
 }
 
@@ -33,58 +63,15 @@ export const DEFAULT_FORM_STATE: EdgeFormState = {
   conditionMode: "single",
   singleConditionType: "default",
   multipleConditionType: "and",
-  selectedNodeId: "",
-  resultPath: "result.data",
-  rightValue: "",
-  existsResultPath: "result",
-  exprValue: "",
-  regexResultPath: "result.data",
-  regexPattern: "",
-  containsResultPath: "result.data",
-  containsSearch: "",
+  
+  equalsData: { nodeId: "", path: "result.data", value: "" },
+  existsData: { nodeId: "", path: "result" },
+  containsData: { nodeId: "", path: "result.data", search: "" },
+  regexData: { nodeId: "", path: "result.data", pattern: "" },
+  exprData: { expr: "" },
+  
   subConditions: [],
 };
-
-/**
- * SwitchEdgeData를 EdgeFormState로 역직렬화
- */
-export function parseEdgeData(edgeData?: SwitchEdgeData): EdgeFormState {
-  if (!edgeData) {
-    return { ...DEFAULT_FORM_STATE };
-  }
-
-  // 조건 모드 판별
-  const conditionMode: ConditionMode =
-    edgeData.when?.and || edgeData.when?.or ? "multiple" : "single";
-
-  // 단일 조건 타입 판별
-  const singleConditionType: SingleConditionType = detectConditionType(edgeData);
-
-  // 복합 조건 타입
-  const multipleConditionType: MultipleConditionType = edgeData.when?.and
-    ? "and"
-    : "or";
-
-  // 기본 폼 상태로 시작
-  const formState: Partial<EdgeFormState> = {
-    ...DEFAULT_FORM_STATE,
-    conditionMode,
-    singleConditionType,
-    multipleConditionType,
-  };
-
-  // 단일 조건인 경우, 해당 전략으로 파싱
-  if (conditionMode === "single" && edgeData.when) {
-    const strategy = strategyRegistry.getStrategy(singleConditionType);
-    strategy.parseFromWhen(edgeData.when, formState);
-  }
-
-  // 복합 조건 파싱
-  const conditions = edgeData.when?.and || edgeData.when?.or || [];
-  formState.subConditions = parseSubConditions(conditions);
-
-  return formState as EdgeFormState;
-}
 
 /**
  * 조건 타입 감지
@@ -128,6 +115,47 @@ function parseSubConditions(conditions: WhenCondition[]): SubCondition[] {
 }
 
 /**
+ * SwitchEdgeData를 EdgeFormState로 역직렬화
+ */
+export function parseEdgeData(edgeData?: SwitchEdgeData): EdgeFormState {
+  if (!edgeData) {
+    return { ...DEFAULT_FORM_STATE };
+  }
+
+  // 조건 모드 판별
+  const conditionMode: ConditionMode =
+    edgeData.when?.and || edgeData.when?.or ? "multiple" : "single";
+
+  // 단일 조건 타입 판별
+  const singleConditionType: SingleConditionType = detectConditionType(edgeData);
+
+  // 복합 조건 타입
+  const multipleConditionType: MultipleConditionType = edgeData.when?.and
+    ? "and"
+    : "or";
+
+  // 기본 폼 상태로 시작
+  const formState: Partial<EdgeFormState> = {
+    ...DEFAULT_FORM_STATE,
+    conditionMode,
+    singleConditionType,
+    multipleConditionType,
+  };
+
+  // 단일 조건인 경우, 해당 전략으로 파싱
+  if (conditionMode === "single" && edgeData.when) {
+    const strategy = strategyRegistry.getStrategy(singleConditionType);
+    strategy.parseFromWhen(edgeData.when, formState);
+  }
+
+  // 복합 조건 파싱
+  const conditions = edgeData.when?.and || edgeData.when?.or || [];
+  formState.subConditions = parseSubConditions(conditions);
+
+  return formState as EdgeFormState;
+}
+
+/**
  * EdgeFormState를 SwitchEdgeData로 직렬화
  */
 export function buildEdgeData(formState: EdgeFormState): SwitchEdgeData {
@@ -143,7 +171,6 @@ export function buildEdgeData(formState: EdgeFormState): SwitchEdgeData {
  */
 function buildSingleCondition(formState: EdgeFormState): SwitchEdgeData {
   const { singleConditionType } = formState;
-  const strategy = strategyRegistry.getStrategy(singleConditionType);
 
   // default 조건은 특별 처리
   if (singleConditionType === "default") {
@@ -152,6 +179,8 @@ function buildSingleCondition(formState: EdgeFormState): SwitchEdgeData {
       conditionLabel: "default",
     };
   }
+
+  const strategy = strategyRegistry.getStrategy(singleConditionType);
 
   // 전략을 사용해서 WhenCondition 생성
   const when = strategy.buildWhen(formState);
@@ -194,4 +223,3 @@ function buildMultipleCondition(formState: EdgeFormState): SwitchEdgeData {
     };
   }
 }
-

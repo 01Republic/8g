@@ -15,21 +15,22 @@ import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { usePreviousNodes } from "~/hooks/use-previous-nodes";
 
+import type { Dispatch, SetStateAction } from "react";
+
 interface MultipleProps {
   targetNodeId: string;
   multipleConditionType: MultipleConditionType;
   subConditions: SubCondition[];
-  setSubConditions: (val: SubCondition[]) => void;
+  onChange: Dispatch<SetStateAction<SubCondition[]>>;
 }
 
 export const Multiple = (props: MultipleProps) => {
-  const { targetNodeId, multipleConditionType } = props;
-  const { subConditions, setSubConditions } = props;
+  const { targetNodeId, multipleConditionType, subConditions, onChange } = props;
 
   const { previousNodes, getNodeDisplayName } = usePreviousNodes(targetNodeId);
 
   const addSubCondition = () => {
-    setSubConditions([
+    onChange([
       ...subConditions,
       {
         id: `sub-${Date.now()}`,
@@ -46,13 +47,13 @@ export const Multiple = (props: MultipleProps) => {
     field: keyof SubCondition,
     value: any,
   ) => {
-    setSubConditions(
+    onChange(
       subConditions.map((c) => (c.id === id ? { ...c, [field]: value } : c)),
     );
   };
 
   const removeSubCondition = (id: string) => {
-    setSubConditions(subConditions.filter((c) => c.id !== id));
+    onChange(subConditions.filter((c) => c.id !== id));
   };
 
   return (

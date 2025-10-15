@@ -8,28 +8,26 @@ import {
 import { EdgFieldContentBox } from "./EdgFieldContentBox";
 import { Input } from "~/components/ui/input";
 import { usePreviousNodes } from "~/hooks/use-previous-nodes";
+import type { ContainsData } from "./edgeDataConverter";
+import type { Dispatch, SetStateAction } from "react";
 
 interface SingleContainsProps {
   targetNodeId: string;
-  selectedNodeId: string;
-  setSelectedNodeId: React.Dispatch<React.SetStateAction<string>>;
-  containsResultPath: string;
-  setContainsResultPath: (value: React.SetStateAction<string>) => void;
-  containsSearch: string;
-  setContainsSearch: (value: React.SetStateAction<string>) => void;
+  data: ContainsData;
+  onChange: Dispatch<SetStateAction<ContainsData>>;
 }
 
-export const SingleContains = (props: SingleContainsProps) => {
-  const { targetNodeId, selectedNodeId, setSelectedNodeId } = props;
-  const { containsResultPath, setContainsResultPath } = props;
-  const { containsSearch, setContainsSearch } = props;
-
+export const SingleContains = ({ targetNodeId, data, onChange }: SingleContainsProps) => {
   const { previousNodes, getNodeDisplayName } = usePreviousNodes(targetNodeId);
+
+  const updateField = <K extends keyof ContainsData>(field: K, value: ContainsData[K]) => {
+    onChange((prev) => ({ ...prev, [field]: value }));
+  };
 
   return (
     <>
       <EdgFieldContentBox label="비교할 노드">
-        <Select value={selectedNodeId} onValueChange={setSelectedNodeId}>
+        <Select value={data.nodeId} onValueChange={(v) => updateField("nodeId", v)}>
           <SelectTrigger>
             <SelectValue placeholder="노드 선택" />
           </SelectTrigger>
@@ -45,20 +43,20 @@ export const SingleContains = (props: SingleContainsProps) => {
 
       <EdgFieldContentBox
         label="결과 경로"
-        helperText={`최종 경로: $.steps.${selectedNodeId}.${containsResultPath}`}
+        helperText={`최종 경로: $.steps.${data.nodeId}.${data.path}`}
       >
         <Input
           placeholder="result.data"
-          value={containsResultPath}
-          onChange={(e) => setContainsResultPath(e.target.value)}
+          value={data.path}
+          onChange={(e) => updateField("path", e.target.value)}
         />
       </EdgFieldContentBox>
 
       <EdgFieldContentBox label="검색 문자열">
         <Input
           placeholder="검색할 문자열"
-          value={containsSearch}
-          onChange={(e) => setContainsSearch(e.target.value)}
+          value={data.search}
+          onChange={(e) => updateField("search", e.target.value)}
         />
       </EdgFieldContentBox>
     </>

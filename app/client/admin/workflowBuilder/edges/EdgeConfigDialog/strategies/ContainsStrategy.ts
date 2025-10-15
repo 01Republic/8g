@@ -18,24 +18,23 @@ export class ContainsStrategy extends BaseConditionStrategy {
   ): void {
     if (!when.contains) return;
 
-    formState.selectedNodeId = extractNodeIdFromPath(when.contains.value || "");
-    formState.containsResultPath =
-      extractPathFromJsonPath(when.contains.value || "") || "result.data";
-    formState.containsSearch = when.contains.search || "";
+    formState.containsData = {
+      nodeId: extractNodeIdFromPath(when.contains.value || ""),
+      path: extractPathFromJsonPath(when.contains.value || "") || "result.data",
+      search: when.contains.search || "",
+    };
   }
 
   buildWhen(formState: EdgeFormState): WhenCondition {
-    const containsPath = buildJsonPath(
-      formState.selectedNodeId,
-      formState.containsResultPath,
-    );
+    const { nodeId, path, search } = formState.containsData;
+    const containsPath = buildJsonPath(nodeId, path);
     return {
-      contains: { value: containsPath, search: formState.containsSearch },
+      contains: { value: containsPath, search },
     };
   }
 
   getLabel(formState: EdgeFormState): string {
-    return `contains ${formState.containsSearch}`;
+    return `contains ${formState.containsData.search}`;
   }
 
   buildFromSubCondition(sub: SubCondition): WhenCondition {

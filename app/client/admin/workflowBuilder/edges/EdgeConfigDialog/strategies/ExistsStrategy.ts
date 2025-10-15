@@ -18,16 +18,15 @@ export class ExistsStrategy extends BaseConditionStrategy {
   ): void {
     if (!when.exists) return;
 
-    formState.selectedNodeId = extractNodeIdFromPath(when.exists);
-    formState.existsResultPath =
-      extractPathFromJsonPath(when.exists) || "result";
+    formState.existsData = {
+      nodeId: extractNodeIdFromPath(when.exists),
+      path: extractPathFromJsonPath(when.exists) || "result",
+    };
   }
 
   buildWhen(formState: EdgeFormState): WhenCondition {
-    const existsPath = buildJsonPath(
-      formState.selectedNodeId,
-      formState.existsResultPath,
-    );
+    const { nodeId, path } = formState.existsData;
+    const existsPath = buildJsonPath(nodeId, path);
     return {
       exists: existsPath,
     };

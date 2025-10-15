@@ -8,25 +8,26 @@ import {
 import { EdgFieldContentBox } from "./EdgFieldContentBox";
 import { Input } from "~/components/ui/input";
 import { usePreviousNodes } from "~/hooks/use-previous-nodes";
+import type { ExistsData } from "./edgeDataConverter";
+import type { Dispatch, SetStateAction } from "react";
 
 interface SingleExistsProps {
   targetNodeId: string;
-  selectedNodeId: string;
-  setSelectedNodeId: React.Dispatch<React.SetStateAction<string>>;
-  existsResultPath: string;
-  setExistsResultPath: (value: React.SetStateAction<string>) => void;
+  data: ExistsData;
+  onChange: Dispatch<SetStateAction<ExistsData>>;
 }
 
-export const SingleExists = (props: SingleExistsProps) => {
-  const { targetNodeId, selectedNodeId, setSelectedNodeId } = props;
-  const { existsResultPath, setExistsResultPath } = props;
-
+export const SingleExists = ({ targetNodeId, data, onChange }: SingleExistsProps) => {
   const { previousNodes, getNodeDisplayName } = usePreviousNodes(targetNodeId);
+
+  const updateField = <K extends keyof ExistsData>(field: K, value: ExistsData[K]) => {
+    onChange((prev) => ({ ...prev, [field]: value }));
+  };
 
   return (
     <>
       <EdgFieldContentBox label="확인할 노드">
-        <Select value={selectedNodeId} onValueChange={setSelectedNodeId}>
+        <Select value={data.nodeId} onValueChange={(v) => updateField("nodeId", v)}>
           <SelectTrigger>
             <SelectValue placeholder="노드 선택" />
           </SelectTrigger>
@@ -42,13 +43,13 @@ export const SingleExists = (props: SingleExistsProps) => {
 
       <EdgFieldContentBox
         label="결과 경로"
-        helperText={`최종 경로: $.steps.${selectedNodeId}.${existsResultPath}`}
+        helperText={`최종 경로: $.steps.${data.nodeId}.${data.path}`}
       >
         <Input
           placeholder="result"
-          value={existsResultPath}
+          value={data.path}
           className="w-full flex-1"
-          onChange={(e) => setExistsResultPath(e.target.value)}
+          onChange={(e) => updateField("path", e.target.value)}
         />
       </EdgFieldContentBox>
     </>

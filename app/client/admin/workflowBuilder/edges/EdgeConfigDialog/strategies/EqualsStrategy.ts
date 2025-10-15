@@ -18,21 +18,23 @@ export class EqualsStrategy extends BaseConditionStrategy {
   ): void {
     if (!when.equals) return;
 
-    formState.selectedNodeId = extractNodeIdFromPath(when.equals.left || "");
-    formState.resultPath =
-      extractPathFromJsonPath(when.equals.left || "") || "result.data";
-    formState.rightValue = when.equals.right || "";
+    formState.equalsData = {
+      nodeId: extractNodeIdFromPath(when.equals.left || ""),
+      path: extractPathFromJsonPath(when.equals.left || "") || "result.data",
+      value: when.equals.right || "",
+    };
   }
 
   buildWhen(formState: EdgeFormState): WhenCondition {
-    const leftPath = buildJsonPath(formState.selectedNodeId, formState.resultPath);
+    const { nodeId, path, value } = formState.equalsData;
+    const leftPath = buildJsonPath(nodeId, path);
     return {
-      equals: { left: leftPath, right: formState.rightValue },
+      equals: { left: leftPath, right: value },
     };
   }
 
   getLabel(formState: EdgeFormState): string {
-    return `== ${formState.rightValue}`;
+    return `== ${formState.equalsData.value}`;
   }
 
   buildFromSubCondition(sub: SubCondition): WhenCondition {
