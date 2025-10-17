@@ -141,8 +141,7 @@ export const BlockActionHandlerModal = (
         <Button
           variant="outline"
           size="xxs"
-          onClick={() => console.log(parsedSchema)}
-        >
+          >
           수정
         </Button>
       </DialogTrigger>
@@ -158,10 +157,6 @@ export const BlockActionHandlerModal = (
             currentNodeId={id}
           />
 
-          {(() => {
-            console.log("🔍 Parsed Schema Fields:", parsedSchema.fields);
-            return null;
-          })()}
           {parsedSchema.fields.map((field) => {
             if (field.name === "name") return null;
 

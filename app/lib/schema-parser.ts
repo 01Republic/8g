@@ -23,6 +23,8 @@ export interface ParsedField {
   arrayItemType?: FieldType;
   // For union types
   unionTypes?: FieldType[];
+  // For nested object types
+  nestedFields?: ParsedField[];
 }
 
 export interface ParsedSchema {
@@ -36,11 +38,24 @@ export interface ParsedSchema {
 export function parseZodSchema(schema: any): ParsedSchema {
   const fields: ParsedField[] = [];
 
-  if (!(schema instanceof z.ZodObject)) {
+  // Handle ZodIntersection (A & B)
+  if (schema._def?.typeName === "ZodIntersection") {
+    const leftFields = parseZodSchema(schema._def.left).fields;
+    const rightFields = parseZodSchema(schema._def.right).fields;
+    return { fields: [...leftFields, ...rightFields] };
+  }
+
+  // Use _def.typeName instead of instanceof to avoid version conflicts
+  if (schema._def?.typeName !== "ZodObject") {
     return { fields };
   }
 
-  const shape = schema.shape;
+  // Get shape - it might be a function or an object
+  const shape = typeof schema.shape === 'function' ? schema.shape() : schema.shape;
+
+  if (!shape || typeof shape !== 'object') {
+    return { fields };
+  }
 
   for (const [fieldName, fieldSchema] of Object.entries(shape)) {
     const parsed = parseField(fieldName, fieldSchema as any);
@@ -126,7 +141,7 @@ type UnwrapHandler = {
 
 const unwrapHandlers: UnwrapHandler[] = [
   {
-    check: (s) => s instanceof z.ZodOptional,
+    check: (s) => s?._def?.typeName === "ZodOptional",
     unwrap: (s, state) => ({
       schema: s._def.innerType,
       optional: true,
@@ -134,7 +149,7 @@ const unwrapHandlers: UnwrapHandler[] = [
     }),
   },
   {
-    check: (s) => s instanceof z.ZodDefault,
+    check: (s) => s?._def?.typeName === "ZodDefault",
     unwrap: (s, state) => ({
       schema: s._def.innerType,
       optional: state.optional,
@@ -145,7 +160,7 @@ const unwrapHandlers: UnwrapHandler[] = [
     }),
   },
   {
-    check: (s) => s instanceof z.ZodNullable,
+    check: (s) => s?._def?.typeName === "ZodNullable",
     unwrap: (s, state) => ({
       schema: s._def.innerType,
       optional: true,
@@ -182,63 +197,95 @@ type TypeHandler = {
 
 const typeHandlers: TypeHandler[] = [
   {
-    check: (s) => s instanceof z.ZodString,
+    check: (s) => s?._def?.typeName === "ZodString",
     handle: () => ({ type: "string" }),
   },
   {
-    check: (s) => s instanceof z.ZodNumber,
+    check: (s) => s?._def?.typeName === "ZodNumber",
     handle: () => ({ type: "number" }),
   },
   {
-    check: (s) => s instanceof z.ZodBoolean,
+    check: (s) => s?._def?.typeName === "ZodBoolean",
     handle: () => ({ type: "boolean" }),
   },
   {
-    check: (s) => s instanceof z.ZodEnum,
+    check: (s) => s?._def?.typeName === "ZodEnum",
     handle: (s) => ({
       type: "enum",
-      enumValues: s.options || Object.values(s._def.entries || {}),
+      enumValues: s.options || s._def?.values || Object.values(s._def?.entries || {}),
     }),
   },
   {
-    check: (s) => s instanceof z.ZodLiteral,
+    check: (s) => s?._def?.typeName === "ZodLiteral",
     handle: (s) => ({
       type: "literal",
       defaultValue: s._def.value,
     }),
   },
   {
-    check: (s) => s instanceof z.ZodArray,
+    check: (s) => s?._def?.typeName === "ZodArray",
     handle: (s) => {
-      const itemType = s._def.element || s.element;
+      const itemType = s._def?.type || s._def?.element || s.element;
       return {
         type: "array",
         arrayItemType:
-          itemType instanceof z.ZodString
+          itemType?._def?.typeName === "ZodString"
             ? "string"
-            : itemType instanceof z.ZodNumber
+            : itemType?._def?.typeName === "ZodNumber"
               ? "number"
               : undefined,
       };
     },
   },
   {
-    check: (s) => s instanceof z.ZodRecord,
+    check: (s) => s?._def?.typeName === "ZodRecord",
     handle: () => ({ type: "record" }),
   },
   {
-    check: (s) => s instanceof z.ZodObject,
-    handle: () => ({ type: "object" }),
+    check: (s) => s?._def?.typeName === "ZodObject",
+    handle: (s) => {
+      // Parse nested object fields
+      const nestedFields: ParsedField[] = [];
+      const shape = s.shape;
+      
+      for (const [fieldName, fieldSchema] of Object.entries(shape || {})) {
+        const parsed = parseField(fieldName, fieldSchema as any);
+        if (parsed) {
+          nestedFields.push(parsed);
+        }
+      }
+      
+      return { type: "object", nestedFields };
+    },
   },
   {
     check: (s) => s._def?.typeName === "ZodUnion",
     handle: (s) => ({
       type: "union",
-      unionTypes: s._def.options.map((opt: any) => {
-        if (opt instanceof z.ZodString) return "string";
-        if (opt instanceof z.ZodArray) return "array";
+      unionTypes: (s._def?.options || []).map((opt: any) => {
+        if (opt?._def?.typeName === "ZodString") return "string";
+        if (opt?._def?.typeName === "ZodArray") return "array";
+        if (opt?._def?.typeName === "ZodNumber") return "number";
+        if (opt?._def?.typeName === "ZodBoolean") return "boolean";
+        if (opt?._def?.typeName === "ZodObject") return "object";
         return "string";
       }),
     }),
+  },
+  {
+    check: (s) => s._def?.typeName === "ZodDiscriminatedUnion",
+    handle: (s) => {
+      // Handle discriminated unions like schemaDefinition
+      const options = s._def?.options || [];
+      const unionTypes = options.map((opt: any) => {
+        if (opt?._def?.typeName === "ZodObject") return "object";
+        return "string";
+      });
+      return { type: "union", unionTypes };
+    },
+  },
+  {
+    check: (s) => s._def?.typeName === "ZodAny",
+    handle: () => ({ type: "string" }), // Treat ZodAny as string for UI purposes
   },
 ];
