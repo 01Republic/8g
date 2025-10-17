@@ -9,6 +9,9 @@ import type { FormWorkflow } from "~/models/integration/types";
 import { useFetcher } from "react-router";
 import { useEffect } from "react";
 import { redirect } from "react-router";
+import axios from "axios";
+
+const BASE_URL = process.env.BASE_URL || "http://localhost:8000";
 
 export async function loader({ params }: Route.LoaderArgs) {
   const workflowId = params.workflowId
@@ -16,7 +19,8 @@ export async function loader({ params }: Route.LoaderArgs) {
     : undefined;
 
   if (workflowId) {
-    const workflow = await findWorkflowMetadata(workflowId);
+    const response = await axios.get(`${BASE_URL}/8g/workflow/${workflowId}`);
+    const workflow = response.data;
     return {
       workflowId,
       workflow: workflow
@@ -42,7 +46,11 @@ export async function action({ request }: Route.ActionArgs) {
   const description = formData.get("description")!.toString();
   const meta = JSON.parse(formData.get("meta")!.toString()) as FormWorkflow;
 
-  await upsertWorkflowMetadata({ workflowId, description, meta });
+  await axios.post(`${BASE_URL}/8g/workflow`, {
+    workflowId,
+    description,
+    meta,
+  });
 
   return redirect("/workflows");
 }

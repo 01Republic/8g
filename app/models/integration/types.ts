@@ -1,4 +1,4 @@
-import type { WorkflowStep } from "8g-extension";
+import type { WorkflowStep } from "scordi-extension";
 
 export type FormWorkflow = {
   version: string;

@@ -1,4 +1,4 @@
-import { EightGClient } from "8g-extension";
+import { EightGClient } from "scordi-extension";
 import type { FormWorkflow } from "~/models/integration/types";
 import { resolveWorkflowVariables } from "./VariableResolver";
 

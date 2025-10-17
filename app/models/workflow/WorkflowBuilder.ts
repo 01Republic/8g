@@ -1,4 +1,4 @@
-import type { Workflow, WorkflowStep, Block } from "8g-extension";
+import type { Workflow, WorkflowStep, Block } from "scordi-extension";
 import type { WorkflowEdge } from "./types";
 import type { FormWorkflow } from "../integration/types";
 

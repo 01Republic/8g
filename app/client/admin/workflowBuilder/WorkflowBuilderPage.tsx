@@ -10,8 +10,8 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { workflowNodeTypes } from "~/client/admin/workflowBuilder/nodes";
-import type { Workflow, Block } from "8g-extension";
-import { AllBlockSchemas } from "8g-extension";
+import type { Workflow, Block } from "scordi-extension";
+import { AllBlockSchemas } from "scordi-extension";
 import { PaletteSheet } from "./PaletteSheet";
 import { ResultPanel } from "./ResultPanel";
 import { WorkflowBuilderHeader } from "./WorkflowBuilderHeader";

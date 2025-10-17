@@ -20,21 +20,21 @@
 #### npm에서 사용
 
 ```bash
-npm install 8g-extension
+npm install scordi-extension
 # 또는
-yarn add 8g-extension
+yarn add scordi-extension
 ```
 
 ```ts
 // ESM
-import { EightGClient } from "8g-extension";
+import { EightGClient } from "scordi-extension";
 
 // 타입도 함께 제공됩니다 (types: ./dist/sdk/index.d.ts)
 const client = new EightGClient();
 await client.checkExtension();
 ```
 
-번들러(Next.js/Vite 등) 환경에서 `import { EightGClient } from '8g-extension'`만으로 동작합니다. React는 외부 의존으로 마크되어 있으며, SDK 사용에는 React가 필요하지 않습니다.
+번들러(Next.js/Vite 등) 환경에서 `import { EightGClient } from 'scordi-extension'`만으로 동작합니다. React는 외부 의존으로 마크되어 있으며, SDK 사용에는 React가 필요하지 않습니다.
 
 ### 단일 블록 실행
 

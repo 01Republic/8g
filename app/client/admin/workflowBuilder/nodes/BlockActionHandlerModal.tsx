@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useReactFlow } from "@xyflow/react";
-import type { Block, RepeatConfig } from "8g-extension";
+import type { Block, RepeatConfig } from "scordi-extension";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,

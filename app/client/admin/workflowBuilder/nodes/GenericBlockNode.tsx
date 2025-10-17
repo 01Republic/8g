@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Handle, Position, type NodeProps, type Node } from "@xyflow/react";
 import type { z } from "zod";
-import type { Block, RepeatConfig } from "8g-extension";
+import type { Block, RepeatConfig } from "scordi-extension";
 import { cn } from "~/lib/utils";
 import { parseZodSchema } from "~/lib/schema-parser";
 import { blockLabels, fieldLabels } from "./index";

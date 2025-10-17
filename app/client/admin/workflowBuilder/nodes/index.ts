@@ -1,6 +1,6 @@
 import type { NodeTypes } from "@xyflow/react";
 import GenericBlockNode from "./GenericBlockNode";
-import { AllBlockSchemas } from "8g-extension";
+import { AllBlockSchemas } from "scordi-extension";
 
 // 모든 블록 타입을 GenericBlockNode로 자동 등록
 export const workflowNodeTypes: NodeTypes = Object.keys(AllBlockSchemas).reduce(

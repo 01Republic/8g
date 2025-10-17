@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { EightGClient } from "8g-extension";
+import { EightGClient } from "scordi-extension";
 import { Button } from "~/components/ui/button";
 import { CenteredSection } from "~/components/ui/centered-section";
 import { LoadingCard } from "~/components/ui/loading-card";

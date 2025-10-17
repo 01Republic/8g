@@ -1,6 +1,6 @@
 import type { Node } from "@xyflow/react";
-import type { Workflow, WorkflowStep } from "8g-extension";
-import { AllBlockSchemas } from "8g-extension";
+import type { Workflow, WorkflowStep } from "scordi-extension";
+import { AllBlockSchemas } from "scordi-extension";
 import type { WorkflowEdge } from "~/models/workflow/types";
 import { getLayoutedElements } from "./autoLayout";
 import { getConditionLabel } from "./conditionUtils";

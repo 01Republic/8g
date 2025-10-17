@@ -183,15 +183,15 @@ export async function action({ request, context }: Route.ActionArgs) {
 ### 설치
 
 ```bash
-pnpm add 8g-extension
+pnpm add scordi-extension
 # or
-npm install 8g-extension
+npm install scordi-extension
 ```
 
 ### 기본 초기화
 
 ```ts
-import { EightGClient } from "8g-extension";
+import { EightGClient } from "scordi-extension";
 
 const client = new EightGClient();
 await client.checkExtension();

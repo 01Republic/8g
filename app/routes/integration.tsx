@@ -10,15 +10,16 @@ import type {
 import type { SelectedMembers } from "~/models/integration/types";
 import type { AppFormMetadata } from "~/models/integration/types";
 import IntegrationPage from "~/client/private/integration/IntegrationPage";
-import {
-  findActiveIntegrationProducts,
-  integrateApp,
-} from "~/.server/services";
+import axios from "axios";
 
 export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
 
+const BASE_URL = process.env.BASE_URL || "http://localhost:8000";
+
 export async function loader({}: Route.LoaderArgs) {
-  return await findActiveIntegrationProducts();
+  const response = await axios.get(`${BASE_URL}/8g/integration`);
+  const { products, integrationAppFormMetadata } = response.data;
+  return { products, integrationAppFormMetadata };
 }
 
 export async function action({ request, context }: Route.ActionArgs) {
@@ -33,7 +34,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 
   const organizationId = user!.orgId;
 
-  await integrateApp({
+  await axios.post(`${BASE_URL}/8g/integration`, {
     workspace,
     members,
     paymentInfo,

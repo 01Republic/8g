@@ -7,7 +7,7 @@ import {
   AccordionTrigger,
 } from "~/components/ui/accordion";
 import type { IntegrationAppWorkflowMetadata } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
-import type { Workflow } from "8g-extension";
+import type { Workflow } from "scordi-extension";
 import type { AppFormSectionMeta } from "~/models/integration/types";
 import WorkflowSelect from "./field/WorkflowSelect";
 import TextField from "./field/TextField";

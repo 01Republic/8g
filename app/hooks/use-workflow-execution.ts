@@ -5,7 +5,7 @@ import { runWorkflow } from "../models/workflow/WorkflowRunner";
 import { ResultParser } from "../models/workflow/ResultParser";
 
 /*
-이 workflow execution은 8g-extension을 사용하여 워크플로우를 실행하고 결과를 반환합니다.
+이 workflow execution은 scordi-extension을 사용하여 워크플로우를 실행하고 결과를 반환합니다.
 여기서 resolvedUrl은 워크플로우에 전달되는 url입니다.
 워크플로우에 전달되는 url은 템플릿 문자열을 포함할 수 있습니다.
 템플릿 문자열은 워크플로우에 전달되는 url에 포함된 템플릿 문자열을 찾아서 대체합니다.
