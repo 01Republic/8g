@@ -18,8 +18,8 @@ const BASE_URL = process.env.BASE_URL || "http://localhost:8000";
 
 export async function loader({}: Route.LoaderArgs) {
   const response = await axios.get(`${BASE_URL}/8g/integration`);
-  const { products, integrationAppFormMetadata } = response.data;
-  return { products, integrationAppFormMetadata };
+  const { integrationAppFormMetadata } = response.data;
+  return { integrationAppFormMetadata };
 }
 
 export async function action({ request, context }: Route.ActionArgs) {
@@ -45,7 +45,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 }
 
 export default function Integration({ loaderData }: Route.ComponentProps) {
-  const { products, integrationAppFormMetadata } = loaderData;
+  const { integrationAppFormMetadata } = loaderData;
   const fetcher = useFetcher();
 
   const onSubmit = (payload: {
@@ -67,18 +67,9 @@ export default function Integration({ loaderData }: Route.ComponentProps) {
     fetcher.submit(formData, { method: "POST" });
   };
 
-  // 흠 이 부분은 나중에 실시간 반영을 위해서 fetch 하는 방식으로 변경
-  const getMetadata = (productId: number): AppFormMetadata => {
-    const meta = integrationAppFormMetadata.find(
-      (it) => it.productId === productId,
-    )?.meta;
-    return meta as unknown as AppFormMetadata;
-  };
-
   return (
     <IntegrationPage
-      products={products}
-      getMetadata={getMetadata}
+      metadata={integrationAppFormMetadata}
       onSubmit={onSubmit}
     />
   );

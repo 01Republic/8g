@@ -77,6 +77,7 @@ export type AppFormSectionMeta = {
 
 export type AppFormMetadata = {
   sections: AppFormSectionMeta[];
+  product: Product
 };
 
 export type Product = {

@@ -1,10 +1,6 @@
 import "@xyflow/react/dist/style.css";
 import WorkflowBuilderPage from "~/client/admin/workflowBuilder/WorkflowBuilderPage";
 import type { Route } from "./+types/workflow-builder";
-import {
-  upsertWorkflowMetadata,
-  findWorkflowMetadata,
-} from "~/.server/services";
 import type { FormWorkflow } from "~/models/integration/types";
 import { useFetcher } from "react-router";
 import { useEffect } from "react";

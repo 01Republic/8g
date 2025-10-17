@@ -12,8 +12,7 @@ import type { SelectedMembers } from "~/models/integration/types";
 import type { Product } from "~/models/integration/types";
 
 interface IntegrationPageProps {
-  products: Product[];
-  getMetadata: (productId: number) => AppFormMetadata;
+  metadata: AppFormMetadata[];
   onSubmit: (payload: {
     workspace: SelectedWorkspace;
     members: SelectedMembers[];
@@ -24,9 +23,9 @@ interface IntegrationPageProps {
 }
 
 export default function IntegrationPage(props: IntegrationPageProps) {
-  const { products, getMetadata, onSubmit } = props;
+  const { metadata, onSubmit } = props;
   const [open, setOpen] = useState(false);
-  const [productId, setProductId] = useState<number>(products[0]?.id || 1);
+  const [selectedMetadata, setSelectedMetadata] = useState<AppFormMetadata | null>(null);
 
   return (
     <div className="h-full w-full p-8">
@@ -39,24 +38,24 @@ export default function IntegrationPage(props: IntegrationPageProps) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ml-12">
-          {products.map((app, index: number) => (
+          {metadata.map((metadata, index: number) => (
             <ProductCard
               key={index}
-              appInfo={app}
+              appInfo={metadata.product}
               onOpen={(pid) => {
-                setProductId(pid);
+                setSelectedMetadata(metadata);
                 setOpen(true);
               }}
             />
           ))}
         </div>
-        {getMetadata(productId) && (
-          <IntegartionProductModal
+        {selectedMetadata && (
+        <IntegartionProductModal
             open={open}
             setOpen={setOpen}
             onSubmit={onSubmit}
-            meta={getMetadata(productId)}
-            productId={productId}
+            meta={selectedMetadata}
+            productId={selectedMetadata.product.id}
           />
         )}
       </div>
