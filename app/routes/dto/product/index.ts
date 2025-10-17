@@ -1,3 +1,5 @@
+import type { AppFormMetadata } from "~/models/integration/types";
+
 export interface ProductDto {
   id: number;
   nameKo: string;
@@ -14,11 +16,11 @@ export interface ProductDto {
 export interface IntegrationAppFormMetadataDto {
   id: number;
   productId: number;
-  meta: Record<string, unknown>;
+  meta: AppFormMetadata;
+  product: ProductDto;
   isActive: boolean;
 }
 
 export interface FindActiveIntegrationProductsResponseDto {
-  products: ProductDto[];
   integrationAppFormMetadata: IntegrationAppFormMetadataDto[];
 }

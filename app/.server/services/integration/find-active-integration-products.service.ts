@@ -1,4 +1,4 @@
-import type { FindActiveIntegrationProductsResponseDto } from "~/routes/dto/product";
+import type { FindActiveIntegrationProductsResponseDto, IntegrationAppFormMetadataDto } from "~/routes/dto/product";
 import { initializeDatabase } from "~/.server/db";
 import { IntegrationAppFormMetadata } from "~/.server/db/entities/IntegrationAppFormMetadata";
 import { Products } from "~/.server/db/entities/Products";
@@ -14,7 +14,6 @@ export async function findActiveIntegrationProducts(): Promise<FindActiveIntegra
   // 메타데이터가 없으면 빈 결과 반환
   if (integrationAppFormMetadata.length === 0) {
     return {
-      products: [],
       integrationAppFormMetadata: [],
     };
   }
@@ -29,7 +28,9 @@ export async function findActiveIntegrationProducts(): Promise<FindActiveIntegra
     .getMany();
 
   return {
-    products,
-    integrationAppFormMetadata,
+    integrationAppFormMetadata: integrationAppFormMetadata.map((item) => ({
+      ...item,
+      product: products.find((product) => product.id === item.productId),
+    })) as IntegrationAppFormMetadataDto[],
   };
 }

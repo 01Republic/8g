@@ -2,17 +2,16 @@ import { ProductCard } from "~/client/private/integration/ProductCard";
 import { IntegartionProductModal } from "~/client/private/integration/IntegrationProductModal";
 
 import type {
-  AppFormMetadata,
   PaymentHistory,
   PaymentInfo,
 } from "~/models/integration/types";
 import { useState } from "react";
 import type { SelectedWorkspace } from "~/models/integration/types";
 import type { SelectedMembers } from "~/models/integration/types";
-import type { Product } from "~/models/integration/types";
+import type { IntegrationAppFormMetadataDto } from "~/routes/dto/product";
 
 interface IntegrationPageProps {
-  metadata: AppFormMetadata[];
+  metadata: IntegrationAppFormMetadataDto[];
   onSubmit: (payload: {
     workspace: SelectedWorkspace;
     members: SelectedMembers[];
@@ -25,7 +24,7 @@ interface IntegrationPageProps {
 export default function IntegrationPage(props: IntegrationPageProps) {
   const { metadata, onSubmit } = props;
   const [open, setOpen] = useState(false);
-  const [selectedMetadata, setSelectedMetadata] = useState<AppFormMetadata | null>(null);
+  const [selectedMetadata, setSelectedMetadata] = useState<IntegrationAppFormMetadataDto | null>(null);
 
   return (
     <div className="h-full w-full p-8">
@@ -54,11 +53,11 @@ export default function IntegrationPage(props: IntegrationPageProps) {
             open={open}
             setOpen={setOpen}
             onSubmit={onSubmit}
-            meta={selectedMetadata}
+            meta={selectedMetadata.meta}
             productId={selectedMetadata.product.id}
           />
         )}
-      </div>
+        </div>
     </div>
   );
 }

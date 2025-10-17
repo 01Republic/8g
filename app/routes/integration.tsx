@@ -8,9 +8,9 @@ import type {
   SelectedWorkspace,
 } from "~/models/integration/types";
 import type { SelectedMembers } from "~/models/integration/types";
-import type { AppFormMetadata } from "~/models/integration/types";
 import IntegrationPage from "~/client/private/integration/IntegrationPage";
 import axios from "axios";
+import type { FindActiveIntegrationProductsResponseDto } from "./dto/product";
 
 export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
 
@@ -18,7 +18,7 @@ const BASE_URL = process.env.BASE_URL || "http://localhost:8000";
 
 export async function loader({}: Route.LoaderArgs) {
   const response = await axios.get(`${BASE_URL}/8g/integration`);
-  const { integrationAppFormMetadata } = response.data;
+  const { integrationAppFormMetadata } = response.data as FindActiveIntegrationProductsResponseDto;
   return { integrationAppFormMetadata };
 }
 
