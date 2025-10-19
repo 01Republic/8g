@@ -111,8 +111,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       scordi-extension:
-        specifier: ^1.15.0
-        version: 1.15.0(axios@1.12.2)(handlebars@4.7.8)(openai@5.12.2(ws@8.18.3)(zod@3.25.76))(typeorm@0.3.27(mssql@6.4.1(encoding@0.1.13))(mysql2@3.15.2)(pg@8.16.3)(reflect-metadata@0.2.2)(sqlite3@5.1.7))(ws@8.18.3)
+        specifier: 1.15.2
+        version: 1.15.2(axios@1.12.2)(handlebars@4.7.8)(openai@5.12.2(ws@8.18.3)(zod@3.25.76))(typeorm@0.3.27(mssql@6.4.1(encoding@0.1.13))(mysql2@3.15.2)(pg@8.16.3)(reflect-metadata@0.2.2)(sqlite3@5.1.7))(ws@8.18.3)
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
@@ -2998,8 +2998,8 @@ packages:
   scheduler@0.27.0:
     resolution: {integrity: sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==}
 
-  scordi-extension@1.15.0:
-    resolution: {integrity: sha512-oawC45olSnq5NF/EHhQw/5ywbjgeqnt5HBd+EcRi89XTD+68eXuIpdrdQ8VqAlmy68+B88EfK5CU1JHlJOjHTw==}
+  scordi-extension@1.15.2:
+    resolution: {integrity: sha512-OSQkMVhCpo8DBD7w5WgtbCnGFC9+RAs/m5XIer/8aSDximwsTlxbIsb0Fcr2d6u8XncnQnBLMl7KQOPfBnJWvw==}
 
   semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
@@ -6576,7 +6576,7 @@ snapshots:
 
   scheduler@0.27.0: {}
 
-  scordi-extension@1.15.0(axios@1.12.2)(handlebars@4.7.8)(openai@5.12.2(ws@8.18.3)(zod@3.25.76))(typeorm@0.3.27(mssql@6.4.1(encoding@0.1.13))(mysql2@3.15.2)(pg@8.16.3)(reflect-metadata@0.2.2)(sqlite3@5.1.7))(ws@8.18.3):
+  scordi-extension@1.15.2(axios@1.12.2)(handlebars@4.7.8)(openai@5.12.2(ws@8.18.3)(zod@3.25.76))(typeorm@0.3.27(mssql@6.4.1(encoding@0.1.13))(mysql2@3.15.2)(pg@8.16.3)(reflect-metadata@0.2.2)(sqlite3@5.1.7))(ws@8.18.3):
     dependencies:
       '@langchain/core': 0.3.78(openai@5.12.2(ws@8.18.3)(zod@3.25.76))
       '@langchain/openai': 0.6.16(@langchain/core@0.3.78(openai@5.12.2(ws@8.18.3)(zod@3.25.76)))(ws@8.18.3)

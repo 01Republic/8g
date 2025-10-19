@@ -1,6 +1,6 @@
 import "@xyflow/react/dist/style.css";
 import WorkflowBuilderPage from "~/client/admin/workflowBuilder/WorkflowBuilderPage";
-import type { Route } from "./+types/workflow-builder";
+import type { Route } from "./+types/workspace-builder";
 import type { FormWorkflow } from "~/models/workflow/types";
 import { useFetcher } from "react-router";
 import { useEffect } from "react";
@@ -42,12 +42,12 @@ export async function action({ request }: Route.ActionArgs) {
   const description = formData.get("description")!.toString();
   const meta = JSON.parse(formData.get("meta")!.toString()) as FormWorkflow;
 
-  await upsertWorkflowMetadata({ workflowId, description, meta, type: 'workflow' });
+  await upsertWorkflowMetadata({ workflowId, description, meta, type: 'workspace' });
 
-  return redirect("/workflows");
+  return redirect("/");
 }
 
-export default function WorkflowBuilder({ loaderData }: Route.ComponentProps) {
+export default function WorkspaceBuilder({ loaderData }: Route.ComponentProps) {
   const fetcher = useFetcher();
   const isSaving = fetcher.state !== "idle";
 
@@ -80,6 +80,7 @@ export default function WorkflowBuilder({ loaderData }: Route.ComponentProps) {
       initialWorkflow={loaderData.workflow}
       onSave={onSave}
       isSaving={isSaving}
+      apiType="getWorkspaces"
     />
   );
 }

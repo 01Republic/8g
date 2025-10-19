@@ -43,7 +43,7 @@ export type FormWorkflow = {
   parser?: {
     expression: string;
   };
-  variables?: Record<string, any>;
+  vars?: Record<string, any>;
 };
 
 export type WorkspaceSelectSectionSchema = {

@@ -1,13 +1,7 @@
 import { Label } from "~/components/ui/label";
 import { FieldBlockContentBox } from "./FieldBlockContentBox";
 import type { ParsedField } from "~/lib/schema-parser";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
+import { Checkbox } from "~/components/ui/checkbox";
 import { useReactFlow } from "@xyflow/react";
 import { blockLabels } from "../index";
 
@@ -62,55 +56,114 @@ export const SourceDataFieldBlock = (props: SourceDataFieldBlockProps) => {
 
   const previousNodes = getPreviousNodes();
 
-  // 현재 값에서 노드 ID 추출 (${$.steps.{nodeId}.result.data} 형태)
+  // 현재 값 파싱 - 배열 또는 단일 string 지원
   const currentValue = formData[name] || "";
-  const extractNodeId = (value: string) => {
-    const match = value.match(/\$\{?\$\.steps\.([^.}]+)\.result/);
-    return match ? match[1] : "";
-  };
-  const selectedNodeId = extractNodeId(currentValue);
 
-  const handleNodeSelect = (nodeId: string) => {
-    if (!nodeId) {
-      updateFormField(name, "");
-      return;
+  // 선택된 노드 ID들을 Set으로 관리
+  const getSelectedNodeIds = (): Set<string> => {
+    const selectedIds = new Set<string>();
+
+    if (Array.isArray(currentValue)) {
+      // 배열인 경우
+      currentValue.forEach((item: string) => {
+        const match = item.match(/\$\{steps\.([^.}]+)\.result/);
+        if (match) selectedIds.add(match[1]);
+      });
+    } else if (typeof currentValue === "string" && currentValue) {
+      // 단일 string인 경우
+      const match = currentValue.match(/\$\{steps\.([^.}]+)\.result/);
+      if (match) selectedIds.add(match[1]);
     }
-    // ${$.steps.{nodeId}.result.data} 형태로 설정
-    updateFormField(name, `\${steps.${nodeId}.result.data}`);
+
+    return selectedIds;
+  };
+
+  const selectedNodeIds = getSelectedNodeIds();
+
+  const handleNodeToggle = (nodeId: string, checked: boolean) => {
+    const newSelectedIds = new Set(selectedNodeIds);
+
+    if (checked) {
+      newSelectedIds.add(nodeId);
+    } else {
+      newSelectedIds.delete(nodeId);
+    }
+
+    // 선택된 노드들을 배열로 변환
+    if (newSelectedIds.size === 0) {
+      updateFormField(name, "");
+    } else if (newSelectedIds.size === 1) {
+      // 단일 선택인 경우 string으로 (backward compatibility)
+      const nodeId = Array.from(newSelectedIds)[0];
+      updateFormField(name, `\${steps.${nodeId}.result.data}`);
+    } else {
+      // 다중 선택인 경우 배열로
+      const selectedArray = Array.from(newSelectedIds).map(
+        (id) => `\${steps.${id}.result.data}`
+      );
+      updateFormField(name, selectedArray);
+    }
   };
 
   return (
     <FieldBlockContentBox key={name} label="소스 데이터">
-      <Select value={selectedNodeId} onValueChange={handleNodeSelect}>
-        <SelectTrigger className="w-40">
-          <SelectValue placeholder="이전 노드 선택" />
-        </SelectTrigger>
-        <SelectContent>
-          {previousNodes.length === 0 ? (
-            <div className="p-2 text-sm text-gray-500">
-              이전 노드가 없습니다
-            </div>
-          ) : (
-            previousNodes.map((node) => {
+      <div className="space-y-2">
+        {previousNodes.length === 0 ? (
+          <div className="p-2 text-sm text-gray-500">
+            이전 노드가 없습니다
+          </div>
+        ) : (
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {previousNodes.map((node) => {
               const blockName = (node.data as any)?.block?.name || "";
               const displayName =
                 blockName && blockLabels[blockName]
                   ? blockLabels[blockName].title
                   : blockName || node.id;
+              const isChecked = selectedNodeIds.has(node.id);
+
               return (
-                <SelectItem key={node.id} value={node.id}>
-                  {node.id} - {displayName}
-                </SelectItem>
+                <div key={node.id} className="flex items-center gap-2">
+                  <Checkbox
+                    id={`node-${node.id}`}
+                    checked={isChecked}
+                    onCheckedChange={(checked) =>
+                      handleNodeToggle(node.id, checked === true)
+                    }
+                  />
+                  <label
+                    htmlFor={`node-${node.id}`}
+                    className="text-sm cursor-pointer flex-1"
+                  >
+                    <span className="font-mono text-xs text-gray-600">
+                      {node.id}
+                    </span>
+                    <span className="mx-1">-</span>
+                    <span>{displayName}</span>
+                  </label>
+                </div>
               );
-            })
-          )}
-        </SelectContent>
-      </Select>
-      {selectedNodeId && (
-        <div className="text-xs text-gray-500 mt-1 font-mono">
-          {currentValue}
-        </div>
-      )}
+            })}
+          </div>
+        )}
+
+        {selectedNodeIds.size > 0 && (
+          <div className="mt-3 p-2 bg-gray-50 rounded border">
+            <div className="text-xs font-semibold text-gray-700 mb-1">
+              선택된 노드 ({selectedNodeIds.size}개):
+            </div>
+            <div className="text-xs text-gray-600 font-mono space-y-0.5">
+              {Array.isArray(currentValue) ? (
+                currentValue.map((item: string, idx: number) => (
+                  <div key={idx}>{item}</div>
+                ))
+              ) : (
+                <div>{currentValue}</div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </FieldBlockContentBox>
   );
 };

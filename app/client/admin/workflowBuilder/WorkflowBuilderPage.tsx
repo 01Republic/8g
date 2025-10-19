@@ -14,9 +14,10 @@ import type { Workflow, Block } from "scordi-extension";
 import { AllBlockSchemas } from "scordi-extension";
 import { PaletteSheet } from "./PaletteSheet";
 import { ResultPanel } from "./ResultPanel";
+import { WorkspaceResultPanel } from "./WorkspaceResultPanel";
 import { WorkflowBuilderHeader } from "./WorkflowBuilderHeader";
 import { blockLabels } from "./nodes";
-import { runWorkflow } from "~/models/workflow/WorkflowRunner";
+import { runWorkflow, type WorkflowApiType } from "~/models/workflow/WorkflowRunner";
 import { buildWorkflowJson } from "~/models/workflow/WorkflowBuilder";
 import type { WorkflowEdge, SwitchEdgeData } from "~/models/workflow/types";
 import { ConditionalEdge } from "./edges/ConditionalEdge";
@@ -44,6 +45,7 @@ interface WorkflowBuilderPageProps {
     meta: FormWorkflow;
   }) => void;
   isSaving: boolean;
+  apiType?: WorkflowApiType; // Workspace API 타입 지정
 }
 
 export default function WorkflowBuilderPage({
@@ -51,6 +53,7 @@ export default function WorkflowBuilderPage({
   initialWorkflow,
   onSave,
   isSaving,
+  apiType,
 }: WorkflowBuilderPageProps) {
   // 초기 노드/엣지 변환
   const initialData = React.useMemo(() => {
@@ -81,7 +84,7 @@ export default function WorkflowBuilderPage({
 
   // Variables 관리
   const [variables, setVariables] = React.useState<Record<string, any>>(
-    initialWorkflow?.meta?.variables || {},
+    initialWorkflow?.meta?.vars || {},
   );
   const [variablesDialogOpen, setVariablesDialogOpen] = React.useState(false);
 
@@ -118,7 +121,7 @@ export default function WorkflowBuilderPage({
       start: workflow.start,
       steps: workflow.steps,
       targetUrl: workflow.targetUrl,
-      variables,
+      vars: variables,
     };
 
     if (parserExpression.trim()) {
@@ -155,6 +158,7 @@ export default function WorkflowBuilderPage({
         closeTabAfterCollection: true,
         activateTab: true,
         variables, // variables 전달
+        apiType, // API 타입 전달
       });
       setResult(res);
     } catch (err) {
@@ -376,7 +380,13 @@ export default function WorkflowBuilderPage({
               onVariablesChange={setVariables}
             />
           </ReactFlow>
-          {result && <ResultPanel result={result} />}
+          {result && (
+            apiType === "getWorkspaces" ? (
+              <WorkspaceResultPanel result={result} />
+            ) : (
+              <ResultPanel result={result} />
+            )
+          )}
         </div>
 
         {/* 오른쪽: Variables Preview */}

@@ -35,6 +35,7 @@ export const WorkflowsTable = (props: WorkflowsTableProps) => {
         <TableHeader className="bg-gray-50">
           <TableRow>
             <TableHead className="font-semibold text-gray-900">ID</TableHead>
+            <TableHead className="font-semibold text-gray-900">타입</TableHead>
             <TableHead className="font-semibold text-gray-900">설명</TableHead>
             <TableHead className="font-semibold text-gray-900">
               Steps 수
@@ -50,37 +51,55 @@ export const WorkflowsTable = (props: WorkflowsTableProps) => {
         <TableBody>
           {workflows.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+              <TableCell colSpan={6} className="text-center py-8 text-gray-500">
                 워크플로우가 없습니다. 새로운 워크플로우를 만들어보세요!
               </TableCell>
             </TableRow>
           ) : (
-            workflows.map((workflow) => (
-              <TableRow key={workflow.id} className="hover:bg-gray-50">
-                <TableCell className="font-medium">#{workflow.id}</TableCell>
-                <TableCell>
-                  <div className="font-medium">{workflow.description}</div>
-                </TableCell>
-                <TableCell>{workflow.meta?.steps?.length || 0} steps</TableCell>
-                <TableCell className="text-sm text-gray-600">
-                  {formatDate(workflow.updatedAt || workflow.createdAt || null)}
-                </TableCell>
-                <TableCell className="text-right">
-                  <Link to={`/workflow-builder/${workflow.id}`}>
-                    <Button variant="outline" size="sm">
-                      수정
+            workflows.map((workflow) => {
+              const workflowType = workflow.type || 'workflow';
+              const builderPath = workflowType === 'workspace'
+                ? `/workspace-builder/${workflow.id}`
+                : `/workflow-builder/${workflow.id}`;
+
+              return (
+                <TableRow key={workflow.id} className="hover:bg-gray-50">
+                  <TableCell className="font-medium">#{workflow.id}</TableCell>
+                  <TableCell>
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        workflowType === 'workspace'
+                          ? 'bg-purple-100 text-purple-800'
+                          : 'bg-blue-100 text-blue-800'
+                      }`}
+                    >
+                      {workflowType === 'workspace' ? 'Workspace' : 'Workflow'}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <div className="font-medium">{workflow.description}</div>
+                  </TableCell>
+                  <TableCell>{workflow.meta?.steps?.length || 0} steps</TableCell>
+                  <TableCell className="text-sm text-gray-600">
+                    {formatDate(workflow.updatedAt || workflow.createdAt || null)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Link to={builderPath}>
+                      <Button variant="outline" size="sm">
+                        수정
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => deleteWorkflows(workflow.id)}
+                    >
+                      삭제
                     </Button>
-                  </Link>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => deleteWorkflows(workflow.id)}
-                  >
-                    삭제
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))
+                  </TableCell>
+                </TableRow>
+              );
+            })
           )}
         </TableBody>
       </Table>

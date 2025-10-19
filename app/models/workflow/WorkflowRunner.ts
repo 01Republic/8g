@@ -1,6 +1,7 @@
 import { EightGClient } from "scordi-extension";
 import type { FormWorkflow } from "~/models/integration/types";
-import { resolveWorkflowVariables } from "./VariableResolver";
+
+export type WorkflowApiType = 'collectWorkflow' | 'getWorkspaces' | 'getWorkspaceMembers' | 'getWorkspacePlanAndCycle' | 'getWorkspaceBillingHistories';
 
 export interface RunWorkflowParams {
   evaluatedUrl: string;
@@ -8,6 +9,7 @@ export interface RunWorkflowParams {
   closeTabAfterCollection?: boolean;
   activateTab?: boolean;
   variables?: Record<string, any>;
+  apiType?: WorkflowApiType; // 어떤 API를 호출할지 지정
 }
 
 export interface RunWorkflowResult {
@@ -23,24 +25,48 @@ export async function runWorkflow(
     closeTabAfterCollection,
     activateTab,
     variables,
+    apiType = 'collectWorkflow', // 기본값은 일반 collectWorkflow
   } = params;
   const client = new EightGClient();
 
-  // 변수 치환
-  const resolvedWorkflow = variables
-    ? resolveWorkflowVariables(workflow, variables)
-    : workflow;
+  // vars 필드에 변수 병합 (workflow.vars + 주입된 variables)
+  const finalVars = {
+    ...workflow.vars,
+    ...variables,
+  };
 
-  const result = await client.collectWorkflow({
-    targetUrl: resolvedWorkflow.targetUrl ?? evaluatedUrl,
+  const requestParams = {
+    targetUrl: workflow.targetUrl ?? evaluatedUrl,
     workflow: {
-      version: "1.0",
-      start: resolvedWorkflow.start,
-      steps: resolvedWorkflow.steps,
+      version: "1.0" as const,
+      start: workflow.start,
+      steps: workflow.steps,
+      vars: Object.keys(finalVars).length > 0 ? finalVars : undefined,
     },
-    closeTabAfterCollection: closeTabAfterCollection ?? false,
+    closeTabAfterCollection: false,
     activateTab: activateTab ?? true,
-  });
+  };
+
+  // API 타입에 따라 다른 메서드 호출
+  let result: any;
+  switch (apiType) {
+    case 'getWorkspaces':
+      result = await client.getWorkspaces(requestParams);
+      break;
+    case 'getWorkspaceMembers':
+      result = await client.getWorkspaceMembers(requestParams);
+      break;
+    case 'getWorkspacePlanAndCycle':
+      result = await client.getWorkspacePlanAndCycle(requestParams);
+      break;
+    case 'getWorkspaceBillingHistories':
+      result = await client.getWorkspaceBillingHistories(requestParams);
+      break;
+    case 'collectWorkflow':
+    default:
+      result = await client.collectWorkflow(requestParams);
+      break;
+  }
 
   return { result };
 }

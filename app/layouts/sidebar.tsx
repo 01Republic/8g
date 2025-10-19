@@ -1,4 +1,4 @@
-import { FolderIcon, HomeIcon, PlusIcon, UsersIcon } from "lucide-react";
+import { FolderIcon, HomeIcon, UsersIcon } from "lucide-react";
 import {
   SidebarGroupLabel,
   SidebarMenuButton,
@@ -41,13 +41,20 @@ function AppSidebar() {
       <SidebarHeader></SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
+          <SidebarGroupLabel>General</SidebarGroupLabel>
           <Button size="md" asChild>
             <Link to="/">
-              <PlusIcon /> Workflows
+              <FolderIcon /> Workflows
             </Link>
           </Button>
         </SidebarGroup>
         <SidebarGroup>
+          <SidebarGroupLabel>Workspace Data</SidebarGroupLabel>
+          <Button size="md" asChild variant="outline">
+            <Link to="/workspace-builder">
+              <UsersIcon /> Workspace Builder
+            </Link>
+          </Button>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter />
