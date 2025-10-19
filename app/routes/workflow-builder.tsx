@@ -1,13 +1,14 @@
 import "@xyflow/react/dist/style.css";
 import WorkflowBuilderPage from "~/client/admin/workflowBuilder/WorkflowBuilderPage";
 import type { Route } from "./+types/workflow-builder";
-import type { FormWorkflow } from "~/models/integration/types";
+import type { FormWorkflow } from "~/models/workflow/types";
 import { useFetcher } from "react-router";
 import { useEffect } from "react";
 import { redirect } from "react-router";
-import axios from "axios";
-
-const BASE_URL = process.env.BASE_URL || "http://localhost:8000";
+import {
+  findWorkflowMetadata,
+  upsertWorkflowMetadata,
+} from "~/.server/services";
 
 export async function loader({ params }: Route.LoaderArgs) {
   const workflowId = params.workflowId
@@ -15,8 +16,7 @@ export async function loader({ params }: Route.LoaderArgs) {
     : undefined;
 
   if (workflowId) {
-    const response = await axios.get(`${BASE_URL}/8g/workflow/${workflowId}`);
-    const workflow = response.data;
+    const workflow = await findWorkflowMetadata(workflowId);
     return {
       workflowId,
       workflow: workflow
@@ -42,11 +42,7 @@ export async function action({ request }: Route.ActionArgs) {
   const description = formData.get("description")!.toString();
   const meta = JSON.parse(formData.get("meta")!.toString()) as FormWorkflow;
 
-  await axios.post(`${BASE_URL}/8g/workflow`, {
-    workflowId,
-    description,
-    meta,
-  });
+  await upsertWorkflowMetadata({ workflowId, description, meta });
 
   return redirect("/workflows");
 }

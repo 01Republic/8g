@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { DataSource, BaseEntity } from "typeorm";
-import { allEntities } from "./entities/index.js";
+import { allEntities } from "./entities/index";
 
 // 환경변수 설정
 const config = {

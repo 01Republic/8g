@@ -23,6 +23,7 @@ import { SourceDataFieldBlock } from "./fieldBlock/SourceDataFieldBlock";
 import { RecordFieldBlock } from "./fieldBlock/RecordFieldBlock";
 import { CodeFieldBlock } from "./fieldBlock/CodeFieldBlock";
 import { RepeatFieldBlock } from "./fieldBlock/RepeatFieldBlock";
+import { ConditionsFieldBlock } from "./fieldBlock/ConditionsFieldBlock";
 
 interface BlockActionHandlerModalProps {
   id: string;
@@ -163,6 +164,7 @@ export const BlockActionHandlerModal = (
             if (field.name === "option" && field.type === "object") {
               return (
                 <OptionFieldBlock
+                  key={field.name}
                   field={field}
                   formData={formData}
                   updateOptionField={updateOptionField}
@@ -176,6 +178,7 @@ export const BlockActionHandlerModal = (
             if (field.name === "schemaDefinition") {
               return (
                 <SchemaDefinitionFieldBlock
+                  key={field.name}
                   field={field}
                   formData={formData}
                   updateFormField={updateFormField}
@@ -188,6 +191,7 @@ export const BlockActionHandlerModal = (
               if (field.name === "sourceData" || field.name === "inputData") {
                 return (
                   <SourceDataFieldBlock
+                    key={field.name}
                     field={field}
                     formData={formData}
                     updateFormField={updateFormField}
@@ -199,6 +203,7 @@ export const BlockActionHandlerModal = (
               if (field.name === "code") {
                 return (
                   <CodeFieldBlock
+                    key={field.name}
                     field={field}
                     formData={formData}
                     updateFormField={updateFormField}
@@ -207,6 +212,7 @@ export const BlockActionHandlerModal = (
               }
               return (
                 <StringFieldBlock
+                  key={field.name}
                   field={field}
                   formData={formData}
                   updateFormField={updateFormField}
@@ -216,6 +222,7 @@ export const BlockActionHandlerModal = (
             } else if (field.type === "number") {
               return (
                 <NumberFieldBlock
+                  key={field.name}
                   field={field}
                   formData={formData}
                   updateFormField={updateFormField}
@@ -224,6 +231,7 @@ export const BlockActionHandlerModal = (
             } else if (field.type === "boolean") {
               return (
                 <BooleanFieldBlock
+                  key={field.name}
                   field={field}
                   formData={formData}
                   updateFormField={updateFormField}
@@ -232,6 +240,7 @@ export const BlockActionHandlerModal = (
             } else if (field.type === "enum") {
               return (
                 <EnumFieldBlock
+                  key={field.name}
                   field={field}
                   formData={formData}
                   updateFormField={updateFormField}
@@ -243,6 +252,7 @@ export const BlockActionHandlerModal = (
             ) {
               return (
                 <ArrayFieldBlock
+                  key={field.name}
                   field={field}
                   formData={formData}
                   updateFormField={updateFormField}
@@ -251,6 +261,7 @@ export const BlockActionHandlerModal = (
             } else if (field.type === "record") {
               return (
                 <RecordFieldBlock
+                  key={field.name}
                   field={field}
                   formData={formData}
                   updateFormField={updateFormField}
@@ -262,6 +273,18 @@ export const BlockActionHandlerModal = (
               if (field.name === "textFilter") {
                 return (
                   <TextFilterFieldBlock
+                    key={field.name}
+                    field={field}
+                    formData={formData}
+                    updateFormField={updateFormField}
+                  />
+                );
+              }
+              // For conditions in WaitForConditionBlock
+              if (field.name === "conditions") {
+                return (
+                  <ConditionsFieldBlock
+                    key={field.name}
                     field={field}
                     formData={formData}
                     updateFormField={updateFormField}

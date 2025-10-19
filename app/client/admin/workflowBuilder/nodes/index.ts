@@ -78,6 +78,14 @@ export const blockLabels: Record<
     title: "데이터 추출/변환",
     description: "JavaScript로 데이터 추출 및 변환",
   },
+  "wait-for-condition": {
+    title: "조건 대기",
+    description: "조건 대기",
+  },
+  "navigate": {
+    title: "페이지 이동",
+    description: "페이지 이동",
+  },
 };
 
 /**
@@ -127,4 +135,17 @@ export const fieldLabels: Record<string, string> = {
   // DataExtractBlock
   code: "JavaScript 코드",
   inputData: "입력 데이터",
+
+  // WaitForConditionBlock
+  conditions: "조건",
+  mode: "모드",
+  pollingIntervalMs: "폴링 간격 (ms)",
+  position: "UI 위치",
+  urlPattern: "URL 패턴",
+  elementExists: "요소 존재 확인",
+  cookieExists: "쿠키 존재 확인",
+  storageKey: "스토리지 키 확인",
+  userConfirmation: "사용자 확인",
+  message: "메시지",
+  buttonText: "버튼 텍스트",
 };

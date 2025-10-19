@@ -167,6 +167,14 @@ const unwrapHandlers: UnwrapHandler[] = [
       defaultValue: state.defaultValue,
     }),
   },
+  {
+    check: (s) => s?._def?.typeName === "ZodEffects",
+    unwrap: (s, state) => ({
+      schema: s._def.schema,
+      optional: state.optional,
+      defaultValue: state.defaultValue,
+    }),
+  },
 ];
 
 /**
@@ -176,7 +184,7 @@ function determineFieldType(
   schema: any,
 ): Pick<
   ParsedField,
-  "type" | "enumValues" | "arrayItemType" | "unionTypes" | "defaultValue"
+  "type" | "enumValues" | "arrayItemType" | "unionTypes" | "defaultValue" | "nestedFields"
 > {
   const handler = typeHandlers.find((h) => h.check(schema));
   return handler ? handler.handle(schema) : { type: "string" }; // default
@@ -191,7 +199,7 @@ type TypeHandler = {
     schema: any,
   ) => Pick<
     ParsedField,
-    "type" | "enumValues" | "arrayItemType" | "unionTypes" | "defaultValue"
+    "type" | "enumValues" | "arrayItemType" | "unionTypes" | "defaultValue" | "nestedFields"
   >;
 };
 

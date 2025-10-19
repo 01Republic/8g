@@ -42,24 +42,12 @@ function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <Button size="md" asChild>
-            <Link to="/integration">
-              <PlusIcon /> Integration Apps
+            <Link to="/">
+              <PlusIcon /> Workflows
             </Link>
           </Button>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarMenuButton size="lg">
-            <HomeIcon />
-            <Link to="/">Home</Link>
-          </SidebarMenuButton>
-          <SidebarMenuButton size="lg">
-            <FolderIcon />
-            <Link to="/apps">Apps</Link>
-          </SidebarMenuButton>
-          <SidebarMenuButton size="lg">
-            <UsersIcon />
-            <Link to="/members">Members</Link>
-          </SidebarMenuButton>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter />

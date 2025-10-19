@@ -1,6 +1,6 @@
 import { initializeDatabase } from "~/.server/db";
 import { IntegrationAppWorkflowMetadata } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
-import type { FormWorkflow } from "~/models/integration/types";
+import type { FormWorkflow } from "~/models/workflow/types";
 
 interface UpsertWorkflowMetadataPayload {
   workflowId?: number;
