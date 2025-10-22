@@ -23,6 +23,8 @@ interface WorkflowBuilderHeaderProps {
   onAutoLayout?: () => void;
   onSaveClick: () => void;
   onVariablesClick: () => void;
+  onExportClick: () => void;
+  onImportClick: () => void;
   type?: WorkflowType;
   onApiTypeChange?: (type: WorkflowType) => void;
   productId: number;
@@ -38,6 +40,8 @@ export const WorkflowBuilderHeader = ({
   onAutoLayout,
   onSaveClick,
   onVariablesClick,
+  onExportClick,
+  onImportClick,
   type = 'WORKFLOW',
   onApiTypeChange,
   productId,
@@ -105,6 +109,12 @@ export const WorkflowBuilderHeader = ({
       </Button>
       <Button variant="outline" onClick={onVariablesClick}>
         Variables
+      </Button>
+      <Button variant="outline" onClick={onExportClick}>
+        Export JSON
+      </Button>
+      <Button variant="outline" onClick={onImportClick}>
+        Import JSON
       </Button>
       <Button variant="outline" onClick={onSaveClick}>
         저장

@@ -34,6 +34,10 @@ import { useNodesState } from "@xyflow/react";
 import { VariablesDialog } from "./VariablesDialog";
 import { VariablesPreviewPanel } from "./VariablesPreviewPanel";
 import { EdgeConfigDialog } from "./edges/EdgeConfigDialog";
+import {
+  exportWorkflowWithMetadata,
+  importWorkflowWithMetadata,
+} from "./utils/exportImport";
 
 interface Product {
   id: number;
@@ -268,6 +272,63 @@ export default function WorkflowBuilderPage({
     [workflowId, productId, buildWorkflow, onSave, targetUrl, type],
   );
 
+  const handleExport = React.useCallback(() => {
+    const workflow = buildWorkflow();
+    // 파일명 생성: 한글/영문 유지, 특수문자만 언더스코어로 치환
+    const filename = description
+      ? description
+          .replace(/[<>:"/\\|?*]/g, "_") // 파일명에 사용 불가능한 문자만 치환
+          .replace(/\s+/g, "_") // 공백을 언더스코어로
+          .replace(/_{2,}/g, "_") // 연속된 언더스코어는 하나로
+          .trim()
+      : `workflow_${Date.now()}`;
+    exportWorkflowWithMetadata(workflow, description, filename);
+  }, [buildWorkflow, description]);
+
+  const handleImport = React.useCallback(() => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      const result = await importWorkflowWithMetadata(file);
+      if (result.success && result.data) {
+        // 워크플로우를 nodes/edges로 변환
+        const { nodes: importedNodes, edges: importedEdges } =
+          convertWorkflowToNodesAndEdges(result.data as Workflow);
+
+        // 상태 업데이트
+        setNodes(importedNodes);
+        setEdges(importedEdges);
+        setTargetUrl(result.data.targetUrl || "");
+        setVariables(result.data.vars || {});
+
+        // 메타데이터가 있으면 description도 업데이트
+        if (result.metadata?.description) {
+          setDescription(result.metadata.description);
+        }
+
+        // 자동 레이아웃 적용
+        setTimeout(() => {
+          const { nodes: layoutedNodes, edges: layoutedEdges } =
+            getLayoutedElements(importedNodes, importedEdges, "TB");
+          setNodes(layoutedNodes);
+          setEdges(layoutedEdges);
+          setTimeout(() => {
+            (rfRef.current as any)?.fitView({ padding: 0.2 });
+          }, 0);
+        }, 0);
+
+        alert("워크플로우를 성공적으로 불러왔습니다.");
+      } else {
+        alert(`워크플로우 불러오기 실패: ${result.error}`);
+      }
+    };
+    input.click();
+  }, [setNodes, setEdges, setTargetUrl, setVariables]);
+
   return (
     <div
       style={{
@@ -295,6 +356,8 @@ export default function WorkflowBuilderPage({
           onAutoLayout={onAutoLayout}
           onSaveClick={() => setSaveDialogOpen(true)}
           onVariablesClick={() => setVariablesDialogOpen(true)}
+          onExportClick={handleExport}
+          onImportClick={handleImport}
           type={type}
           onApiTypeChange={setApiType}
           productId={productId}

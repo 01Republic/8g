@@ -11,7 +11,7 @@ interface WorkflowMetadataResponse {
 }
 
 export async function findWorkflowMetadata(workflowId: number) {
-  const response = await fetch(`${WORKFLOW_API_BASE_URL}/8g/workflow/${workflowId}`);
+  const response = await fetch(`${WORKFLOW_API_BASE_URL}/8g/workflows/${workflowId}`);
 
   if (!response.ok) {
     if (response.status === 404) {
