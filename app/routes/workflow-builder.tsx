@@ -8,12 +8,17 @@ import { redirect } from "react-router";
 import {
   findWorkflowMetadata,
   upsertWorkflowMetadata,
+  fetchProducts,
 } from "~/.server/services";
+import type { WorkflowType } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
 
 export async function loader({ params }: Route.LoaderArgs) {
   const workflowId = params.workflowId
     ? parseInt(params.workflowId)
     : undefined;
+
+  // Fetch products from API
+  const productsResponse = await fetchProducts({ itemsPerPage: 100 });
 
   if (workflowId) {
     const workflow = await findWorkflowMetadata(workflowId);
@@ -24,14 +29,18 @@ export async function loader({ params }: Route.LoaderArgs) {
             id: workflow.id,
             description: workflow.description,
             meta: workflow.meta,
+            type: workflow.type,
+            productId: workflow.productId,
           }
         : null,
+      products: productsResponse.items,
     };
   }
 
   return {
     workflowId: undefined,
     workflow: null,
+    products: productsResponse.items,
   };
 }
 
@@ -39,12 +48,21 @@ export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
   const workflowIdStr = formData.get("workflowId")?.toString();
   const workflowId = workflowIdStr ? parseInt(workflowIdStr) : undefined;
+  const productIdStr = formData.get("productId")!.toString();
+  const productId = parseInt(productIdStr);
   const description = formData.get("description")!.toString();
   const meta = JSON.parse(formData.get("meta")!.toString()) as FormWorkflow;
+  const typeStr = formData.get("type")?.toString() as WorkflowType | undefined;
 
-  await upsertWorkflowMetadata({ workflowId, description, meta, type: 'workflow' });
+  await upsertWorkflowMetadata({
+    workflowId,
+    productId,
+    description,
+    meta,
+    type: typeStr || 'WORKFLOW',
+  });
 
-  return redirect("/workflows");
+  return redirect("/");
 }
 
 export default function WorkflowBuilder({ loaderData }: Route.ComponentProps) {
@@ -53,17 +71,23 @@ export default function WorkflowBuilder({ loaderData }: Route.ComponentProps) {
 
   const onSave = (payload: {
     workflowId?: number;
+    productId: number;
     description: string;
     meta: FormWorkflow;
+    type?: WorkflowType;
   }) => {
-    const { workflowId, description, meta } = payload;
+    const { workflowId, productId, description, meta, type } = payload;
 
     const formData = new FormData();
     if (workflowId) {
       formData.append("workflowId", workflowId.toString());
     }
+    formData.append("productId", productId.toString());
     formData.append("description", description);
     formData.append("meta", JSON.stringify(meta));
+    if (type) {
+      formData.append("type", type);
+    }
     fetcher.submit(formData, { method: "POST" });
   };
 
@@ -80,6 +104,8 @@ export default function WorkflowBuilder({ loaderData }: Route.ComponentProps) {
       initialWorkflow={loaderData.workflow}
       onSave={onSave}
       isSaving={isSaving}
+      type={loaderData.workflow?.type as WorkflowType | undefined}
+      products={loaderData.products}
     />
   );
 }

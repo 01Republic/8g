@@ -1,7 +1,6 @@
 import { EightGClient } from "scordi-extension";
 import type { FormWorkflow } from "~/models/integration/types";
-
-export type WorkflowApiType = 'collectWorkflow' | 'getWorkspaces' | 'getWorkspaceMembers' | 'getWorkspacePlanAndCycle' | 'getWorkspaceBillingHistories';
+import type { WorkflowType } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
 
 export interface RunWorkflowParams {
   evaluatedUrl: string;
@@ -9,7 +8,7 @@ export interface RunWorkflowParams {
   closeTabAfterCollection?: boolean;
   activateTab?: boolean;
   variables?: Record<string, any>;
-  apiType?: WorkflowApiType; // 어떤 API를 호출할지 지정
+  type?: WorkflowType; // 어떤 API를 호출할지 지정
 }
 
 export interface RunWorkflowResult {
@@ -25,7 +24,7 @@ export async function runWorkflow(
     closeTabAfterCollection,
     activateTab,
     variables,
-    apiType = 'collectWorkflow', // 기본값은 일반 collectWorkflow
+    type = 'WORKFLOW', // 기본값은 일반 WORKFLOW
   } = params;
   const client = new EightGClient();
 
@@ -43,26 +42,26 @@ export async function runWorkflow(
       steps: workflow.steps,
       vars: Object.keys(finalVars).length > 0 ? finalVars : undefined,
     },
-    closeTabAfterCollection: false,
+    closeTabAfterCollection: true,
     activateTab: activateTab ?? true,
   };
 
-  // API 타입에 따라 다른 메서드 호출
+  // 타입에 따라 다른 메서드 호출
   let result: any;
-  switch (apiType) {
-    case 'getWorkspaces':
+  switch (type) {
+    case 'WORKSPACE':
       result = await client.getWorkspaces(requestParams);
       break;
-    case 'getWorkspaceMembers':
+    case 'MEMBERS':
       result = await client.getWorkspaceMembers(requestParams);
       break;
-    case 'getWorkspacePlanAndCycle':
+    case 'PLAN':
       result = await client.getWorkspacePlanAndCycle(requestParams);
       break;
-    case 'getWorkspaceBillingHistories':
+    case 'BILLING':
       result = await client.getWorkspaceBillingHistories(requestParams);
       break;
-    case 'collectWorkflow':
+    case 'WORKFLOW':
     default:
       result = await client.collectWorkflow(requestParams);
       break;

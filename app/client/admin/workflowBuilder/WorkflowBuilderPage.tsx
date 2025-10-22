@@ -15,9 +15,13 @@ import { AllBlockSchemas } from "scordi-extension";
 import { PaletteSheet } from "./PaletteSheet";
 import { ResultPanel } from "./ResultPanel";
 import { WorkspaceResultPanel } from "./WorkspaceResultPanel";
+import { MembersResultPanel } from "./MembersResultPanel";
+import { PlanCycleResultPanel } from "./PlanCycleResultPanel";
+import { BillingHistoryResultPanel } from "./BillingHistoryResultPanel";
 import { WorkflowBuilderHeader } from "./WorkflowBuilderHeader";
 import { blockLabels } from "./nodes";
-import { runWorkflow, type WorkflowApiType } from "~/models/workflow/WorkflowRunner";
+import { runWorkflow } from "~/models/workflow/WorkflowRunner";
+import type { WorkflowType } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
 import { buildWorkflowJson } from "~/models/workflow/WorkflowBuilder";
 import type { WorkflowEdge, SwitchEdgeData } from "~/models/workflow/types";
 import { ConditionalEdge } from "./edges/ConditionalEdge";
@@ -27,10 +31,15 @@ import type { FormWorkflow } from "~/models/integration/types";
 import { SaveDialog } from "./SaveDialog";
 import { convertWorkflowToNodesAndEdges } from "./utils/workflowConverter";
 import { useNodesState } from "@xyflow/react";
-import { ParserDialog } from "./ParserDialog";
 import { VariablesDialog } from "./VariablesDialog";
 import { VariablesPreviewPanel } from "./VariablesPreviewPanel";
 import { EdgeConfigDialog } from "./edges/EdgeConfigDialog";
+
+interface Product {
+  id: number;
+  nameKo: string;
+  nameEn: string;
+}
 
 interface WorkflowBuilderPageProps {
   workflowId?: number;
@@ -38,14 +47,18 @@ interface WorkflowBuilderPageProps {
     id: number;
     description: string;
     meta: FormWorkflow;
+    productId: number;
   } | null;
   onSave: (payload: {
     workflowId?: number;
+    productId: number;
     description: string;
     meta: FormWorkflow;
+    type?: WorkflowType;
   }) => void;
   isSaving: boolean;
-  apiType?: WorkflowApiType; // Workspace API 타입 지정
+  type?: WorkflowType; // Workspace API 타입 지정
+  products: Product[];
 }
 
 export default function WorkflowBuilderPage({
@@ -53,7 +66,8 @@ export default function WorkflowBuilderPage({
   initialWorkflow,
   onSave,
   isSaving,
-  apiType,
+  type: initialApiType,
+  products,
 }: WorkflowBuilderPageProps) {
   // 초기 노드/엣지 변환
   const initialData = React.useMemo(() => {
@@ -75,12 +89,12 @@ export default function WorkflowBuilderPage({
   const [description, setDescription] = React.useState(
     initialWorkflow?.description || "",
   );
-
-  // Parser 관리
-  const [parserExpression, setParserExpression] = React.useState(
-    initialWorkflow?.meta?.parser?.expression || "",
+  const [type, setApiType] = React.useState<WorkflowType>(
+    initialApiType || 'WORKFLOW',
   );
-  const [parserDialogOpen, setParserDialogOpen] = React.useState(false);
+  const [productId, setProductId] = React.useState<number>(
+    initialWorkflow?.productId || 1, // 기본값 1 (나중에 UI에서 선택 가능하도록)
+  );
 
   // Variables 관리
   const [variables, setVariables] = React.useState<Record<string, any>>(
@@ -110,6 +124,7 @@ export default function WorkflowBuilderPage({
   );
   const [isRunning, setIsRunning] = React.useState(false);
   const [result, setResult] = React.useState<any>(null);
+  const [executionResults, setExecutionResults] = React.useState<any>(null);
   const rfRef = React.useRef<unknown>(null);
   const [paletteOpen, setPaletteOpen] = React.useState(false);
 
@@ -124,14 +139,8 @@ export default function WorkflowBuilderPage({
       vars: variables,
     };
 
-    if (parserExpression.trim()) {
-      formWorkflow.parser = {
-        expression: parserExpression,
-      };
-    }
-
     return formWorkflow;
-  }, [nodes, edges, targetUrl, parserExpression, variables]);
+  }, [nodes, edges, targetUrl, variables]);
 
   const run = async () => {
     setIsRunning(true);
@@ -158,9 +167,23 @@ export default function WorkflowBuilderPage({
         closeTabAfterCollection: true,
         activateTab: true,
         variables, // variables 전달
-        apiType, // API 타입 전달
+        type, // API 타입 전달
       });
       setResult(res);
+      setExecutionResults(res);
+
+      // nodes의 data에 executionResults 추가
+      setNodes((nds) => {
+        const updatedNodes = nds.map((node) => ({
+          ...node,
+          data: {
+            ...node.data,
+            executionResults: res,
+          },
+        }));
+        console.log("🔄 Updated nodes with executionResults:", updatedNodes);
+        return updatedNodes;
+      });
     } catch (err) {
       setResult({ error: String(err) });
     } finally {
@@ -235,12 +258,14 @@ export default function WorkflowBuilderPage({
 
       onSave({
         workflowId,
+        productId,
         description: desc,
         meta: workflowWithUrl,
+        type,
       });
       setDescription(desc);
     },
-    [workflowId, buildWorkflow, onSave, targetUrl],
+    [workflowId, productId, buildWorkflow, onSave, targetUrl, type],
   );
 
   return (
@@ -269,8 +294,12 @@ export default function WorkflowBuilderPage({
           isRunning={isRunning}
           onAutoLayout={onAutoLayout}
           onSaveClick={() => setSaveDialogOpen(true)}
-          onParserClick={() => setParserDialogOpen(true)}
           onVariablesClick={() => setVariablesDialogOpen(true)}
+          type={type}
+          onApiTypeChange={setApiType}
+          productId={productId}
+          onProductIdChange={setProductId}
+          products={products}
         />
 
         <PaletteSheet
@@ -365,14 +394,6 @@ export default function WorkflowBuilderPage({
               initialDescription={description}
             />
 
-            <ParserDialog
-              open={parserDialogOpen}
-              onOpenChange={setParserDialogOpen}
-              expression={parserExpression}
-              onExpressionChange={setParserExpression}
-              sampleResult={result}
-            />
-
             <VariablesDialog
               open={variablesDialogOpen}
               onOpenChange={setVariablesDialogOpen}
@@ -381,11 +402,14 @@ export default function WorkflowBuilderPage({
             />
           </ReactFlow>
           {result && (
-            apiType === "getWorkspaces" ? (
-              <WorkspaceResultPanel result={result} />
-            ) : (
-              <ResultPanel result={result} />
-            )
+            <>
+              {console.log(result)}
+              {type === "WORKSPACE" && <WorkspaceResultPanel result={result} />}
+              {type === "MEMBERS" && <MembersResultPanel result={result} />}
+              {type === "PLAN" && <PlanCycleResultPanel result={result} />}
+              {type === "BILLING" && <BillingHistoryResultPanel result={result} />}
+              {(type === "WORKFLOW" || !type) && <ResultPanel result={result} />}
+            </>
           )}
         </div>
 

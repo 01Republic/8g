@@ -20,7 +20,12 @@ CREATE TABLE IF NOT EXISTS payplo_staging.integration_app_workflow_metadata (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 */
 
-export type WorkflowType = 'workflow' | 'workspace';
+export type WorkflowType =
+  | 'WORKFLOW'
+  | 'WORKSPACE'
+  | 'MEMBERS'
+  | 'PLAN'
+  | 'BILLING';
 
 @Entity("integration_app_workflow_metadata")
 export class IntegrationAppWorkflowMetadata extends BaseEntity {
@@ -33,8 +38,11 @@ export class IntegrationAppWorkflowMetadata extends BaseEntity {
   @Column({ type: "json", name: "meta" })
   meta: FormWorkflow;
 
-  @Column({ type: "varchar", name: "type", default: "workflow" })
+  @Column({ type: "varchar", name: "type", default: "WORKFLOW" })
   type: WorkflowType;
+
+  @Column({ type: "int", name: "product_id" })
+  productId: number;
 
   @CreateDateColumn({ type: "datetime", name: "created_at" })
   createdAt: Date;

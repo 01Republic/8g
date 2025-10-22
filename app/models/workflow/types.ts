@@ -40,9 +40,6 @@ export type FormWorkflow = {
   start: string;
   steps: WorkflowStep[];
   targetUrl?: string;
-  parser?: {
-    expression: string;
-  };
   vars?: Record<string, any>;
 };
 

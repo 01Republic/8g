@@ -31,12 +31,13 @@ interface BlockActionHandlerModalProps {
   block: Block;
   parsedSchema: ParsedSchema;
   repeat?: RepeatConfig;
+  executionResults?: Record<string, any>;
 }
 
 export const BlockActionHandlerModal = (
   props: BlockActionHandlerModalProps,
 ) => {
-  const { id, title, parsedSchema, block, repeat: initialRepeat } = props;
+  const { id, title, parsedSchema, block, repeat: initialRepeat, executionResults } = props;
 
   const { setNodes } = useReactFlow();
   const blockName = block.name;
@@ -207,6 +208,8 @@ export const BlockActionHandlerModal = (
                     field={field}
                     formData={formData}
                     updateFormField={updateFormField}
+                    currentNodeId={id}
+                    executionResults={executionResults}
                   />
                 );
               }

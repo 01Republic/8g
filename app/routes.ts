@@ -8,7 +8,6 @@ import {
 export default [
   layout("layouts/sidebar.tsx", [
     index("routes/workflows.tsx"),
-    route("/workflow-builder/:workflowId?", "routes/workflow-builder.tsx"),
-    route("/workspace-builder/:workflowId?", "routes/workspace-builder.tsx"),
+    route("/workflow-builder/:workflowId?", "routes/workflow-builder.tsx")
   ]),
 ] satisfies RouteConfig;

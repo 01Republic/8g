@@ -41,7 +41,6 @@ function AppSidebar() {
       <SidebarHeader></SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>General</SidebarGroupLabel>
           <Button size="md" asChild>
             <Link to="/">
               <FolderIcon /> Workflows
@@ -49,12 +48,6 @@ function AppSidebar() {
           </Button>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Workspace Data</SidebarGroupLabel>
-          <Button size="md" asChild variant="outline">
-            <Link to="/workspace-builder">
-              <UsersIcon /> Workspace Builder
-            </Link>
-          </Button>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter />
