@@ -219,9 +219,15 @@ function ObjectSchemaFieldBlock({
                         <SelectItem value="boolean">불린</SelectItem>
                         <SelectItem value="array">배열</SelectItem>
                         <SelectItem value="object">객체</SelectItem>
+                        <SelectItem value="currency">통화</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
+                  {typeValue === "currency" && (
+                    <div className="pl-2 flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded">
+                      💱 통화 객체 (AI가 자동으로 파싱합니다: code, symbol, format, amount, text)
+                    </div>
+                  )}
                   {canHaveEnum && (
                     <div className="pl-2 flex gap-2 items-center">
                       <span className="text-xs text-gray-500 w-20">
@@ -506,9 +512,17 @@ function ArraySchemaFieldBlock({
               <SelectItem value="number">숫자</SelectItem>
               <SelectItem value="boolean">불린</SelectItem>
               <SelectItem value="object">객체</SelectItem>
+              <SelectItem value="currency">통화</SelectItem>
             </SelectContent>
           </Select>
         </div>
+
+        {/* currency일 경우 안내 메시지 */}
+        {itemsType === "currency" && (
+          <div className="flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded border-t pt-2">
+            💱 통화 객체 (AI가 자동으로 파싱합니다: code, symbol, format, amount, text)
+          </div>
+        )}
 
         {/* string/number일 경우 enum 값 입력 */}
         {(itemsType === "string" || itemsType === "number") && (
@@ -559,9 +573,15 @@ function ArraySchemaFieldBlock({
                             <SelectItem value="boolean">불린</SelectItem>
                             <SelectItem value="array">배열</SelectItem>
                             <SelectItem value="object">객체</SelectItem>
+                            <SelectItem value="currency">통화</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
+                      {typeValue === "currency" && (
+                        <div className="pl-2 flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded">
+                          💱 통화 객체 (AI가 자동으로 파싱합니다: code, symbol, format, amount, text)
+                        </div>
+                      )}
                       {canHaveEnum && (
                         <div className="pl-2 flex gap-2 items-center">
                           <span className="text-xs text-gray-500 w-20">
@@ -765,9 +785,15 @@ function NestedObjectFields({
                       <SelectItem value="boolean">불린</SelectItem>
                       <SelectItem value="array">배열</SelectItem>
                       <SelectItem value="object">객체</SelectItem>
+                      <SelectItem value="currency">통화</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
+                {typeValue === "currency" && (
+                  <div className="pl-2 flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded">
+                    💱 통화 객체 (AI가 자동으로 파싱합니다: code, symbol, format, amount, text)
+                  </div>
+                )}
                 {canHaveEnum && (
                   <div className="pl-2 flex gap-2 items-center">
                     <span className="text-xs text-gray-500 w-20">Enum 값:</span>
@@ -905,9 +931,16 @@ function NestedArrayItems({
             <SelectItem value="boolean">불린</SelectItem>
             <SelectItem value="object">객체</SelectItem>
             <SelectItem value="array">배열</SelectItem>
+            <SelectItem value="currency">통화</SelectItem>
           </SelectContent>
         </Select>
       </div>
+
+      {itemsType === "currency" && (
+        <div className="flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded">
+          💱 통화 객체 (AI가 자동으로 파싱합니다: code, symbol, format, amount, text)
+        </div>
+      )}
 
       {(itemsType === "string" || itemsType === "number") && (
         <div className="flex gap-2 items-center">

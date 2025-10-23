@@ -1,15 +1,32 @@
 import { EightGClient } from "scordi-extension";
 import type { FormWorkflow } from "~/models/integration/types";
-import type { WorkflowType } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
 
-export interface RunWorkflowParams {
-  evaluatedUrl: string;
-  workflow: FormWorkflow;
-  closeTabAfterCollection?: boolean;
-  activateTab?: boolean;
-  variables?: Record<string, any>;
-  type?: WorkflowType; // 어떤 API를 호출할지 지정
-}
+export type RunWorkflowParams =
+  | {
+      evaluatedUrl: string;
+      workflow: FormWorkflow;
+      closeTabAfterCollection?: boolean;
+      activateTab?: boolean;
+      variables?: Record<string, any>;
+      type?: 'WORKFLOW';
+    }
+  | {
+      evaluatedUrl: string;
+      workflow: FormWorkflow;
+      closeTabAfterCollection?: boolean;
+      activateTab?: boolean;
+      variables?: Record<string, any>;
+      type: 'WORKSPACE';
+    }
+  | {
+      evaluatedUrl: string;
+      workflow: FormWorkflow;
+      closeTabAfterCollection?: boolean;
+      activateTab?: boolean;
+      variables?: Record<string, any>;
+      type: 'MEMBERS' | 'PLAN' | 'BILLING';
+      workspaceKey: string; // 필수!
+    };
 
 export interface RunWorkflowResult {
   result: any;
@@ -24,8 +41,9 @@ export async function runWorkflow(
     closeTabAfterCollection,
     activateTab,
     variables,
-    type = 'WORKFLOW', // 기본값은 일반 WORKFLOW
   } = params;
+  const type = params.type ?? 'WORKFLOW'; // 기본값은 일반 WORKFLOW
+  const workspaceKey = 'workspaceKey' in params ? params.workspaceKey : undefined;
   const client = new EightGClient();
 
   // vars 필드에 변수 병합 (workflow.vars + 주입된 variables)
@@ -42,7 +60,7 @@ export async function runWorkflow(
       steps: workflow.steps,
       vars: Object.keys(finalVars).length > 0 ? finalVars : undefined,
     },
-    closeTabAfterCollection: true,
+    closeTabAfterCollection: closeTabAfterCollection ?? true,
     activateTab: activateTab ?? true,
   };
 
@@ -53,13 +71,16 @@ export async function runWorkflow(
       result = await client.getWorkspaces(requestParams);
       break;
     case 'MEMBERS':
-      result = await client.getWorkspaceMembers(requestParams);
+      if (!workspaceKey) throw new Error('workspaceKey is required for MEMBERS type');
+      result = await client.getWorkspaceMembers(workspaceKey, requestParams);
       break;
     case 'PLAN':
-      result = await client.getWorkspacePlanAndCycle(requestParams);
+      if (!workspaceKey) throw new Error('workspaceKey is required for PLAN type');
+      result = await client.getWorkspacePlanAndCycle(workspaceKey, requestParams);
       break;
     case 'BILLING':
-      result = await client.getWorkspaceBillingHistories(requestParams);
+      if (!workspaceKey) throw new Error('workspaceKey is required for BILLING type');
+      result = await client.getWorkspaceBillingHistories(workspaceKey, requestParams);
       break;
     case 'WORKFLOW':
     default:

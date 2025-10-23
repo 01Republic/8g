@@ -21,6 +21,8 @@ interface PlanCycleResultPanelProps {
         format: string;
         amount: number;
       };
+      cardName: string;
+      cardNumber: string;
       rawData: {
         success: boolean;
         steps: any[];
@@ -36,7 +38,6 @@ interface PlanCycleResultPanelProps {
 export const PlanCycleResultPanel = ({ result }: PlanCycleResultPanelProps) => {
   const hasError = result.error;
   const data = result.result;
-  console.log(result.result);
 
   return (
     <div
@@ -216,6 +217,22 @@ export const PlanCycleResultPanel = ({ result }: PlanCycleResultPanelProps) => {
                     </span>
                   </div>
                 )}
+                {data.cardName && (
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: 13, color: "#6b7280" }}>Card Name:</span>
+                    <span style={{ fontSize: 13, fontWeight: 500, color: "#111827" }}>
+                      {data.cardName}
+                    </span>
+                  </div>
+                )}
+                {data.cardNumber && (
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: 13, color: "#6b7280" }}>Card Number:</span>
+                    <span style={{ fontSize: 13, fontWeight: 500, color: "#111827" }}>
+                      {data.cardNumber}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -245,7 +262,7 @@ export const PlanCycleResultPanel = ({ result }: PlanCycleResultPanelProps) => {
             maxHeight: 200,
           }}
         >
-          {JSON.stringify(result.result?.rawData, null, 2)}
+          {JSON.stringify(result.result, null, 2)}
         </pre>
       </details>
     </div>

@@ -106,6 +106,9 @@ export default function WorkflowBuilderPage({
   );
   const [variablesDialogOpen, setVariablesDialogOpen] = React.useState(false);
 
+  // Workspace Key 관리 (MEMBERS, PLAN, BILLING 타입에서 사용)
+  const [workspaceKey, setWorkspaceKey] = React.useState<string>('');
+
   const onConnect = React.useCallback(
     (connection: Connection) => {
       const newEdge: WorkflowEdge = {
@@ -165,14 +168,22 @@ export default function WorkflowBuilderPage({
         });
       }
 
-      const res = await runWorkflow({
+      // type에 따라 runWorkflow 파라미터 구성
+      const runParams: any = {
         evaluatedUrl,
         workflow,
         closeTabAfterCollection: true,
         activateTab: true,
-        variables, // variables 전달
-        type, // API 타입 전달
-      });
+        variables,
+        type,
+      };
+
+      // MEMBERS, PLAN, BILLING 타입일 때 workspaceKey 추가
+      if (type === 'MEMBERS' || type === 'PLAN' || type === 'BILLING') {
+        runParams.workspaceKey = workspaceKey;
+      }
+
+      const res = await runWorkflow(runParams);
       setResult(res);
       setExecutionResults(res);
 
@@ -363,6 +374,8 @@ export default function WorkflowBuilderPage({
           productId={productId}
           onProductIdChange={setProductId}
           products={products}
+          workspaceKey={workspaceKey}
+          setWorkspaceKey={setWorkspaceKey}
         />
 
         <PaletteSheet

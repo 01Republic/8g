@@ -780,6 +780,137 @@ const workflow = {
 };
 ```
 
+### 예제 5-1: AI 파싱 + 통화 스키마 (Schema.currency)
+
+SDK는 다양한 통화 정보를 포함한 통합 스키마를 제공합니다. `Schema.currency()`를 사용하면 40개 통화 코드와 27개 통화 심볼, 8개 포맷 패턴을 지원하는 통화 필드를 쉽게 정의할 수 있습니다.
+
+```typescript
+import { EightGClient, createSchema, Schema } from '8g-extension';
+
+const client = new EightGClient();
+
+const workflow = {
+  version: '1.0',
+  start: 'getBillingInfo',
+  vars: {
+    apiKey: 'sk-...'
+  },
+  steps: [
+    {
+      id: 'getBillingInfo',
+      block: {
+        name: 'get-text',
+        selector: '.billing-section',
+        findBy: 'cssSelector',
+        option: {},
+        useTextContent: true
+      },
+      next: 'parseWithAi'
+    },
+    {
+      id: 'parseWithAi',
+      block: {
+        name: 'ai-parse-data',
+        apiKey: { valueFrom: 'vars.apiKey' },
+        sourceData: { valueFrom: 'steps.getBillingInfo.result.data' },
+        schemaDefinition: createSchema({
+          planName: Schema.string({ description: '플랜 이름' }),
+          // 통화 스키마 사용 - 모든 통화 지원
+          currentCycleBillAmount: Schema.currency({ description: '현재 주기 결제 금액' }),
+          unitPrice: Schema.currency({ description: '단위 가격' }),
+          nextPaymentDue: Schema.string({ description: '다음 결제일 (YYYY-MM-DD)' }),
+          cycleTerm: Schema.string({ 
+            enum: ['MONTHLY', 'YEARLY'] as const,
+            description: '결제 주기'
+          }),
+          isFreeTier: Schema.boolean({ description: '무료 티어 여부' }),
+          paidMemberCount: Schema.number({ description: '결제 멤버 수' })
+        })
+      }
+    }
+  ]
+};
+
+const result = await client.collectWorkflow({
+  targetUrl: 'https://example.com/billing',
+  workflow
+});
+```
+
+**지원하는 통화 코드 (40개):**
+- 주요 통화: `USD`, `EUR`, `KRW`, `GBP`, `CAD`, `JPY`, `CNY`
+- 아시아: `VND`, `INR`, `TWD`, `HKD`, `IDR`, `SGD`, `THB`, `PHP`, `MYR`
+- 유럽: `CHF`, `SEK`, `NOK`, `DKK`, `PLN`, `CZK`, `HUF`, `RON`, `BGN`, `TRY`, `RUB`
+- 중동/아프리카: `ILS`, `ZAR`, `AED`, `SAR`, `EGP`
+- 아메리카: `MXN`, `BRL`, `ARS`, `CLP`, `COP`
+- 오세아니아: `AUD`, `NZD`
+
+**지원하는 통화 심볼 (27개):**
+`$`, `₩`, `€`, `£`, `¥`, `₫`, `₹`, `NT$`, `Rp`, `₣`, `฿`, `R$`, `₺`, `₽`, `kr`, `₪`, `R`, `zł`, `₱`, `Kč`, `E£`, `RM`, `Ft`, `د.إ`, `﷼`, `L`, `лв`
+
+**지원하는 포맷 패턴 (8개):**
+`%s%u`, `%s%n`, `%u%s`, `%n%s`, `%s %u`, `%s %n`, `%u %s`, `%n %s`
+- `%s`: 통화 심볼
+- `%u` / `%n`: 금액
+
+**Schema.currency() 특징:**
+- 단일 통합 스키마로 모든 통화 지원
+- AI가 자동으로 적절한 통화 코드, 심볼, 포맷을 선택
+- 5개 필드 포함: `code`, `symbol`, `format`, `amount`, `text`
+
+**결과 예시:**
+```json
+{
+  "planName": "Pro",
+  "currentCycleBillAmount": {
+    "code": "USD",
+    "symbol": "$",
+    "format": "%s%u",
+    "amount": 57.75,
+    "text": "US$57.75"
+  },
+  "unitPrice": {
+    "code": "USD",
+    "symbol": "$",
+    "format": "%s%u",
+    "amount": 52.5,
+    "text": "US$52.50"
+  },
+  "nextPaymentDue": "2025-11-18",
+  "cycleTerm": "MONTHLY",
+  "isFreeTier": false,
+  "paidMemberCount": 6
+}
+```
+
+**다국어 통화 지원 예시:**
+```typescript
+// AI가 자동으로 한국어, 영어, 일본어 등 다양한 통화를 인식
+const multiCurrencyWorkflow = {
+  version: '1.0',
+  start: 'parsePrice',
+  steps: [
+    {
+      id: 'parsePrice',
+      block: {
+        name: 'ai-parse-data',
+        apiKey: 'sk-...',
+        sourceData: { valueFrom: 'steps.getPriceText.result.data' },
+        schemaDefinition: createSchema({
+          // 모든 통화를 자동으로 파싱
+          originalPrice: Schema.currency({ description: '원래 가격' }),
+          discountPrice: Schema.currency({ description: '할인 가격', optional: true }),
+          shippingCost: Schema.currency({ description: '배송비', optional: true })
+        })
+      }
+    }
+  ]
+};
+
+// 입력: "₩50,000원, 할인가 $45.00, 배송비 €5.99"
+// 출력: 각 통화가 자동으로 올바른 코드와 심볼로 파싱됨
+```
+
 ### 예제 6: 로그인 대기 (wait-for-condition)
 
 ```typescript

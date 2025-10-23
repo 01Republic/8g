@@ -147,7 +147,7 @@ export const BillingHistoryResultPanel = ({ result }: BillingHistoryResultPanelP
                       textAlign: "right",
                     }}
                   >
-                    {history.amount.format || history.amount.text}
+                    {history.amount.text}
                   </div>
                 )}
               </div>
@@ -239,7 +239,7 @@ export const BillingHistoryResultPanel = ({ result }: BillingHistoryResultPanelP
             maxHeight: 200,
           }}
         >
-          {JSON.stringify(result.result?.rawData, null, 2)}
+          {JSON.stringify(result.result, null, 2)}
         </pre>
       </details>
     </div>

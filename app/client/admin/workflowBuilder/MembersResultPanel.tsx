@@ -183,7 +183,7 @@ export const MembersResultPanel = ({ result }: MembersResultPanelProps) => {
             maxHeight: 200,
           }}
         >
-          {JSON.stringify(result.result?.rawData, null, 2)}
+          {JSON.stringify(result.result, null, 2)}
         </pre>
       </details>
     </div>

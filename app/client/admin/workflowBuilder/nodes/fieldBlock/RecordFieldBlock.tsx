@@ -22,7 +22,7 @@ interface RecordFieldBlockProps {
   currentNodeId?: string;
 }
 
-type ValueType = "string" | "number" | "boolean" | "array" | "object";
+type ValueType = "string" | "number" | "boolean" | "array" | "object" | "currency";
 
 export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
   const { field, formData, updateFormField, currentNodeId } = props;
@@ -47,12 +47,30 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
   const recordValue = formData[name] || {};
   const entries = Object.entries(recordValue);
 
+  // 통화 객체 감지 함수
+  const isCurrencyObject = (value: any): boolean => {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) {
+      return false;
+    }
+    // code, symbol, format, desc, amount, text 속성이 모두 있는지 확인
+    return (
+      "code" in value &&
+      "symbol" in value &&
+      "format" in value &&
+      "desc" in value &&
+      "amount" in value &&
+      "text" in value
+    );
+  };
+
   // 각 키의 타입 정보를 관리 (키: 타입)
   const [keyTypes, setKeyTypes] = useState<Record<string, ValueType>>(() => {
     const types: Record<string, ValueType> = {};
     Object.entries(recordValue).forEach(([key, value]) => {
       if (Array.isArray(value)) {
         types[key] = "array";
+      } else if (isCurrencyObject(value)) {
+        types[key] = "currency";
       } else if (typeof value === "object" && value !== null) {
         types[key] = "object";
       } else if (typeof value === "boolean") {
@@ -181,6 +199,14 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
       } else {
         newRecord[key] = {};
       }
+    } else if (newType === "currency") {
+      // 통화로 변환: 고정된 CurrencyInfoSchema 구조
+      // 이 구조는 AI가 자동으로 채우므로 마커만 저장
+      newRecord[key] = {
+        type: "currency",
+        description: typeof currentValue === "string" ? currentValue : "통화 정보",
+        optional: false,
+      };
     } else {
       newRecord[key] = String(currentValue);
     }
@@ -406,6 +432,7 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
                         <SelectItem value="boolean">논리값</SelectItem>
                         <SelectItem value="array">배열</SelectItem>
                         <SelectItem value="object">객체</SelectItem>
+                        <SelectItem value="currency">통화</SelectItem>
                       </SelectContent>
                     </Select>
                     <Input
@@ -417,7 +444,22 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
                       className="flex-1"
                     />
 
-                    {valueType === "object" ? (
+                    {valueType === "currency" ? (
+                      <>
+                        <div className="flex-1 flex items-center gap-2 text-sm text-gray-600 bg-blue-50 px-3 py-2 rounded">
+                          💱 통화 객체 (AI가 자동으로 파싱합니다)
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveEntry(key)}
+                          className="mt-0 !px-1"
+                        >
+                          <Trash2 className="size-4 text-red-500" />
+                        </Button>
+                      </>
+                    ) : valueType === "object" ? (
                       <Button
                         type="button"
                         variant="ghost"

@@ -30,6 +30,8 @@ interface WorkflowBuilderHeaderProps {
   productId: number;
   onProductIdChange: (id: number) => void;
   products: Product[];
+  workspaceKey?: string;
+  setWorkspaceKey?: (key: string) => void;
 }
 
 export const WorkflowBuilderHeader = ({
@@ -47,6 +49,8 @@ export const WorkflowBuilderHeader = ({
   productId,
   onProductIdChange,
   products,
+  workspaceKey,
+  setWorkspaceKey,
 }: WorkflowBuilderHeaderProps) => {
   const typeLabels: Record<WorkflowType, string> = {
     WORKFLOW: '⚡ Data Collection',
@@ -104,6 +108,14 @@ export const WorkflowBuilderHeader = ({
         onChange={(e) => setTargetUrl(e.target.value)}
         style={{ maxWidth: 480 }}
       />
+      {(type === 'MEMBERS' || type === 'PLAN' || type === 'BILLING') && (
+        <Input
+          placeholder="Workspace Key (필수)"
+          value={workspaceKey || ''}
+          onChange={(e) => setWorkspaceKey?.(e.target.value)}
+          style={{ maxWidth: 240 }}
+        />
+      )}
       <Button onClick={runWorkflow} disabled={isRunning}>
         {isRunning ? "Running…" : "Run Workflow"}
       </Button>
