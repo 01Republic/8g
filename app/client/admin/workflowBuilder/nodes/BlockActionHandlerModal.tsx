@@ -85,7 +85,6 @@ export const BlockActionHandlerModal = (
 
   const handleSave = () => {
     const nextBlock: any = {
-      ...block,
       name: blockName,
     };
 
@@ -95,13 +94,14 @@ export const BlockActionHandlerModal = (
 
       const value = formData[field.name];
 
+      // undefined나 빈 문자열은 저장하지 않음 (필드 삭제)
+      if (value === undefined || value === "") {
+        return; // Skip
+      }
+
+      // option은 특별 처리
       if (field.name === "option" && field.type === "object") {
         nextBlock.option = value;
-      } else if (value === "" || value === undefined) {
-        // Skip empty values for optional fields
-        if (!field.optional) {
-          nextBlock[field.name] = value;
-        }
       } else {
         nextBlock[field.name] = value;
       }
@@ -124,17 +124,37 @@ export const BlockActionHandlerModal = (
   };
 
   const updateFormField = (fieldName: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [fieldName]: value }));
+    setFormData((prev) => {
+      console.log("updateFormField", fieldName, value);
+      if (value === undefined) {
+        // undefined이면 필드를 삭제
+        const newData = { ...prev };
+        delete newData[fieldName];
+        return newData;
+      }
+      return { ...prev, [fieldName]: value };
+    });
   };
 
   const updateOptionField = (optionKey: string, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      option: {
-        ...prev.option,
-        [optionKey]: value,
-      },
-    }));
+    setFormData((prev) => {
+      if (value === undefined) {
+        // undefined이면 option 내 필드를 삭제
+        const newOption = { ...prev.option };
+        delete newOption[optionKey];
+        return {
+          ...prev,
+          option: Object.keys(newOption).length > 0 ? newOption : undefined,
+        };
+      }
+      return {
+        ...prev,
+        option: {
+          ...prev.option,
+          [optionKey]: value,
+        },
+      };
+    });
   };
 
   return (

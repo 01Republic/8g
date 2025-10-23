@@ -25,13 +25,18 @@ export const TextFilterFieldBlock = (props: TextFilterFieldBlockProps) => {
       <Input
         placeholder="필터할 텍스트"
         value={formData[name]?.text ?? ""}
-        onChange={(e) =>
-          updateFormField(name, {
-            ...formData[name],
-            text: e.target.value,
-            mode: formData[name]?.mode ?? "exact",
-          })
-        }
+        onChange={(e) => {
+          const newText = e.target.value;
+          if (!newText) {
+            updateFormField(name, undefined);
+          } else {
+            updateFormField(name, {
+              ...formData[name],
+              text: newText,
+              mode: formData[name]?.mode ?? "exact",
+            });
+          }
+        }}
       />
       <Select
         value={formData[name]?.mode ?? "exact"}

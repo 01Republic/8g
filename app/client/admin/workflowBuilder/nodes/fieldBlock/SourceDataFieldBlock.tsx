@@ -91,7 +91,7 @@ export const SourceDataFieldBlock = (props: SourceDataFieldBlockProps) => {
 
     // 선택된 노드들을 배열로 변환
     if (newSelectedIds.size === 0) {
-      updateFormField(name, "");
+      updateFormField(name, undefined);
     } else if (newSelectedIds.size === 1) {
       // 단일 선택인 경우 string으로 (backward compatibility)
       const nodeId = Array.from(newSelectedIds)[0];

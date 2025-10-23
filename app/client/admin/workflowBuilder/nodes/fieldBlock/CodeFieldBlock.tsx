@@ -82,7 +82,7 @@ export const CodeFieldBlock = (props: CodeFieldBlockProps) => {
         <Textarea
           id={name}
           value={formData[name] ?? ""}
-          onChange={(e) => updateFormField(name, e.target.value)}
+          onChange={(e) => updateFormField(name, e.target.value || undefined)}
           placeholder={
             defaultValue || "// JSONata 코드를 입력하세요 $이 기본 변수입니다."
           }

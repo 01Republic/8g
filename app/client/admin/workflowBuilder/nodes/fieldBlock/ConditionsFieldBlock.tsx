@@ -77,7 +77,7 @@ export const ConditionsFieldBlock = (props: ConditionsFieldBlockProps) => {
                     <Input
                       value={condValue || ""}
                       onChange={(e) =>
-                        updateConditionField(condKey, e.target.value)
+                        updateConditionField(condKey, e.target.value || undefined)
                       }
                       placeholder={fieldLabels[condKey] || condKey}
                     />
@@ -108,7 +108,7 @@ export const ConditionsFieldBlock = (props: ConditionsFieldBlockProps) => {
                                 onChange={(e) =>
                                   updateConditionField(condKey, {
                                     ...(condValue || {}),
-                                    [subField.name]: e.target.value,
+                                    [subField.name]: e.target.value || undefined,
                                   })
                                 }
                               />
