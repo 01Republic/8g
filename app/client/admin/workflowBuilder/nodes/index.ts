@@ -74,10 +74,6 @@ export const blockLabels: Record<
     title: "API 호출",
     description: "API 호출",
   },
-  "data-extract": {
-    title: "데이터 추출/변환",
-    description: "JavaScript로 데이터 추출 및 변환",
-  },
   "wait-for-condition": {
     title: "조건 대기",
     description: "조건 대기",
@@ -86,9 +82,9 @@ export const blockLabels: Record<
     title: "페이지 이동",
     description: "페이지 이동",
   },
-  "capture-network": {
-    title: "네트워크 캡처",
-    description: "네트워크 캡처",
+  "transform-data": {
+    title: "데이터 변환",
+    description: "데이터 변환",
   }
 };
 
@@ -139,6 +135,10 @@ export const fieldLabels: Record<string, string> = {
   // DataExtractBlock
   code: "JavaScript 코드",
   inputData: "입력 데이터",
+
+  // TransformDataBlock
+  sourceData: "소스 데이터",
+  expression: "변환 표현식",
 
   // WaitForConditionBlock
   conditions: "조건",

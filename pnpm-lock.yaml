@@ -117,8 +117,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       scordi-extension:
-        specifier: 1.15.8
-        version: 1.15.8(openai@6.6.0(ws@8.18.3)(zod@3.25.76))(ws@8.18.3)(zod-to-json-schema@3.24.6(zod@3.25.76))
+        specifier: 1.15.10
+        version: 1.15.10(openai@6.6.0(ws@8.18.3)(zod@3.25.76))(ws@8.18.3)(zod-to-json-schema@3.24.6(zod@3.25.76))
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
@@ -2989,8 +2989,8 @@ packages:
   scheduler@0.27.0:
     resolution: {integrity: sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==}
 
-  scordi-extension@1.15.8:
-    resolution: {integrity: sha512-mMKXD/h/Xa5B7jwV3H9HvV1DZ4qy1tjtnnv0Qe//BWD0QrQGL+WScWvCNYSe//ayCVVdMD0QxPC6HFX9bTEgzQ==}
+  scordi-extension@1.15.10:
+    resolution: {integrity: sha512-dTzMS9rQXSjdNa1bhL1LxPEUy5IQ8QYFgS540o0vB6CUPRRYh30/poQM9H1WnC7nGO53k+UmHW/AyFphs7aB5Q==}
 
   semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
@@ -6603,7 +6603,7 @@ snapshots:
 
   scheduler@0.27.0: {}
 
-  scordi-extension@1.15.8(openai@6.6.0(ws@8.18.3)(zod@3.25.76))(ws@8.18.3)(zod-to-json-schema@3.24.6(zod@3.25.76)):
+  scordi-extension@1.15.10(openai@6.6.0(ws@8.18.3)(zod@3.25.76))(ws@8.18.3)(zod-to-json-schema@3.24.6(zod@3.25.76)):
     dependencies:
       '@langchain/anthropic': 1.0.0(@langchain/core@1.0.1(openai@6.6.0(ws@8.18.3)(zod@3.25.76)))(zod@3.25.76)
       '@langchain/core': 1.0.1(openai@6.6.0(ws@8.18.3)(zod@3.25.76))
