@@ -86,6 +86,10 @@ export const blockLabels: Record<
     title: "페이지 이동",
     description: "페이지 이동",
   },
+  "capture-network": {
+    title: "네트워크 캡처",
+    description: "네트워크 캡처",
+  }
 };
 
 /**
