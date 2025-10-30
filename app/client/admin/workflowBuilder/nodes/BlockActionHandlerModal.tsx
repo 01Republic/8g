@@ -22,6 +22,7 @@ import { SchemaDefinitionFieldBlock } from "./fieldBlock/SchemaDefinitionFieldBl
 import { SourceDataFieldBlock } from "./fieldBlock/SourceDataFieldBlock";
 import { RecordFieldBlock } from "./fieldBlock/RecordFieldBlock";
 import { CodeFieldBlock } from "./fieldBlock/CodeFieldBlock";
+import { ExpressionFieldBlock } from "./fieldBlock/ExpressionFieldBlock";
 import { RepeatFieldBlock } from "./fieldBlock/RepeatFieldBlock";
 import { ConditionsFieldBlock } from "./fieldBlock/ConditionsFieldBlock";
 
@@ -224,6 +225,19 @@ export const BlockActionHandlerModal = (
               if (field.name === "code") {
                 return (
                   <CodeFieldBlock
+                    key={field.name}
+                    field={field}
+                    formData={formData}
+                    updateFormField={updateFormField}
+                    currentNodeId={id}
+                    executionResults={executionResults}
+                  />
+                );
+              }
+              // expression 필드 (transform-data 블록)는 JSONata 테스트 UI로
+              if (field.name === "expression" && blockName === "transform-data") {
+                return (
+                  <ExpressionFieldBlock
                     key={field.name}
                     field={field}
                     formData={formData}

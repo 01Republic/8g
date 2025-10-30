@@ -232,6 +232,22 @@ The workflow builder maintains type safety through:
 4. Check browser console for extension communication logs
 5. Inspect workflow JSON in browser DevTools Network tab
 
+### Testing JSONata Expressions (transform-data block)
+
+1. Add a `transform-data` block to your workflow
+2. In the block configuration modal:
+   - Select **sourceData**: Choose a previous step's output (e.g., `${steps.node_xxx.result.data}`)
+   - Write **expression**: JSONata expression to transform the data
+3. Use the built-in test panel:
+   - Execution results auto-load into test input
+   - Click "표현식 실행" to test the expression
+   - See results or errors immediately
+4. Common JSONata patterns:
+   - Filter: `*.data.data.results[membershipType = "owner"]`
+   - Extract fields: `*.data.data.results[].{ "id": id, "name": name }`
+   - Get unique values: `$distinct(data.users.*.user_root.*.value.space_view_pointers[].spaceId)`
+   - Nested navigation: `data.users.*.user_root.*.value.space_view_pointers[]`
+
 ## Important Files
 
 ### Core Workflow Files
@@ -254,6 +270,14 @@ The workflow builder maintains type safety through:
 ### Edge Conditions
 - `app/client/admin/workflowBuilder/edges/EdgeConfigDialog/` - Condition builder UI
 - `app/client/admin/workflowBuilder/utils/conditionUtils.ts` - Condition rendering helpers
+
+### Field Blocks (Block Configuration UI)
+- `app/client/admin/workflowBuilder/nodes/fieldBlock/ExpressionFieldBlock.tsx` - JSONata expression testing UI for transform-data blocks
+  - Real-time JSONata expression evaluation
+  - Auto-loads execution results from previous steps
+  - Supports both `context.steps` and `result.steps` data structures
+  - Uses EightGClient helper functions for data access
+- `app/client/admin/workflowBuilder/nodes/BlockActionHandlerModal.tsx` - Block configuration modal with dynamic field rendering
 
 ## Common Tasks
 
