@@ -168,7 +168,7 @@ export const BlockActionHandlerModal = (
           수정
         </Button>
       </DialogTrigger>
-      <DialogContent className="min-w-3xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="min-w-[1200px] max-w-7xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">{title} 편집</DialogTitle>
         </DialogHeader>

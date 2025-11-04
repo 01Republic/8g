@@ -5,8 +5,9 @@ import { FieldBlockContentBox } from "./FieldBlockContentBox";
 import { useState, useEffect } from "react";
 import jsonata from "jsonata";
 import { Button } from "~/components/ui/button";
-import { PlayIcon, RefreshCwIcon, AlertCircleIcon } from "lucide-react";
+import { PlayIcon, RefreshCwIcon, AlertCircleIcon, SparklesIcon } from "lucide-react";
 import { EightGClient } from "scordi-extension";
+import { buildJSONataQuery } from "~/client/admin/workflowBuilder/agent/JSONata-qaury-builder";
 
 interface ExpressionFieldBlockProps {
   field: ParsedField;
@@ -29,6 +30,11 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
   const [testOutput, setTestOutput] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [hasRealData, setHasRealData] = useState(false);
+  
+  // Auto generation states
+  const [targetSchema, setTargetSchema] = useState<string>("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [showAutoGenerate, setShowAutoGenerate] = useState(false);
 
   // executionResults가 변경될 때마다 자동으로 테스트 데이터 로드
   useEffect(() => {
@@ -172,6 +178,36 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
     }
   };
 
+  // Auto generate JSONata expression
+  const handleAutoGenerate = async () => {
+    try {
+      setIsGenerating(true);
+      setError("");
+
+      if (!targetSchema.trim()) {
+        setError("원하는 결과 형태를 설명해주세요");
+        return;
+      }
+
+      const sourceData = JSON.parse(testInput);
+      const generatedExpression = await buildJSONataQuery(sourceData, targetSchema);
+      
+      // Update the expression field
+      updateFormField(name, generatedExpression);
+      
+      // Test the generated expression
+      await handleTest();
+      
+      // Close the auto generate section
+      setShowAutoGenerate(false);
+      setTargetSchema("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "자동 생성 중 오류 발생");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
     <FieldBlockContentBox key={name} label="변환 표현식 (JSONata)" location="top">
       <div className="space-y-2">
@@ -186,16 +222,80 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
           예: <code className="bg-white px-1 rounded">$sum(items.price)</code> 또는 <code className="bg-white px-1 rounded">items[price &gt; 100]</code>
         </div>
 
-        <Textarea
-          id={name}
-          value={formData[name] ?? ""}
-          onChange={(e) => updateFormField(name, e.target.value || undefined)}
-          placeholder={
-            defaultValue || "$sum(items.price)"
-          }
-          className="font-mono text-sm min-h-24"
-          spellCheck={false}
-        />
+        <div className="relative">
+          <Textarea
+            id={name}
+            value={formData[name] ?? ""}
+            onChange={(e) => updateFormField(name, e.target.value || undefined)}
+            placeholder={
+              defaultValue || "$sum(items.price)"
+            }
+            className="font-mono text-sm min-h-24"
+            spellCheck={false}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="xxs"
+            onClick={() => setShowAutoGenerate(!showAutoGenerate)}
+            className="absolute top-2 right-2 gap-1"
+            title="AI로 JSONata 표현식 자동 생성"
+          >
+            <SparklesIcon className="w-3 h-3" />
+            AI 자동 생성
+          </Button>
+        </div>
+
+        {/* Auto Generate Section */}
+        {showAutoGenerate && (
+          <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 space-y-3">
+            <div>
+              <Label className="text-xs font-semibold text-purple-700 mb-1 block">
+                원하는 결과 형태를 설명해주세요
+              </Label>
+              <Textarea
+                value={targetSchema}
+                onChange={(e) => setTargetSchema(e.target.value)}
+                placeholder="예: 모든 상품의 가격 합계를 구하고 싶습니다"
+                className="font-mono text-xs min-h-20"
+                disabled={isGenerating}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                size="sm"
+                onClick={handleAutoGenerate}
+                disabled={isGenerating || !targetSchema.trim()}
+                className="flex-1 bg-purple-600 hover:bg-purple-700"
+              >
+                {isGenerating ? (
+                  <>
+                    <RefreshCwIcon className="w-4 h-4 mr-2 animate-spin" />
+                    생성 중...
+                  </>
+                ) : (
+                  <>
+                    <SparklesIcon className="w-4 h-4 mr-2" />
+                    표현식 생성
+                  </>
+                )}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setShowAutoGenerate(false);
+                  setTargetSchema("");
+                }}
+                disabled={isGenerating}
+              >
+                취소
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* JSONata 참고 링크 */}
         <div className="flex items-center gap-2 text-xs text-gray-500">

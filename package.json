@@ -12,6 +12,7 @@
     "db:generate-entities": "node app/.server/db/scripts/generate-entities.js"
   },
   "dependencies": {
+    "@langchain/core": "^1.0.2",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-avatar": "^1.1.10",
@@ -36,9 +37,11 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "dagre": "^0.8.5",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "isbot": "^5.1.31",
     "jsonata": "^2.1.0",
+    "langchain": "^1.0.2",
     "lucide-react": "^0.544.0",
     "mysql2": "^3.15.2",
     "react": "^19.2.0",
@@ -48,7 +51,7 @@
     "react-dom": "^19.2.0",
     "react-router": "^7.9.4",
     "reflect-metadata": "^0.2.2",
-    "scordi-extension": "1.15.10",
+    "scordi-extension": "1.15.14",
     "tailwind-merge": "^3.3.1",
     "typeorm": "^0.3.27",
     "vaul": "^1.1.2",

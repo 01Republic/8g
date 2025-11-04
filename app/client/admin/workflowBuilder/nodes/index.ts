@@ -85,7 +85,15 @@ export const blockLabels: Record<
   "transform-data": {
     title: "데이터 변환",
     description: "데이터 변환",
-  }
+  },
+  "export-data": {
+    title: "데이터 내보내기",
+    description: "데이터 내보내기",
+  },
+  "network-catch": {
+    title: "네트워크 응답 캐치",
+    description: "네트워크 응답 캐치",
+  },
 };
 
 /**
