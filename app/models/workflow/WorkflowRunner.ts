@@ -71,6 +71,7 @@ export async function runWorkflow(
       result = await client.getWorkspaces(requestParams);
       break;
     case 'WORKSPACE_DETAIL':
+      if (!workspaceKey) throw new Error('workspaceKey is required for WORKSPACE_DETAIL type');
       result = await client.getWorkspaceDetail(requestParams);
       break;
     case 'MEMBERS':
@@ -78,11 +79,11 @@ export async function runWorkflow(
       result = await client.getWorkspaceMembers(workspaceKey, requestParams);
       break;
     case 'BILLING':
-      if (!workspaceKey) throw new Error('workspaceKey is required for PLAN type');
+      if (!workspaceKey) throw new Error('workspaceKey is required for BILLING type');
       result = await client.getWorkspacePlanAndCycle(workspaceKey, requestParams);
       break;
     case 'BILLING_HISTORIES':
-      if (!workspaceKey) throw new Error('workspaceKey is required for BILLING type');
+      if (!workspaceKey) throw new Error('workspaceKey is required for BILLING_HISTORIES type');
       result = await client.getWorkspaceBillingHistories(workspaceKey, requestParams);
       break;
     case 'WORKFLOW':
