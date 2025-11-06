@@ -179,7 +179,7 @@ export default function WorkflowBuilderPage({
       };
 
       // MEMBERS, PLAN, BILLING 타입일 때 workspaceKey 추가
-      if (type === 'MEMBERS' || type === 'BILLING' || type === 'BILLING_HISTORIES') {
+      if (type === 'MEMBERS' || type === 'BILLING' || type === 'BILLING_HISTORIES' || type === 'WORKSPACE_DETAIL') {
         runParams.workspaceKey = workspaceKey;
       }
 
