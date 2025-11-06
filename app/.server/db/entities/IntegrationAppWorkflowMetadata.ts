@@ -23,9 +23,10 @@ CREATE TABLE IF NOT EXISTS payplo_staging.integration_app_workflow_metadata (
 export type WorkflowType =
   | 'WORKFLOW'
   | 'WORKSPACE'
+  | 'WORKSPACE_DETAIL'
   | 'MEMBERS'
-  | 'PLAN'
-  | 'BILLING';
+  | 'BILLING'
+  | 'BILLING_HISTORIES';
 
 @Entity("integration_app_workflow_metadata")
 export class IntegrationAppWorkflowMetadata extends BaseEntity {

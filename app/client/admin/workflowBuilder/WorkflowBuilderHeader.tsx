@@ -55,9 +55,10 @@ export const WorkflowBuilderHeader = ({
   const typeLabels: Record<WorkflowType, string> = {
     WORKFLOW: '⚡ Data Collection',
     WORKSPACE: '🏢 Get Workspaces',
+    WORKSPACE_DETAIL: '🏢 Get Workspace Detail',
     MEMBERS: '👥 Get Members',
-    PLAN: '💳 Plan & Cycle',
-    BILLING: '📊 Billing History',
+    BILLING: '💳 Billing',
+    BILLING_HISTORIES: '📊 Billing Histories',
   };
 
   return (
@@ -91,14 +92,17 @@ export const WorkflowBuilderHeader = ({
           <SelectItem value="WORKSPACE">
             {typeLabels.WORKSPACE}
           </SelectItem>
+            <SelectItem value="WORKSPACE_DETAIL">
+                {typeLabels.WORKSPACE_DETAIL}
+            </SelectItem>
           <SelectItem value="MEMBERS">
             {typeLabels.MEMBERS}
           </SelectItem>
-          <SelectItem value="PLAN">
-            {typeLabels.PLAN}
-          </SelectItem>
           <SelectItem value="BILLING">
             {typeLabels.BILLING}
+          </SelectItem>
+          <SelectItem value="BILLING_HISTORIES">
+            {typeLabels.BILLING_HISTORIES}
           </SelectItem>
         </SelectContent>
       </Select>
@@ -108,7 +112,7 @@ export const WorkflowBuilderHeader = ({
         onChange={(e) => setTargetUrl(e.target.value)}
         style={{ maxWidth: 480 }}
       />
-      {(type === 'MEMBERS' || type === 'PLAN' || type === 'BILLING') && (
+      {(type==='WORKSPACE_DETAIL' ||type === 'MEMBERS' || type === 'BILLING' || type === 'BILLING_HISTORIES') && (
         <Input
           placeholder="Workspace Key (필수)"
           value={workspaceKey || ''}

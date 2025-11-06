@@ -48,9 +48,10 @@ const getWorkflowTypeBadge = (type: WorkflowType) => {
   const badges: Record<WorkflowType, { label: string; className: string }> = {
     WORKFLOW: { label: '⚡ Data', className: 'bg-blue-100 text-blue-800' },
     WORKSPACE: { label: '🏢 Workspaces', className: 'bg-purple-100 text-purple-800' },
+    WORKSPACE_DETAIL: { label: '🏢 Workspace Detail', className: 'bg-purple-100 text-purple-800' },
     MEMBERS: { label: '👥 Members', className: 'bg-green-100 text-green-800' },
-    PLAN: { label: '💳 Plan', className: 'bg-orange-100 text-orange-800' },
-    BILLING: { label: '📊 Billing', className: 'bg-pink-100 text-pink-800' },
+    BILLING: { label: '💳 Billing', className: 'bg-orange-100 text-orange-800' },
+    BILLING_HISTORIES: { label: '📊 Billing_Histories', className: 'bg-pink-100 text-pink-800' },
   };
   return badges[type] || badges.WORKFLOW;
 };

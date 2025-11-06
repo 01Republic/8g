@@ -24,7 +24,7 @@ export type RunWorkflowParams =
       closeTabAfterCollection?: boolean;
       activateTab?: boolean;
       variables?: Record<string, any>;
-      type: 'MEMBERS' | 'PLAN' | 'BILLING';
+      type: 'WORKSPACE_DETAIL' | 'MEMBERS' | 'BILLING' | 'BILLING_HISTORIES';
       workspaceKey: string; // 필수!
     };
 
@@ -70,15 +70,18 @@ export async function runWorkflow(
     case 'WORKSPACE':
       result = await client.getWorkspaces(requestParams);
       break;
+    case 'WORKSPACE_DETAIL':
+      result = await client.getWorkspaceDetail(requestParams);
+      break;
     case 'MEMBERS':
       if (!workspaceKey) throw new Error('workspaceKey is required for MEMBERS type');
       result = await client.getWorkspaceMembers(workspaceKey, requestParams);
       break;
-    case 'PLAN':
+    case 'BILLING':
       if (!workspaceKey) throw new Error('workspaceKey is required for PLAN type');
       result = await client.getWorkspacePlanAndCycle(workspaceKey, requestParams);
       break;
-    case 'BILLING':
+    case 'BILLING_HISTORIES':
       if (!workspaceKey) throw new Error('workspaceKey is required for BILLING type');
       result = await client.getWorkspaceBillingHistories(workspaceKey, requestParams);
       break;

@@ -179,7 +179,7 @@ export default function WorkflowBuilderPage({
       };
 
       // MEMBERS, PLAN, BILLING 타입일 때 workspaceKey 추가
-      if (type === 'MEMBERS' || type === 'PLAN' || type === 'BILLING') {
+      if (type === 'MEMBERS' || type === 'BILLING' || type === 'BILLING_HISTORIES') {
         runParams.workspaceKey = workspaceKey;
       }
 
@@ -481,9 +481,10 @@ export default function WorkflowBuilderPage({
             <>
               {console.log(result)}
               {type === "WORKSPACE" && <WorkspaceResultPanel result={result} />}
+              {type === "WORKSPACE" && <WorkspaceResultPanel result={result} />}
               {type === "MEMBERS" && <MembersResultPanel result={result} />}
-              {type === "PLAN" && <PlanCycleResultPanel result={result} />}
-              {type === "BILLING" && <BillingHistoryResultPanel result={result} />}
+              {type === "BILLING" && <PlanCycleResultPanel result={result} />}
+              {type === "BILLING_HISTORIES" && <BillingHistoryResultPanel result={result} />}
               {(type === "WORKFLOW" || !type) && <ResultPanel result={result} />}
             </>
           )}
