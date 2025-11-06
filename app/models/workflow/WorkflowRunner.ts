@@ -26,6 +26,7 @@ export type RunWorkflowParams =
       variables?: Record<string, any>;
       type: 'WORKSPACE_DETAIL' | 'MEMBERS' | 'BILLING' | 'BILLING_HISTORIES';
       workspaceKey: string; // 필수!
+      slug: string;
     };
 
 export interface RunWorkflowResult {
@@ -44,6 +45,7 @@ export async function runWorkflow(
   } = params;
   const type = params.type ?? 'WORKFLOW'; // 기본값은 일반 WORKFLOW
   const workspaceKey = 'workspaceKey' in params ? params.workspaceKey : undefined;
+  const slug = 'slug' in params ? params.slug : undefined;
   const client = new EightGClient();
 
   // vars 필드에 변수 병합 (workflow.vars + 주입된 variables)
@@ -72,19 +74,23 @@ export async function runWorkflow(
       break;
     case 'WORKSPACE_DETAIL':
       if (!workspaceKey) throw new Error('workspaceKey is required for WORKSPACE_DETAIL type');
-      result = await client.getWorkspaceDetail(requestParams);
+      if (!slug) throw new Error('slug is required for WORKSPACE_DETAIL type');
+      result = await client.getWorkspaceDetail(workspaceKey, slug, requestParams);
       break;
     case 'MEMBERS':
       if (!workspaceKey) throw new Error('workspaceKey is required for MEMBERS type');
-      result = await client.getWorkspaceMembers(workspaceKey, requestParams);
+      if (!slug) throw new Error('slug is required for MEMBERS type');
+      result = await client.getWorkspaceMembers(workspaceKey, slug, requestParams);
       break;
     case 'BILLING':
       if (!workspaceKey) throw new Error('workspaceKey is required for BILLING type');
-      result = await client.getWorkspacePlanAndCycle(workspaceKey, requestParams);
+      if (!slug) throw new Error('slug is required for BILLING type');
+      result = await client.getWorkspaceBilling(workspaceKey, slug, requestParams);
       break;
     case 'BILLING_HISTORIES':
       if (!workspaceKey) throw new Error('workspaceKey is required for BILLING_HISTORIES type');
-      result = await client.getWorkspaceBillingHistories(workspaceKey, requestParams);
+      if (!slug) throw new Error('slug is required for BILLING_HISTORIES type');
+      result = await client.getWorkspaceBillingHistories(workspaceKey, slug, requestParams);
       break;
     case 'WORKFLOW':
     default:

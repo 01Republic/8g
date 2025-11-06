@@ -7,7 +7,7 @@ interface WorkspaceDetailResultPanelProps {
   };
 }
 
-export const WorkspaceResultPanel = ({ result }: WorkspaceDetailResultPanelProps) => {
+export const WorkspaceDetailResultPanel = ({ result }: WorkspaceDetailResultPanelProps) => {
   const hasError = result.error || !result.result?.isSuccess;
   const workspaces = result.result?.data || [];
 

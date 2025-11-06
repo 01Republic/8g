@@ -106,8 +106,10 @@ export default function WorkflowBuilderPage({
   );
   const [variablesDialogOpen, setVariablesDialogOpen] = React.useState(false);
 
-  // Workspace Key 관리 (MEMBERS, PLAN, BILLING 타입에서 사용)
+  // Workspace Key 관리 (MEMBERS, BILLING, BILLING_HISTORIES, WORKSPACE_DETAIL 타입에서 사용)
   const [workspaceKey, setWorkspaceKey] = React.useState<string>('');
+  // Slug 관리 (WORKSPACE_DETAIL, MEMBERS, BILLING, BILLING_HISTORIES 타입에서 사용)
+  const [slug, setSlug] = React.useState<string>('');
 
   const onConnect = React.useCallback(
     (connection: Connection) => {
@@ -181,6 +183,7 @@ export default function WorkflowBuilderPage({
       // MEMBERS, PLAN, BILLING 타입일 때 workspaceKey 추가
       if (type === 'MEMBERS' || type === 'BILLING' || type === 'BILLING_HISTORIES' || type === 'WORKSPACE_DETAIL') {
         runParams.workspaceKey = workspaceKey;
+        runParams.slug = slug;
       }
 
       const res = await runWorkflow(runParams);
@@ -376,6 +379,8 @@ export default function WorkflowBuilderPage({
           products={products}
           workspaceKey={workspaceKey}
           setWorkspaceKey={setWorkspaceKey}
+          slug={slug}
+          setSlug={setSlug}
         />
 
         <PaletteSheet

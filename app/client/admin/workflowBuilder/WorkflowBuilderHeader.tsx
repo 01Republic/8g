@@ -32,6 +32,8 @@ interface WorkflowBuilderHeaderProps {
   products: Product[];
   workspaceKey?: string;
   setWorkspaceKey?: (key: string) => void;
+  slug?: string;
+  setSlug?: (slug: string) => void;
 }
 
 export const WorkflowBuilderHeader = ({
@@ -51,6 +53,8 @@ export const WorkflowBuilderHeader = ({
   products,
   workspaceKey,
   setWorkspaceKey,
+  slug,
+  setSlug,
 }: WorkflowBuilderHeaderProps) => {
   const typeLabels: Record<WorkflowType, string> = {
     WORKFLOW: '⚡ Data Collection',
@@ -117,6 +121,14 @@ export const WorkflowBuilderHeader = ({
           placeholder="Workspace Key (필수)"
           value={workspaceKey || ''}
           onChange={(e) => setWorkspaceKey?.(e.target.value)}
+          style={{ maxWidth: 240 }}
+        />
+      )}
+      {(type==='WORKSPACE_DETAIL' ||type === 'MEMBERS' || type === 'BILLING' || type === 'BILLING_HISTORIES') && (
+        <Input
+          placeholder="Slug (필수)"
+          value={slug || ''}
+          onChange={(e) => setSlug?.(e.target.value)}
           style={{ maxWidth: 240 }}
         />
       )}
