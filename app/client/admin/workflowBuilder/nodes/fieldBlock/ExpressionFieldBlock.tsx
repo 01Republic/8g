@@ -40,7 +40,7 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
   useEffect(() => {
     if (executionResults) {
       // sourceData 값이 있으면 해당 경로의 데이터를 로드
-      let dataToLoad = executionResults;
+      let dataToLoad = executionResults.result.context.steps;
 
       // sourceData가 ${steps.xxx.result.data} 형식인 경우 파싱
       if (sourceDataValue) {

@@ -83,7 +83,7 @@ export const WorkspaceResultPanel = ({ result }: WorkspaceResultPanelProps) => {
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {workspaces.map((workspace, index) => (
             <div
-              key={workspace.key || index}
+              key={workspace.id || index}
               style={{
                 padding: 12,
                 border: "1px solid #e5e7eb",
@@ -144,7 +144,7 @@ export const WorkspaceResultPanel = ({ result }: WorkspaceResultPanelProps) => {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  {workspace.key}
+                  {workspace.id}
                 </div>
               </div>
             </div>
