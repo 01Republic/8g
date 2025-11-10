@@ -2,9 +2,34 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 📚 Documentation Index
+
+For comprehensive project information, refer to the following documents:
+
+- **[Documentation Principles](.claude/DOCUMENTATION_PRINCIPLES.md)** - 📐 문서화 작성 원칙 및 가이드라인 (필독!)
+- **[Product Requirements Document (PRD)](.claude/PRD.md)** - 전체 프로젝트 기획, 요구사항, 아키텍처 개요
+- **[Feature Specifications](.claude/product-specs/README.md)** - 기능별 상세 명세 (사전식 인덱스)
+- **[Technical Architecture](#architecture-overview)** - 기술 아키텍처 (이 문서 하단)
+- **[Workflow Execution Architecture](WORKFLOW_EXECUTION_ARCHITECTURE.md)** - 워크플로우 실행 상세 (있는 경우)
+
+**문서화 원칙 (중요!)**:
+- ✅ 모든 문서는 한글로 작성 (CLAUDE.md 제외)
+- ✅ 모든 문서는 200줄 이하로 작성
+- ✅ 개발 완료 직후 문서 최신화 필수
+
+**빠른 참조:**
+- 새 기능 개발 시: PRD에서 요구사항 확인 → Feature Specs에서 상세 확인 → 이 문서에서 구현 방법 확인
+- 버그 수정 시: Feature Specs에서 기대 동작 확인 → 이 문서에서 관련 파일 찾기
+- 코드 리뷰 시: Feature Specs에서 명세 준수 확인 → PRD에서 비기능 요구사항 확인
+- 문서 작성 시: [Documentation Principles](.claude/DOCUMENTATION_PRINCIPLES.md) 필독!
+
+---
+
 ## Project Overview
 
 8G is a visual workflow automation platform that enables users to design complex web scraping and data extraction workflows through a drag-and-drop interface. The platform executes workflows via the 8G Extension (browser extension SDK). The project was recently refactored to focus purely on workflow builder functionality (branch: `only-builder`).
+
+**상세 정보**: [PRD - Section 1: Product Overview](.claude/PRD.md#1-product-overview)
 
 ## Development Commands
 
@@ -58,6 +83,8 @@ CREATE TABLE IF NOT EXISTS integration_app_workflow_metadata (
 
 ## Architecture Overview
 
+**상세 아키텍처 정보**: [PRD - Section 2: System Architecture](.claude/PRD.md#2-system-architecture)
+
 ### Tech Stack
 - **Frontend**: React 19, React Router 7 (config-based routing)
 - **Server**: Express 5, React Router server-side rendering
@@ -65,7 +92,7 @@ CREATE TABLE IF NOT EXISTS integration_app_workflow_metadata (
 - **Database**: MySQL 3306, TypeORM 0.3.27
 - **UI Components**: shadcn/ui (Radix UI primitives), TailwindCSS 4
 - **Schema Validation**: Zod 3.25.76
-- **Workflow Execution SDK**: scordi-extension v1.15.0
+- **Workflow Execution SDK**: scordi-extension v1.16.0
 
 ### Key Architectural Patterns
 
@@ -173,11 +200,12 @@ All workflow execution happens through the **8G browser extension**. The client-
 **Data extraction**: get-text, attribute-value, get-element-data, get-value-form
 **Interaction**: event-click, keypress, scroll
 **Control flow**: wait, element-exists
-**Integration**: fetch-api, ai-parse-data
+**Integration**: fetch-api, ai-parse-data, transform-data
 **Loops**: forEach (iterate arrays), count (fixed repetitions)
 **Branching**: switch conditions with JSON expressions
 
-See `WORKFLOW_EXECUTION_ARCHITECTURE.md` for complete block documentation.
+**상세 블록 명세**: [Feature Specs - F-002: Block System](.claude/product-specs/F-002-block-system.md)
+See `WORKFLOW_EXECUTION_ARCHITECTURE.md` for complete block documentation (if exists).
 
 ### Variable Substitution
 
