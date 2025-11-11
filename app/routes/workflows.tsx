@@ -4,8 +4,11 @@ import { useFetcher } from "react-router";
 import { deleteWorkflows } from "~/.server/services/workflow/delete-workflows.service";
 import { findAllWorkflows } from "~/.server/services/workflow/find-all-workflows.service";
 import { fetchProducts } from "~/.server/services";
+import { requireAuthSession } from "~/middleware/auth";
 
 export async function loader({ request }: Route.LoaderArgs) {
+  const { token } = await requireAuthSession(request);
+
   const url = new URL(request.url);
   const page = parseInt(url.searchParams.get("page") || "1");
   const itemsPerPage = parseInt(url.searchParams.get("itemsPerPage") || "10");
@@ -21,22 +24,25 @@ export async function loader({ request }: Route.LoaderArgs) {
     where.type = type;
   }
 
-  const workflowsResponse = await findAllWorkflows({
-    page,
-    itemsPerPage,
-    where,
-    order: { id: "DESC" },
-    relations: [],
-    limit: itemsPerPage,
-    offset: (page - 1) * itemsPerPage
-  });
+  const workflowsResponse = await findAllWorkflows(
+    {
+      page,
+      itemsPerPage,
+      where,
+      order: { id: "DESC" },
+      relations: [],
+      limit: itemsPerPage,
+      offset: (page - 1) * itemsPerPage,
+    },
+    token,
+  );
 
-  const productsResponse = await fetchProducts({ itemsPerPage: 100 });
+  const productsResponse = await fetchProducts({ itemsPerPage: 100 }, token);
 
   return {
     workflows: workflowsResponse.items,
     pagination: workflowsResponse.pagination,
-    products: productsResponse.items
+    products: productsResponse.items,
   };
 }
 

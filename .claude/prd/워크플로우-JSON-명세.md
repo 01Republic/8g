@@ -17,6 +17,7 @@
 이 문서는 200줄 제한 준수를 위해 하위 문서로 분리되어 있습니다.
 
 **상세 문서**:
+
 - [스텝 정의](./워크플로우-JSON-명세/스텝-정의.md) - WorkflowStep 구조, Block 타입, 필드 상세
 - [고급 기능](./워크플로우-JSON-명세/고급-기능.md) - repeat, switch, retry, parser, vars
 
@@ -26,12 +27,12 @@
 
 ```typescript
 interface FormWorkflow {
-  version: string;              // "1.0"
-  start: string;                // 시작 스텝 ID
-  steps: WorkflowStep[];        // 워크플로우 스텝 배열
-  targetUrl?: string;           // 타겟 웹사이트 URL
-  parser?: ParserConfig;        // 출력 변환 설정
-  vars?: Record<string, any>;   // 변수 정의
+  version: string; // "1.0"
+  start: string; // 시작 스텝 ID
+  steps: WorkflowStep[]; // 워크플로우 스텝 배열
+  targetUrl?: string; // 타겟 웹사이트 URL
+  parser?: ParserConfig; // 출력 변환 설정
+  vars?: Record<string, any>; // 변수 정의
 }
 ```
 
@@ -51,6 +52,7 @@ interface FormWorkflow {
 **구조**: name (필수) + 블록별 설정
 
 **주요 블록 타입**:
+
 - 데이터 추출: get-text, attribute-value, get-element-data, get-value-form
 - 인터랙션: event-click, keypress, scroll
 - 제어 흐름: wait, element-exists
@@ -63,19 +65,24 @@ interface FormWorkflow {
 ## 고급 기능
 
 ### RepeatConfig
+
 **forEach**: 배열 순회 루프
 **count**: 고정 횟수 반복
 
 ### SwitchCase
+
 **조건 타입**: equals, regex, contains, exists, and, or
 
 ### RetryConfig
+
 **설정**: attempts, delayMs, backoff (linear/exponential)
 
 ### ParserConfig
+
 **출력 변환**: JSONPath 표현식
 
 ### Variables
+
 **정적**: `${vars.key}`
 **동적**: `${$.steps.xxx.result.data}`
 
@@ -111,7 +118,12 @@ interface FormWorkflow {
       "block": { "name": "element-exists", "selector": ".dashboard" },
       "switch": [
         {
-          "when": { "equals": { "left": "$.steps.check.result.data.exists", "right": true } },
+          "when": {
+            "equals": {
+              "left": "$.steps.check.result.data.exists",
+              "right": true
+            }
+          },
           "next": "extract"
         }
       ]
@@ -145,7 +157,7 @@ Zod 스키마를 사용한 워크플로우 검증이 향후 구현 예정입니�
 
 **변경 이력**
 
-| 버전 | 날짜 | 변경 내용 | 작성자 |
-|-----|------|---------|-------|
-| 1.1 | 2025-11-11 | 200줄 제한 준수를 위해 스텝 정의와 고급 기능 분리 | System |
-| 1.0 | 2025-11-11 | 최초 작성 | System |
+| 버전 | 날짜       | 변경 내용                                         | 작성자 |
+| ---- | ---------- | ------------------------------------------------- | ------ |
+| 1.1  | 2025-11-11 | 200줄 제한 준수를 위해 스텝 정의와 고급 기능 분리 | System |
+| 1.0  | 2025-11-11 | 최초 작성                                         | System |

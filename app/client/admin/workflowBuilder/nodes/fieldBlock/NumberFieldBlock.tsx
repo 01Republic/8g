@@ -20,7 +20,10 @@ export const NumberFieldBlock = (props: NumberFieldBlockProps) => {
         type="number"
         value={formData[name] ?? ""}
         onChange={(e) =>
-          updateFormField(name, e.target.value ? Number(e.target.value) : undefined)
+          updateFormField(
+            name,
+            e.target.value ? Number(e.target.value) : undefined,
+          )
         }
         placeholder={defaultValue || "ms 단위로 입력해주세요."}
         className="max-w-48"

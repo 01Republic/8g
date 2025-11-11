@@ -1,16 +1,10 @@
 {
-    "autoApprove": {
-        "read": true,
-        "glob": ["**/*.ts", "**/*.tsx", "**/*.js"],
-        "bash": {
-            "safe": true,
-            "allowList": [
-                "find",
-                "wc",
-                "grep",
-                "ls",
-                "cat"
-            ]
-        }
+  "autoApprove": {
+    "read": true,
+    "glob": ["**/*.ts", "**/*.tsx", "**/*.js"],
+    "bash": {
+      "safe": true,
+      "allowList": ["find", "wc", "grep", "ls", "cat"]
     }
+  }
 }

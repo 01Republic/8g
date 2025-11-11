@@ -6,4 +6,3 @@ export * from "./ExprStrategy";
 export * from "./RegexStrategy";
 export * from "./ContainsStrategy";
 export * from "./StrategyRegistry";
-

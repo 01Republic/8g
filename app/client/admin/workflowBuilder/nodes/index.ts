@@ -78,7 +78,7 @@ export const blockLabels: Record<
     title: "조건 대기",
     description: "조건 대기",
   },
-  "navigate": {
+  navigate: {
     title: "페이지 이동",
     description: "페이지 이동",
   },

@@ -139,7 +139,9 @@ export function VariablesPreviewPanel({
                 <div className="text-blue-700">
                   • Step의 selector, targetUrl 등에서 사용
                 </div>
-                <div className="text-blue-700">• 변수를 클릭하면 복사됩니다</div>
+                <div className="text-blue-700">
+                  • 변수를 클릭하면 복사됩니다
+                </div>
               </div>
             )}
           </div>

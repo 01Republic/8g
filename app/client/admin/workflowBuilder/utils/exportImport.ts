@@ -13,7 +13,7 @@ const WhenConditionSchema: z.ZodType<any> = z.lazy(() =>
     contains: z.object({ value: z.string(), search: z.string() }).optional(),
     and: z.array(WhenConditionSchema).optional(),
     or: z.array(WhenConditionSchema).optional(),
-  })
+  }),
 );
 
 const WorkflowStepSchema = z.object({
@@ -30,7 +30,7 @@ const WorkflowStepSchema = z.object({
       z.object({
         when: WhenConditionSchema,
         next: z.string(),
-      })
+      }),
     )
     .optional(),
   next: z.string().optional(),
@@ -58,7 +58,7 @@ const FormWorkflowSchema = z.object({
  */
 export function exportWorkflowToJson(
   workflow: FormWorkflow,
-  filename: string = "workflow"
+  filename: string = "workflow",
 ): void {
   try {
     // FormWorkflow를 JSON 문자열로 변환 (pretty print)
@@ -113,7 +113,7 @@ export function validateWorkflowJson(jsonData: unknown): ValidationResult {
 
     // start 스텝이 실제로 존재하는지 확인
     const startStepExists = validatedData.steps.some(
-      (step) => step.id === validatedData.start
+      (step) => step.id === validatedData.start,
     );
     if (!startStepExists) {
       return {
@@ -171,7 +171,7 @@ export function validateWorkflowJson(jsonData: unknown): ValidationResult {
  * @returns Promise with validation result
  */
 export async function importWorkflowFromJson(
-  file: File
+  file: File,
 ): Promise<ValidationResult> {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -218,7 +218,7 @@ export interface WorkflowExportData {
 export function exportWorkflowWithMetadata(
   workflow: FormWorkflow,
   description: string,
-  filename: string = "workflow"
+  filename: string = "workflow",
 ): void {
   const exportData: WorkflowExportData = {
     workflow,
@@ -245,7 +245,7 @@ export function exportWorkflowWithMetadata(
  * Import workflow with metadata
  */
 export async function importWorkflowWithMetadata(
-  file: File
+  file: File,
 ): Promise<ValidationResult & { metadata?: WorkflowExportData["metadata"] }> {
   return new Promise((resolve) => {
     const reader = new FileReader();
