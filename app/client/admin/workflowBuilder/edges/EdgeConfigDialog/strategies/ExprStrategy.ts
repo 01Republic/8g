@@ -6,10 +6,7 @@ import { BaseConditionStrategy } from "./types";
  * Expr 조건 전략
  */
 export class ExprStrategy extends BaseConditionStrategy {
-  parseFromWhen(
-    when: WhenCondition,
-    formState: Partial<EdgeFormState>,
-  ): void {
+  parseFromWhen(when: WhenCondition, formState: Partial<EdgeFormState>): void {
     if (!when.expr) return;
 
     formState.exprData = {
@@ -28,4 +25,3 @@ export class ExprStrategy extends BaseConditionStrategy {
     return expr.length > 15 ? expr.substring(0, 15) + "..." : expr;
   }
 }
-

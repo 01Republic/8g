@@ -22,7 +22,7 @@ export const EnumFieldBlock = (props: EnumFieldBlockProps) => {
     <FieldBlockContentBox key={name} label={name}>
       <Select
         value={formData[name] ?? ""}
-        onValueChange={(v) => updateFormField(name, v)}
+        onValueChange={(v) => updateFormField(name, v || undefined)}
       >
         <SelectTrigger className="min-w-40">
           <SelectValue placeholder={`${name} 선택`} />

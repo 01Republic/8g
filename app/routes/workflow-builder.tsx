@@ -1,22 +1,30 @@
 import "@xyflow/react/dist/style.css";
 import WorkflowBuilderPage from "~/client/admin/workflowBuilder/WorkflowBuilderPage";
 import type { Route } from "./+types/workflow-builder";
-import type { FormWorkflow } from "~/models/integration/types";
+import type { FormWorkflow } from "~/models/workflow/types";
 import { useFetcher } from "react-router";
 import { useEffect } from "react";
 import { redirect } from "react-router";
-import axios from "axios";
+import {
+  findWorkflowMetadata,
+  upsertWorkflowMetadata,
+  fetchProducts,
+} from "~/.server/services";
+import { requireAuthSession } from "~/middleware/auth";
+import type { WorkflowType } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
 
-const BASE_URL = process.env.BASE_URL || "http://localhost:8000";
+export async function loader({ request, params }: Route.LoaderArgs) {
+  const { token } = await requireAuthSession(request);
 
-export async function loader({ params }: Route.LoaderArgs) {
   const workflowId = params.workflowId
     ? parseInt(params.workflowId)
     : undefined;
 
+  // Fetch products from API
+  const productsResponse = await fetchProducts({ itemsPerPage: 100 }, token);
+
   if (workflowId) {
-    const response = await axios.get(`${BASE_URL}/8g/workflow/${workflowId}`);
-    const workflow = response.data;
+    const workflow = await findWorkflowMetadata(workflowId, token);
     return {
       workflowId,
       workflow: workflow
@@ -24,31 +32,44 @@ export async function loader({ params }: Route.LoaderArgs) {
             id: workflow.id,
             description: workflow.description,
             meta: workflow.meta,
+            type: workflow.type,
+            productId: workflow.productId,
           }
         : null,
+      products: productsResponse.items,
     };
   }
 
   return {
     workflowId: undefined,
     workflow: null,
+    products: productsResponse.items,
   };
 }
 
 export async function action({ request }: Route.ActionArgs) {
+  const { token } = await requireAuthSession(request);
   const formData = await request.formData();
   const workflowIdStr = formData.get("workflowId")?.toString();
   const workflowId = workflowIdStr ? parseInt(workflowIdStr) : undefined;
+  const productIdStr = formData.get("productId")!.toString();
+  const productId = parseInt(productIdStr);
   const description = formData.get("description")!.toString();
   const meta = JSON.parse(formData.get("meta")!.toString()) as FormWorkflow;
+  const typeStr = formData.get("type")?.toString() as WorkflowType | undefined;
 
-  await axios.post(`${BASE_URL}/8g/workflow`, {
-    workflowId,
-    description,
-    meta,
-  });
+  await upsertWorkflowMetadata(
+    {
+      workflowId,
+      productId,
+      description,
+      meta,
+      type: typeStr || "WORKFLOW",
+    },
+    token,
+  );
 
-  return redirect("/workflows");
+  return redirect("/");
 }
 
 export default function WorkflowBuilder({ loaderData }: Route.ComponentProps) {
@@ -57,17 +78,23 @@ export default function WorkflowBuilder({ loaderData }: Route.ComponentProps) {
 
   const onSave = (payload: {
     workflowId?: number;
+    productId: number;
     description: string;
     meta: FormWorkflow;
+    type?: WorkflowType;
   }) => {
-    const { workflowId, description, meta } = payload;
+    const { workflowId, productId, description, meta, type } = payload;
 
     const formData = new FormData();
     if (workflowId) {
       formData.append("workflowId", workflowId.toString());
     }
+    formData.append("productId", productId.toString());
     formData.append("description", description);
     formData.append("meta", JSON.stringify(meta));
+    if (type) {
+      formData.append("type", type);
+    }
     fetcher.submit(formData, { method: "POST" });
   };
 
@@ -84,6 +111,8 @@ export default function WorkflowBuilder({ loaderData }: Route.ComponentProps) {
       initialWorkflow={loaderData.workflow}
       onSave={onSave}
       isSaving={isSaving}
+      type={loaderData.workflow?.type as WorkflowType | undefined}
+      products={loaderData.products}
     />
   );
 }

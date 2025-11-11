@@ -74,9 +74,29 @@ export const blockLabels: Record<
     title: "API 호출",
     description: "API 호출",
   },
-  "data-extract": {
-    title: "데이터 추출/변환",
-    description: "JavaScript로 데이터 추출 및 변환",
+  "wait-for-condition": {
+    title: "조건 대기",
+    description: "조건 대기",
+  },
+  navigate: {
+    title: "페이지 이동",
+    description: "페이지 이동",
+  },
+  "transform-data": {
+    title: "데이터 변환",
+    description: "데이터 변환",
+  },
+  "export-data": {
+    title: "데이터 내보내기",
+    description: "데이터 내보내기",
+  },
+  "network-catch": {
+    title: "네트워크 응답 캐치",
+    description: "네트워크 응답 캐치",
+  },
+  "set-contenteditable": {
+    title: "ContentEditable 설정",
+    description: "ContentEditable 설정",
   },
 };
 
@@ -127,4 +147,21 @@ export const fieldLabels: Record<string, string> = {
   // DataExtractBlock
   code: "JavaScript 코드",
   inputData: "입력 데이터",
+
+  // TransformDataBlock
+  sourceData: "소스 데이터",
+  expression: "변환 표현식",
+
+  // WaitForConditionBlock
+  conditions: "조건",
+  mode: "모드",
+  pollingIntervalMs: "폴링 간격 (ms)",
+  position: "UI 위치",
+  urlPattern: "URL 패턴",
+  elementExists: "요소 존재 확인",
+  cookieExists: "쿠키 존재 확인",
+  storageKey: "스토리지 키 확인",
+  userConfirmation: "사용자 확인",
+  message: "메시지",
+  buttonText: "버튼 텍스트",
 };

@@ -35,7 +35,7 @@ export const StringFieldBlock = (props: StringFieldBlockProps) => {
     const newValue = e.target.value;
     const cursorPos = e.target.selectionStart || 0;
 
-    updateFormField(name, newValue);
+    updateFormField(name, newValue || undefined);
     setCursorPosition(cursorPos);
 
     // $. 감지 (현재 커서 위치 기준)

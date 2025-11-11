@@ -2,15 +2,26 @@ import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import { WorkflowsTable } from "./WorkflowsTable";
 import type { IntegrationAppWorkflowMetadata } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
+import type { PaginationMetaData } from "~/.server/dto/pagination-meta-data.dto";
 
-interface WorkflowsPageProps {
+interface Product {
+  id: number;
+  nameKo: string;
+  nameEn: string;
+}
+
+export interface WorkflowsPageProps {
   workflows: IntegrationAppWorkflowMetadata[];
+  pagination: PaginationMetaData;
   deleteWorkflows: (workflowId: number) => void;
+  products: Product[];
 }
 
 export default function WorkflowsPage({
   workflows,
+  pagination,
   deleteWorkflows,
+  products,
 }: WorkflowsPageProps) {
   return (
     <div className="h-full w-full p-8">
@@ -23,7 +34,9 @@ export default function WorkflowsPage({
         </div>
         <WorkflowsTable
           workflows={workflows}
+          pagination={pagination}
           deleteWorkflows={deleteWorkflows}
+          products={products}
         />
       </div>
     </div>

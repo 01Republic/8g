@@ -1,4 +1,4 @@
-import { FolderIcon, HomeIcon, PlusIcon, UsersIcon } from "lucide-react";
+import { FolderIcon, HomeIcon, UsersIcon } from "lucide-react";
 import {
   SidebarGroupLabel,
   SidebarMenuButton,
@@ -14,6 +14,13 @@ import {
 } from "~/components/ui/sidebar";
 import { Link, Links, Meta, Outlet, Scripts } from "react-router";
 import { Button } from "../components/ui/button";
+import type { Route } from "./+types/sidebar";
+import { requireAuthSession } from "~/middleware/auth";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  await requireAuthSession(request);
+  return null;
+}
 
 export default function SidebarLayout() {
   return (
@@ -42,25 +49,12 @@ function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <Button size="md" asChild>
-            <Link to="/integration">
-              <PlusIcon /> Integration Apps
+            <Link to="/">
+              <FolderIcon /> Workflows
             </Link>
           </Button>
         </SidebarGroup>
-        <SidebarGroup>
-          <SidebarMenuButton size="lg">
-            <HomeIcon />
-            <Link to="/">Home</Link>
-          </SidebarMenuButton>
-          <SidebarMenuButton size="lg">
-            <FolderIcon />
-            <Link to="/apps">Apps</Link>
-          </SidebarMenuButton>
-          <SidebarMenuButton size="lg">
-            <UsersIcon />
-            <Link to="/members">Members</Link>
-          </SidebarMenuButton>
-        </SidebarGroup>
+        <SidebarGroup></SidebarGroup>
       </SidebarContent>
       <SidebarFooter />
     </Sidebar>

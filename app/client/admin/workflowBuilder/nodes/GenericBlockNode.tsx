@@ -12,6 +12,7 @@ type GenericBlockNodeData = {
   title?: string;
   schema: z.ZodTypeAny;
   repeat?: RepeatConfig;
+  executionResults?: Record<string, any>;
 };
 
 type GenericBlockNodeType = Node<GenericBlockNodeData>;
@@ -21,7 +22,7 @@ export default function GenericBlockNode({
   data,
   selected,
 }: NodeProps<GenericBlockNodeType>) {
-  const { block, schema, repeat } = data;
+  const { block, schema, repeat, executionResults } = data;
   const blockName = block.name;
   const { title } = blockLabels[blockName];
 
@@ -64,6 +65,7 @@ export default function GenericBlockNode({
           parsedSchema={parsedSchema}
           block={block}
           repeat={repeat}
+          executionResults={executionResults}
         />
       </div>
 

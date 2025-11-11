@@ -78,12 +78,12 @@ export function usePreviousNodes(currentNodeId: string) {
 
   // Repeat 컨텍스트 변수를 템플릿 문자열로 변환 (블록 필드 값용)
   const createRepeatReference = (contextPath: string) => {
-    return `\${$.${contextPath}}`;
+    return `\${${contextPath}}`;
   };
 
   // 순수 경로 생성 (repeat.forEach 등 설정 필드용)
   const createPathReference = (nodeId: string) => {
-    return `$.steps.${nodeId}.result.data`;
+    return `steps.${nodeId}.result.data`;
   };
 
   return {

@@ -25,7 +25,8 @@ interface MultipleProps {
 }
 
 export const Multiple = (props: MultipleProps) => {
-  const { targetNodeId, multipleConditionType, subConditions, onChange } = props;
+  const { targetNodeId, multipleConditionType, subConditions, onChange } =
+    props;
 
   const { previousNodes, getNodeDisplayName } = usePreviousNodes(targetNodeId);
 

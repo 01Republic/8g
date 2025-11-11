@@ -12,11 +12,13 @@ import "@xyflow/react/dist/style.css";
 import { workflowNodeTypes } from "~/client/admin/workflowBuilder/nodes";
 import type { Workflow, Block } from "scordi-extension";
 import { AllBlockSchemas } from "scordi-extension";
+import { Button } from "~/components/ui/button";
 import { PaletteSheet } from "./PaletteSheet";
 import { ResultPanel } from "./ResultPanel";
 import { WorkflowBuilderHeader } from "./WorkflowBuilderHeader";
 import { blockLabels } from "./nodes";
 import { runWorkflow } from "~/models/workflow/WorkflowRunner";
+import type { WorkflowType } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
 import { buildWorkflowJson } from "~/models/workflow/WorkflowBuilder";
 import type { WorkflowEdge, SwitchEdgeData } from "~/models/workflow/types";
 import { ConditionalEdge } from "./edges/ConditionalEdge";
@@ -26,10 +28,20 @@ import type { FormWorkflow } from "~/models/integration/types";
 import { SaveDialog } from "./SaveDialog";
 import { convertWorkflowToNodesAndEdges } from "./utils/workflowConverter";
 import { useNodesState } from "@xyflow/react";
-import { ParserDialog } from "./ParserDialog";
 import { VariablesDialog } from "./VariablesDialog";
 import { VariablesPreviewPanel } from "./VariablesPreviewPanel";
 import { EdgeConfigDialog } from "./edges/EdgeConfigDialog";
+import { WorkflowParametersDialog } from "./WorkflowParametersDialog";
+import {
+  exportWorkflowWithMetadata,
+  importWorkflowWithMetadata,
+} from "./utils/exportImport";
+
+interface Product {
+  id: number;
+  nameKo: string;
+  nameEn: string;
+}
 
 interface WorkflowBuilderPageProps {
   workflowId?: number;
@@ -37,13 +49,18 @@ interface WorkflowBuilderPageProps {
     id: number;
     description: string;
     meta: FormWorkflow;
+    productId: number;
   } | null;
   onSave: (payload: {
     workflowId?: number;
+    productId: number;
     description: string;
     meta: FormWorkflow;
+    type?: WorkflowType;
   }) => void;
   isSaving: boolean;
+  type?: WorkflowType; // Workspace API 타입 지정
+  products: Product[];
 }
 
 export default function WorkflowBuilderPage({
@@ -51,6 +68,8 @@ export default function WorkflowBuilderPage({
   initialWorkflow,
   onSave,
   isSaving,
+  type: initialApiType,
+  products,
 }: WorkflowBuilderPageProps) {
   // 초기 노드/엣지 변환
   const initialData = React.useMemo(() => {
@@ -69,21 +88,29 @@ export default function WorkflowBuilderPage({
   );
   const [edgeDialogOpen, setEdgeDialogOpen] = React.useState(false);
   const [saveDialogOpen, setSaveDialogOpen] = React.useState(false);
+  const [parametersDialogOpen, setParametersDialogOpen] = React.useState(false);
   const [description, setDescription] = React.useState(
     initialWorkflow?.description || "",
   );
-
-  // Parser 관리
-  const [parserExpression, setParserExpression] = React.useState(
-    initialWorkflow?.meta?.parser?.expression || "",
+  const [type, setApiType] = React.useState<WorkflowType>(
+    initialApiType || "WORKFLOW",
   );
-  const [parserDialogOpen, setParserDialogOpen] = React.useState(false);
+  const [productId, setProductId] = React.useState<number>(
+    initialWorkflow?.productId || 1, // 기본값 1 (나중에 UI에서 선택 가능하도록)
+  );
 
   // Variables 관리
   const [variables, setVariables] = React.useState<Record<string, any>>(
-    initialWorkflow?.meta?.variables || {},
+    initialWorkflow?.meta?.vars || {},
   );
   const [variablesDialogOpen, setVariablesDialogOpen] = React.useState(false);
+
+  // Workspace Key 관리 (MEMBERS, ADD_MEMBERS, BILLING, BILLING_HISTORIES, WORKSPACE_DETAIL 타입에서 사용)
+  const [workspaceKey, setWorkspaceKey] = React.useState<string>("");
+  // Slug 관리 (WORKSPACE_DETAIL, MEMBERS, ADD_MEMBERS, BILLING, BILLING_HISTORIES 타입에서 사용)
+  const [slug, setSlug] = React.useState<string>("");
+  // Emails 관리 (ADD_MEMBERS 타입에서 사용)
+  const [emails, setEmails] = React.useState<string>("");
 
   const onConnect = React.useCallback(
     (connection: Connection) => {
@@ -107,6 +134,7 @@ export default function WorkflowBuilderPage({
   );
   const [isRunning, setIsRunning] = React.useState(false);
   const [result, setResult] = React.useState<any>(null);
+  const [executionResults, setExecutionResults] = React.useState<any>(null);
   const rfRef = React.useRef<unknown>(null);
   const [paletteOpen, setPaletteOpen] = React.useState(false);
 
@@ -118,17 +146,11 @@ export default function WorkflowBuilderPage({
       start: workflow.start,
       steps: workflow.steps,
       targetUrl: workflow.targetUrl,
-      variables,
+      vars: variables,
     };
 
-    if (parserExpression.trim()) {
-      formWorkflow.parser = {
-        expression: parserExpression,
-      };
-    }
-
     return formWorkflow;
-  }, [nodes, edges, targetUrl, parserExpression, variables]);
+  }, [nodes, edges, targetUrl, variables]);
 
   const run = async () => {
     setIsRunning(true);
@@ -149,14 +171,54 @@ export default function WorkflowBuilderPage({
         });
       }
 
-      const res = await runWorkflow({
+      // type에 따라 runWorkflow 파라미터 구성
+      const runParams: any = {
         evaluatedUrl,
         workflow,
         closeTabAfterCollection: true,
         activateTab: true,
-        variables, // variables 전달
-      });
+        variables,
+        type,
+      };
+
+      // MEMBERS, PLAN, BILLING 타입일 때 workspaceKey 추가
+      if (
+        type === "MEMBERS" ||
+        type === "BILLING" ||
+        type === "BILLING_HISTORIES" ||
+        type === "WORKSPACE_DETAIL"
+      ) {
+        runParams.workspaceKey = workspaceKey;
+        runParams.slug = slug;
+      }
+
+      // ADD_MEMBERS 타입일 때 workspaceKey, slug, emails 추가
+      if (type === "ADD_MEMBERS") {
+        runParams.workspaceKey = workspaceKey;
+        runParams.slug = slug;
+        // 쉼표로 구분된 이메일을 배열로 변환
+        runParams.emails = emails
+          .split(",")
+          .map((e) => e.trim())
+          .filter((e) => e.length > 0);
+      }
+
+      const res = await runWorkflow(runParams);
       setResult(res);
+      setExecutionResults(res);
+
+      // nodes의 data에 executionResults 추가
+      setNodes((nds) => {
+        const updatedNodes = nds.map((node) => ({
+          ...node,
+          data: {
+            ...node.data,
+            executionResults: res,
+          },
+        }));
+        console.log("🔄 Updated nodes with executionResults:", updatedNodes);
+        return updatedNodes;
+      });
     } catch (err) {
       setResult({ error: String(err) });
     } finally {
@@ -231,13 +293,72 @@ export default function WorkflowBuilderPage({
 
       onSave({
         workflowId,
+        productId,
         description: desc,
         meta: workflowWithUrl,
+        type,
       });
       setDescription(desc);
     },
-    [workflowId, buildWorkflow, onSave, targetUrl],
+    [workflowId, productId, buildWorkflow, onSave, targetUrl, type],
   );
+
+  const handleExport = React.useCallback(() => {
+    const workflow = buildWorkflow();
+    // 파일명 생성: 한글/영문 유지, 특수문자만 언더스코어로 치환
+    const filename = description
+      ? description
+          .replace(/[<>:"/\\|?*]/g, "_") // 파일명에 사용 불가능한 문자만 치환
+          .replace(/\s+/g, "_") // 공백을 언더스코어로
+          .replace(/_{2,}/g, "_") // 연속된 언더스코어는 하나로
+          .trim()
+      : `workflow_${Date.now()}`;
+    exportWorkflowWithMetadata(workflow, description, filename);
+  }, [buildWorkflow, description]);
+
+  const handleImport = React.useCallback(() => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      const result = await importWorkflowWithMetadata(file);
+      if (result.success && result.data) {
+        // 워크플로우를 nodes/edges로 변환
+        const { nodes: importedNodes, edges: importedEdges } =
+          convertWorkflowToNodesAndEdges(result.data as Workflow);
+
+        // 상태 업데이트
+        setNodes(importedNodes);
+        setEdges(importedEdges);
+        setTargetUrl(result.data.targetUrl || "");
+        setVariables(result.data.vars || {});
+
+        // 메타데이터가 있으면 description도 업데이트
+        if (result.metadata?.description) {
+          setDescription(result.metadata.description);
+        }
+
+        // 자동 레이아웃 적용
+        setTimeout(() => {
+          const { nodes: layoutedNodes, edges: layoutedEdges } =
+            getLayoutedElements(importedNodes, importedEdges, "TB");
+          setNodes(layoutedNodes);
+          setEdges(layoutedEdges);
+          setTimeout(() => {
+            (rfRef.current as any)?.fitView({ padding: 0.2 });
+          }, 0);
+        }, 0);
+
+        alert("워크플로우를 성공적으로 불러왔습니다.");
+      } else {
+        alert(`워크플로우 불러오기 실패: ${result.error}`);
+      }
+    };
+    input.click();
+  }, [setNodes, setEdges, setTargetUrl, setVariables]);
 
   return (
     <div
@@ -263,10 +384,15 @@ export default function WorkflowBuilderPage({
           setTargetUrl={setTargetUrl}
           runWorkflow={run}
           isRunning={isRunning}
-          onAutoLayout={onAutoLayout}
           onSaveClick={() => setSaveDialogOpen(true)}
-          onParserClick={() => setParserDialogOpen(true)}
-          onVariablesClick={() => setVariablesDialogOpen(true)}
+          onParametersClick={() => setParametersDialogOpen(true)}
+          onExportClick={handleExport}
+          onImportClick={handleImport}
+          type={type}
+          onApiTypeChange={setApiType}
+          productId={productId}
+          onProductIdChange={setProductId}
+          products={products}
         />
 
         <PaletteSheet
@@ -346,6 +472,21 @@ export default function WorkflowBuilderPage({
             <Background />
             <Controls />
 
+            {/* 플로팅 정렬 버튼 */}
+            <Button
+              variant="default"
+              onClick={onAutoLayout}
+              style={{
+                position: "absolute",
+                bottom: 20,
+                right: 20,
+                zIndex: 5,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+              }}
+            >
+              정렬
+            </Button>
+
             <EdgeConfigDialog
               open={edgeDialogOpen}
               onOpenChange={setEdgeDialogOpen}
@@ -361,27 +502,39 @@ export default function WorkflowBuilderPage({
               initialDescription={description}
             />
 
-            <ParserDialog
-              open={parserDialogOpen}
-              onOpenChange={setParserDialogOpen}
-              expression={parserExpression}
-              onExpressionChange={setParserExpression}
-              sampleResult={result}
-            />
-
             <VariablesDialog
               open={variablesDialogOpen}
               onOpenChange={setVariablesDialogOpen}
               variables={variables}
               onVariablesChange={setVariables}
             />
+
+            <WorkflowParametersDialog
+              open={parametersDialogOpen}
+              onOpenChange={setParametersDialogOpen}
+              type={type}
+              workspaceKey={workspaceKey}
+              setWorkspaceKey={setWorkspaceKey}
+              slug={slug}
+              setSlug={setSlug}
+              emails={emails}
+              setEmails={setEmails}
+            />
           </ReactFlow>
-          {result && <ResultPanel result={result} />}
+          {result && <ResultPanel result={result} position="top-right" />}
         </div>
 
         {/* 오른쪽: Variables Preview */}
         <div style={{ width: "300px", overflow: "auto" }}>
-          <VariablesPreviewPanel variables={variables} />
+          <VariablesPreviewPanel
+            type={type}
+            workspaceKey={workspaceKey}
+            slug={slug}
+            emails={emails}
+            variables={variables}
+            onAddVariables={() => setVariablesDialogOpen(true)}
+            onAddParameters={() => setParametersDialogOpen(true)}
+          />
         </div>
       </div>
     </div>
