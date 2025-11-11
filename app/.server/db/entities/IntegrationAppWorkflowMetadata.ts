@@ -25,6 +25,7 @@ export type WorkflowType =
   | 'WORKSPACE'
   | 'WORKSPACE_DETAIL'
   | 'MEMBERS'
+  | 'ADD_MEMBERS'
   | 'BILLING'
   | 'BILLING_HISTORIES';
 

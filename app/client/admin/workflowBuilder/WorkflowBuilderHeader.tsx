@@ -20,9 +20,8 @@ interface WorkflowBuilderHeaderProps {
   setTargetUrl: (url: string) => void;
   runWorkflow: () => void;
   isRunning: boolean;
-  onAutoLayout?: () => void;
   onSaveClick: () => void;
-  onVariablesClick: () => void;
+  onParametersClick: () => void;
   onExportClick: () => void;
   onImportClick: () => void;
   type?: WorkflowType;
@@ -30,10 +29,6 @@ interface WorkflowBuilderHeaderProps {
   productId: number;
   onProductIdChange: (id: number) => void;
   products: Product[];
-  workspaceKey?: string;
-  setWorkspaceKey?: (key: string) => void;
-  slug?: string;
-  setSlug?: (slug: string) => void;
 }
 
 export const WorkflowBuilderHeader = ({
@@ -41,9 +36,8 @@ export const WorkflowBuilderHeader = ({
   setTargetUrl,
   runWorkflow,
   isRunning,
-  onAutoLayout,
   onSaveClick,
-  onVariablesClick,
+  onParametersClick,
   onExportClick,
   onImportClick,
   type = 'WORKFLOW',
@@ -51,19 +45,19 @@ export const WorkflowBuilderHeader = ({
   productId,
   onProductIdChange,
   products,
-  workspaceKey,
-  setWorkspaceKey,
-  slug,
-  setSlug,
 }: WorkflowBuilderHeaderProps) => {
   const typeLabels: Record<WorkflowType, string> = {
     WORKFLOW: '⚡ Data Collection',
     WORKSPACE: '🏢 Get Workspaces',
     WORKSPACE_DETAIL: '🏢 Get Workspace Detail',
     MEMBERS: '👥 Get Members',
+    ADD_MEMBERS: '➕ Add Members',
     BILLING: '💳 Billing',
     BILLING_HISTORIES: '📊 Billing Histories',
   };
+
+  // 파라미터가 필요한 타입인지 확인
+  const needsParameters = ['WORKSPACE_DETAIL', 'MEMBERS', 'ADD_MEMBERS', 'BILLING', 'BILLING_HISTORIES'].includes(type);
 
   return (
     <>
@@ -102,6 +96,9 @@ export const WorkflowBuilderHeader = ({
           <SelectItem value="MEMBERS">
             {typeLabels.MEMBERS}
           </SelectItem>
+          <SelectItem value="ADD_MEMBERS">
+            {typeLabels.ADD_MEMBERS}
+          </SelectItem>
           <SelectItem value="BILLING">
             {typeLabels.BILLING}
           </SelectItem>
@@ -116,27 +113,8 @@ export const WorkflowBuilderHeader = ({
         onChange={(e) => setTargetUrl(e.target.value)}
         style={{ maxWidth: 480 }}
       />
-      {(type==='WORKSPACE_DETAIL' ||type === 'MEMBERS' || type === 'BILLING' || type === 'BILLING_HISTORIES') && (
-        <Input
-          placeholder="Workspace Key (필수)"
-          value={workspaceKey || ''}
-          onChange={(e) => setWorkspaceKey?.(e.target.value)}
-          style={{ maxWidth: 240 }}
-        />
-      )}
-      {(type==='WORKSPACE_DETAIL' ||type === 'MEMBERS' || type === 'BILLING' || type === 'BILLING_HISTORIES') && (
-        <Input
-          placeholder="Slug (필수)"
-          value={slug || ''}
-          onChange={(e) => setSlug?.(e.target.value)}
-          style={{ maxWidth: 240 }}
-        />
-      )}
       <Button onClick={runWorkflow} disabled={isRunning}>
         {isRunning ? "Running…" : "Run Workflow"}
-      </Button>
-      <Button variant="outline" onClick={onVariablesClick}>
-        Variables
       </Button>
       <Button variant="outline" onClick={onExportClick}>
         Export JSON
@@ -147,11 +125,6 @@ export const WorkflowBuilderHeader = ({
       <Button variant="outline" onClick={onSaveClick}>
         저장
       </Button>
-      {onAutoLayout && (
-        <Button variant="outline" onClick={onAutoLayout}>
-          정렬
-        </Button>
-      )}
       <div style={{ marginLeft: "auto" }} />
     </>
   );

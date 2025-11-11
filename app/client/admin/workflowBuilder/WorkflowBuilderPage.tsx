@@ -12,6 +12,7 @@ import "@xyflow/react/dist/style.css";
 import { workflowNodeTypes } from "~/client/admin/workflowBuilder/nodes";
 import type { Workflow, Block } from "scordi-extension";
 import { AllBlockSchemas } from "scordi-extension";
+import { Button } from "~/components/ui/button";
 import { PaletteSheet } from "./PaletteSheet";
 import { ResultPanel } from "./ResultPanel";
 import { WorkflowBuilderHeader } from "./WorkflowBuilderHeader";
@@ -30,6 +31,7 @@ import { useNodesState } from "@xyflow/react";
 import { VariablesDialog } from "./VariablesDialog";
 import { VariablesPreviewPanel } from "./VariablesPreviewPanel";
 import { EdgeConfigDialog } from "./edges/EdgeConfigDialog";
+import { WorkflowParametersDialog } from "./WorkflowParametersDialog";
 import {
   exportWorkflowWithMetadata,
   importWorkflowWithMetadata,
@@ -86,6 +88,7 @@ export default function WorkflowBuilderPage({
   );
   const [edgeDialogOpen, setEdgeDialogOpen] = React.useState(false);
   const [saveDialogOpen, setSaveDialogOpen] = React.useState(false);
+  const [parametersDialogOpen, setParametersDialogOpen] = React.useState(false);
   const [description, setDescription] = React.useState(
     initialWorkflow?.description || "",
   );
@@ -102,10 +105,12 @@ export default function WorkflowBuilderPage({
   );
   const [variablesDialogOpen, setVariablesDialogOpen] = React.useState(false);
 
-  // Workspace Key 관리 (MEMBERS, BILLING, BILLING_HISTORIES, WORKSPACE_DETAIL 타입에서 사용)
+  // Workspace Key 관리 (MEMBERS, ADD_MEMBERS, BILLING, BILLING_HISTORIES, WORKSPACE_DETAIL 타입에서 사용)
   const [workspaceKey, setWorkspaceKey] = React.useState<string>('');
-  // Slug 관리 (WORKSPACE_DETAIL, MEMBERS, BILLING, BILLING_HISTORIES 타입에서 사용)
+  // Slug 관리 (WORKSPACE_DETAIL, MEMBERS, ADD_MEMBERS, BILLING, BILLING_HISTORIES 타입에서 사용)
   const [slug, setSlug] = React.useState<string>('');
+  // Emails 관리 (ADD_MEMBERS 타입에서 사용)
+  const [emails, setEmails] = React.useState<string>('');
 
   const onConnect = React.useCallback(
     (connection: Connection) => {
@@ -180,6 +185,14 @@ export default function WorkflowBuilderPage({
       if (type === 'MEMBERS' || type === 'BILLING' || type === 'BILLING_HISTORIES' || type === 'WORKSPACE_DETAIL') {
         runParams.workspaceKey = workspaceKey;
         runParams.slug = slug;
+      }
+      
+      // ADD_MEMBERS 타입일 때 workspaceKey, slug, emails 추가
+      if (type === 'ADD_MEMBERS') {
+        runParams.workspaceKey = workspaceKey;
+        runParams.slug = slug;
+        // 쉼표로 구분된 이메일을 배열로 변환
+        runParams.emails = emails.split(',').map(e => e.trim()).filter(e => e.length > 0);
       }
 
       const res = await runWorkflow(runParams);
@@ -363,9 +376,8 @@ export default function WorkflowBuilderPage({
           setTargetUrl={setTargetUrl}
           runWorkflow={run}
           isRunning={isRunning}
-          onAutoLayout={onAutoLayout}
           onSaveClick={() => setSaveDialogOpen(true)}
-          onVariablesClick={() => setVariablesDialogOpen(true)}
+          onParametersClick={() => setParametersDialogOpen(true)}
           onExportClick={handleExport}
           onImportClick={handleImport}
           type={type}
@@ -373,10 +385,6 @@ export default function WorkflowBuilderPage({
           productId={productId}
           onProductIdChange={setProductId}
           products={products}
-          workspaceKey={workspaceKey}
-          setWorkspaceKey={setWorkspaceKey}
-          slug={slug}
-          setSlug={setSlug}
         />
 
         <PaletteSheet
@@ -456,6 +464,21 @@ export default function WorkflowBuilderPage({
             <Background />
             <Controls />
 
+            {/* 플로팅 정렬 버튼 */}
+            <Button
+              variant="default"
+              onClick={onAutoLayout}
+              style={{
+                position: "absolute",
+                bottom: 20,
+                right: 20,
+                zIndex: 5,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+              }}
+            >
+              정렬
+            </Button>
+
             <EdgeConfigDialog
               open={edgeDialogOpen}
               onOpenChange={setEdgeDialogOpen}
@@ -477,13 +500,33 @@ export default function WorkflowBuilderPage({
               variables={variables}
               onVariablesChange={setVariables}
             />
+
+            <WorkflowParametersDialog
+              open={parametersDialogOpen}
+              onOpenChange={setParametersDialogOpen}
+              type={type}
+              workspaceKey={workspaceKey}
+              setWorkspaceKey={setWorkspaceKey}
+              slug={slug}
+              setSlug={setSlug}
+              emails={emails}
+              setEmails={setEmails}
+            />
           </ReactFlow>
-          {result && <ResultPanel result={result} />}
+          {result && <ResultPanel result={result} position="top-right" />}
         </div>
 
         {/* 오른쪽: Variables Preview */}
         <div style={{ width: "300px", overflow: "auto" }}>
-          <VariablesPreviewPanel variables={variables} />
+          <VariablesPreviewPanel
+            type={type}
+            workspaceKey={workspaceKey}
+            slug={slug}
+            emails={emails}
+            variables={variables}
+            onAddVariables={() => setVariablesDialogOpen(true)}
+            onAddParameters={() => setParametersDialogOpen(true)}
+          />
         </div>
       </div>
     </div>
