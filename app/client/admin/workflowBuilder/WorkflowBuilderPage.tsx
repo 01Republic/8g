@@ -14,10 +14,6 @@ import type { Workflow, Block } from "scordi-extension";
 import { AllBlockSchemas } from "scordi-extension";
 import { PaletteSheet } from "./PaletteSheet";
 import { ResultPanel } from "./ResultPanel";
-import { WorkspaceResultPanel } from "./WorkspaceResultPanel";
-import { MembersResultPanel } from "./MembersResultPanel";
-import { PlanCycleResultPanel } from "./PlanCycleResultPanel";
-import { BillingHistoryResultPanel } from "./BillingHistoryResultPanel";
 import { WorkflowBuilderHeader } from "./WorkflowBuilderHeader";
 import { blockLabels } from "./nodes";
 import { runWorkflow } from "~/models/workflow/WorkflowRunner";
@@ -482,17 +478,7 @@ export default function WorkflowBuilderPage({
               onVariablesChange={setVariables}
             />
           </ReactFlow>
-          {result && (
-            <>
-              {console.log(result)}
-              {type === "WORKSPACE" && <WorkspaceResultPanel result={result} />}
-              {type === "WORKSPACE" && <WorkspaceResultPanel result={result} />}
-              {type === "MEMBERS" && <MembersResultPanel result={result} />}
-              {type === "BILLING" && <PlanCycleResultPanel result={result} />}
-              {type === "BILLING_HISTORIES" && <BillingHistoryResultPanel result={result} />}
-              {(type === "WORKFLOW" || !type) && <ResultPanel result={result} />}
-            </>
-          )}
+          {result && <ResultPanel result={result} />}
         </div>
 
         {/* 오른쪽: Variables Preview */}

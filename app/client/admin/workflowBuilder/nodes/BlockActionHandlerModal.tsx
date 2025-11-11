@@ -305,6 +305,82 @@ export const BlockActionHandlerModal = (
                   currentNodeId={id}
                 />
               );
+            } else if (field.type === "union") {
+              // Handle union types like requestBodyPattern (string | Record<string, any>)
+              // Use RecordFieldBlock for requestBodyPattern to handle JSON objects properly
+              if (field.name === "requestBodyPattern") {
+                // Use RecordFieldBlock to handle as JSON object
+                return (
+                  <RecordFieldBlock
+                    key={field.name}
+                    field={{
+                      ...field,
+                      type: "record" as const,  // Override type to use RecordFieldBlock
+                      description: "요청 본문 필터 패턴 (JSON 객체). ${vars.변수명} 형태의 변수 사용 가능합니다."
+                    }}
+                    formData={formData}
+                    updateFormField={updateFormField}
+                    currentNodeId={id}
+                  />
+                );
+              }
+              // Handle status field (number | {min?: number, max?: number})
+              if (field.name === "status") {
+                return (
+                  <div key={field.name} className="flex flex-col gap-1.5">
+                    <label className="text-sm font-medium">
+                      {field.name}
+                      {field.optional && " (선택)"}
+                    </label>
+                    {field.description && (
+                      <p className="text-xs text-gray-500">{field.description}</p>
+                    )}
+                    <input
+                      type="text"
+                      value={typeof formData[field.name] === "object" 
+                        ? JSON.stringify(formData[field.name]) 
+                        : formData[field.name] || ""}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (!value) {
+                          updateFormField(field.name, undefined);
+                        } else {
+                          // Try to parse as JSON for range {min: x, max: y}
+                          try {
+                            if (value.includes("{")) {
+                              const parsed = JSON.parse(value);
+                              updateFormField(field.name, parsed);
+                            } else {
+                              // Parse as number
+                              const num = parseInt(value, 10);
+                              updateFormField(field.name, isNaN(num) ? value : num);
+                            }
+                          } catch {
+                            // If not valid JSON, try as number
+                            const num = parseInt(value, 10);
+                            updateFormField(field.name, isNaN(num) ? value : num);
+                          }
+                        }
+                      }}
+                      placeholder={"상태 코드 (예: 200) 또는 범위 (예: {\"min\": 200, \"max\": 299})"}
+                      className="rounded-md border border-gray-200 px-3 py-2 text-sm"
+                    />
+                    <p className="text-xs text-gray-500">
+                      특정 상태 코드 또는 범위를 지정할 수 있습니다.
+                    </p>
+                  </div>
+                );
+              }
+              // Default union handling - treat as string
+              return (
+                <StringFieldBlock
+                  key={field.name}
+                  field={field}
+                  formData={formData}
+                  updateFormField={updateFormField}
+                  currentNodeId={id}
+                />
+              );
             } else if (field.type === "object") {
               // For textFilter in EventClickBlock
               if (field.name === "textFilter") {
