@@ -94,6 +94,10 @@ export const blockLabels: Record<
     title: "네트워크 응답 캐치",
     description: "네트워크 응답 캐치",
   },
+  "set-contenteditable": {
+    title: "ContentEditable 설정",
+    description: "ContentEditable 설정",
+  },
 };
 
 /**
