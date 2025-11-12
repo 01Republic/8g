@@ -1,65 +1,49 @@
-import axios from "axios";
-import type { IntegrationAppWorkflowMetadata } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
+import type { FindOptionsOrder } from "typeorm";
+import { initializeDatabase } from "~/.server/db";
+import { IntegrationAppWorkflowMetadata } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
 import { FindAllQueryDto } from "~/.server/dto/FindAllQueryDto";
-import { PaginationMetaData } from "~/.server/dto/pagination-meta-data.dto";
-import type { Paginated } from "~/.server/dto/paginated.dto";
-
-const WORKFLOW_API_BASE_URL =
-  process.env.WORKFLOW_API_BASE_URL || "http://localhost:8000";
+import { Paginated } from "~/.server/dto/paginated.dto";
 
 export class FindAllIntegrationAppWorkflowQueryDto extends FindAllQueryDto<IntegrationAppWorkflowMetadata> {
   //
 }
 
-interface WorkflowMetadataResponse {
-  items: IntegrationAppWorkflowMetadata[];
-  pagination: PaginationMetaData;
-}
-
 export async function findAllWorkflows(
   query: FindAllIntegrationAppWorkflowQueryDto,
   token?: string,
-): Promise<WorkflowMetadataResponse> {
-  const { page = 1, itemsPerPage = 10, where, order, relations = [] } = query;
+): Promise<Paginated<IntegrationAppWorkflowMetadata>> {
+  // token is no longer required since we query DB directly; keep for compatibility
+  void token;
 
-  // Query parameters 구성
-  const params: Record<string, any> = {
+  const {
+    page = 1,
+    itemsPerPage = 10,
+    where,
+    order,
+    relations = [],
+  } = query;
+
+  await initializeDatabase();
+
+  const repository = IntegrationAppWorkflowMetadata.getRepository();
+
+  const effectiveOrder: FindOptionsOrder<IntegrationAppWorkflowMetadata> =
+    order && Object.keys(order).length > 0
+      ? order
+      : { id: "DESC" as const };
+
+  const [items, totalItemCount] = await repository.findAndCount({
+    where,
+    order: effectiveOrder,
+    relations: relations.length > 0 ? relations : undefined,
+    skip: (page - 1) * itemsPerPage,
+    take: itemsPerPage,
+  });
+
+  return new Paginated(
+    items,
+    totalItemCount,
     page,
     itemsPerPage,
-  };
-
-  // Only add where if it has properties
-  if (where && Object.keys(where).length > 0) {
-    params.where = where;
-  }
-
-  // Only add order if it has properties
-  if (order && Object.keys(order).length > 0) {
-    params.order = order;
-  }
-
-  // Only add relations if it has items
-  if (relations.length > 0) {
-    params.relations = relations.join(",");
-  }
-
-  const { data } = await axios.get<Paginated<IntegrationAppWorkflowMetadata>>(
-    `${WORKFLOW_API_BASE_URL}/8g/workflows`,
-    {
-      params,
-      headers: token
-        ? {
-            Authorization: `Bearer ${token}`,
-          }
-        : undefined,
-    },
   );
-
-  const { items, pagination } = data;
-
-  // 최신순 정렬 (API에서 정렬되지 않은 경우)
-  return {
-    items: items.sort((a, b) => b.id - a.id),
-    pagination,
-  };
 }

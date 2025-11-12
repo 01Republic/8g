@@ -204,7 +204,7 @@ export async function importWorkflowFromJson(
 }
 
 /**
- * Export workflow with metadata (including description and productId)
+ * Export workflow with metadata (including description)
  */
 export interface WorkflowExportData {
   workflow: FormWorkflow;

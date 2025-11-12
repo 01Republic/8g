@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { useState } from "react";
 import type { WorkflowType } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
@@ -59,43 +59,16 @@ export function VariablesPreviewPanel({
   return (
     <Card className="h-full flex flex-col">
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between gap-2">
-          <CardTitle className="text-sm font-medium">Parameters</CardTitle>
-          <Button size="sm" variant="outline" onClick={onAddParameters}>
+        <div className="flex items-center justify-between text-xs font-semibold text-gray-600 uppercase tracking-wide">
+          <CardTitle>Variables</CardTitle>
+          <Button size="sm" variant="outline" onClick={onAddVariables}>
             Add
           </Button>
         </div>
       </CardHeader>
       <CardContent className="flex-1 overflow-auto">
         <div className="space-y-6">
-          {needsParameters && (
-            <div className="space-y-2">
-              <div className="space-y-1">
-                {parameterRows.map(({ label, value }) => (
-                  <div
-                    key={label}
-                    className="flex items-center justify-between rounded border border-gray-200 bg-gray-50 px-3 py-2 text-xs"
-                  >
-                    <span className="font-medium text-gray-600">{label}</span>
-                    <span className="ml-3 font-mono text-gray-800 break-all">
-                      {value?.trim() ? value : "-"}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs font-semibold text-gray-600 uppercase tracking-wide">
-              <span>Variables</span>
-              {!hasVariables && (
-                <Button size="sm" variant="outline" onClick={onAddVariables}>
-                  Add
-                </Button>
-              )}
-            </div>
-
             {!hasVariables ? (
               <div className="text-sm text-gray-400 text-center py-8">
                 변수를 추가하면 여기에 표시됩니다
@@ -130,18 +103,6 @@ export function VariablesPreviewPanel({
                     </div>
                   </div>
                 ))}
-              </div>
-            )}
-
-            {hasVariables && (
-              <div className="mt-4 p-3 bg-blue-50 rounded text-xs space-y-1">
-                <div className="font-medium text-blue-900">💡 사용 방법:</div>
-                <div className="text-blue-700">
-                  • Step의 selector, targetUrl 등에서 사용
-                </div>
-                <div className="text-blue-700">
-                  • 변수를 클릭하면 복사됩니다
-                </div>
               </div>
             )}
           </div>

@@ -37,30 +37,21 @@ import {
   importWorkflowWithMetadata,
 } from "./utils/exportImport";
 
-interface Product {
-  id: number;
-  nameKo: string;
-  nameEn: string;
-}
-
 interface WorkflowBuilderPageProps {
   workflowId?: number;
   initialWorkflow?: {
     id: number;
     description: string;
     meta: FormWorkflow;
-    productId: number;
   } | null;
   onSave: (payload: {
     workflowId?: number;
-    productId: number;
     description: string;
     meta: FormWorkflow;
     type?: WorkflowType;
   }) => void;
   isSaving: boolean;
   type?: WorkflowType; // Workspace API 타입 지정
-  products: Product[];
 }
 
 export default function WorkflowBuilderPage({
@@ -69,7 +60,6 @@ export default function WorkflowBuilderPage({
   onSave,
   isSaving,
   type: initialApiType,
-  products,
 }: WorkflowBuilderPageProps) {
   // 초기 노드/엣지 변환
   const initialData = React.useMemo(() => {
@@ -92,11 +82,9 @@ export default function WorkflowBuilderPage({
   const [description, setDescription] = React.useState(
     initialWorkflow?.description || "",
   );
-  const [type, setApiType] = React.useState<WorkflowType>(
-    initialApiType || "WORKFLOW",
-  );
-  const [productId, setProductId] = React.useState<number>(
-    initialWorkflow?.productId || 1, // 기본값 1 (나중에 UI에서 선택 가능하도록)
+  const type = React.useMemo<WorkflowType>(
+    () => initialApiType || "WORKFLOW",
+    [initialApiType],
   );
 
   // Variables 관리
@@ -293,14 +281,13 @@ export default function WorkflowBuilderPage({
 
       onSave({
         workflowId,
-        productId,
         description: desc,
         meta: workflowWithUrl,
         type,
       });
       setDescription(desc);
     },
-    [workflowId, productId, buildWorkflow, onSave, targetUrl, type],
+    [workflowId, buildWorkflow, onSave, targetUrl, type],
   );
 
   const handleExport = React.useCallback(() => {
@@ -388,11 +375,6 @@ export default function WorkflowBuilderPage({
           onParametersClick={() => setParametersDialogOpen(true)}
           onExportClick={handleExport}
           onImportClick={handleImport}
-          type={type}
-          onApiTypeChange={setApiType}
-          productId={productId}
-          onProductIdChange={setProductId}
-          products={products}
         />
 
         <PaletteSheet
