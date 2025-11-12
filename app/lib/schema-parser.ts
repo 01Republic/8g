@@ -51,10 +51,9 @@ export function parseZodSchema(schema: any): ParsedSchema {
   }
 
   // Get shape - it might be a function or an object
-  const shape =
-    typeof schema.shape === "function" ? schema.shape() : schema.shape;
+  const shape = typeof schema.shape === 'function' ? schema.shape() : schema.shape;
 
-  if (!shape || typeof shape !== "object") {
+  if (!shape || typeof shape !== 'object') {
     return { fields };
   }
 
@@ -185,12 +184,7 @@ function determineFieldType(
   schema: any,
 ): Pick<
   ParsedField,
-  | "type"
-  | "enumValues"
-  | "arrayItemType"
-  | "unionTypes"
-  | "defaultValue"
-  | "nestedFields"
+  "type" | "enumValues" | "arrayItemType" | "unionTypes" | "defaultValue" | "nestedFields"
 > {
   const handler = typeHandlers.find((h) => h.check(schema));
   return handler ? handler.handle(schema) : { type: "string" }; // default
@@ -205,12 +199,7 @@ type TypeHandler = {
     schema: any,
   ) => Pick<
     ParsedField,
-    | "type"
-    | "enumValues"
-    | "arrayItemType"
-    | "unionTypes"
-    | "defaultValue"
-    | "nestedFields"
+    "type" | "enumValues" | "arrayItemType" | "unionTypes" | "defaultValue" | "nestedFields"
   >;
 };
 
@@ -231,8 +220,7 @@ const typeHandlers: TypeHandler[] = [
     check: (s) => s?._def?.typeName === "ZodEnum",
     handle: (s) => ({
       type: "enum",
-      enumValues:
-        s.options || s._def?.values || Object.values(s._def?.entries || {}),
+      enumValues: s.options || s._def?.values || Object.values(s._def?.entries || {}),
     }),
   },
   {
@@ -267,14 +255,14 @@ const typeHandlers: TypeHandler[] = [
       // Parse nested object fields
       const nestedFields: ParsedField[] = [];
       const shape = s.shape;
-
+      
       for (const [fieldName, fieldSchema] of Object.entries(shape || {})) {
         const parsed = parseField(fieldName, fieldSchema as any);
         if (parsed) {
           nestedFields.push(parsed);
         }
       }
-
+      
       return { type: "object", nestedFields };
     },
   },

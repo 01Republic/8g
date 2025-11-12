@@ -99,7 +99,7 @@ export const SourceDataFieldBlock = (props: SourceDataFieldBlockProps) => {
     } else {
       // 다중 선택인 경우 배열로
       const selectedArray = Array.from(newSelectedIds).map(
-        (id) => `\${steps.${id}.result.data}`,
+        (id) => `\${steps.${id}.result.data}`
       );
       updateFormField(name, selectedArray);
     }
@@ -109,7 +109,9 @@ export const SourceDataFieldBlock = (props: SourceDataFieldBlockProps) => {
     <FieldBlockContentBox key={name} label="소스 데이터">
       <div className="space-y-2">
         {previousNodes.length === 0 ? (
-          <div className="p-2 text-sm text-gray-500">이전 노드가 없습니다</div>
+          <div className="p-2 text-sm text-gray-500">
+            이전 노드가 없습니다
+          </div>
         ) : (
           <div className="space-y-2 max-h-60 overflow-y-auto">
             {previousNodes.map((node) => {

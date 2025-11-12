@@ -44,14 +44,14 @@ export interface EdgeFormState {
   conditionMode: ConditionMode;
   singleConditionType: SingleConditionType;
   multipleConditionType: MultipleConditionType;
-
+  
   // 각 조건 타입별 데이터 (해당 타입일 때만 사용)
   equalsData: EqualsData;
   existsData: ExistsData;
   containsData: ContainsData;
   regexData: RegexData;
   exprData: ExprData;
-
+  
   // 복합 조건
   subConditions: SubCondition[];
 }
@@ -63,13 +63,13 @@ export const DEFAULT_FORM_STATE: EdgeFormState = {
   conditionMode: "single",
   singleConditionType: "default",
   multipleConditionType: "and",
-
+  
   equalsData: { nodeId: "", path: "result.data", value: "" },
   existsData: { nodeId: "", path: "result" },
   containsData: { nodeId: "", path: "result.data", search: "" },
   regexData: { nodeId: "", path: "result.data", pattern: "" },
   exprData: { expr: "" },
-
+  
   subConditions: [],
 };
 
@@ -127,8 +127,7 @@ export function parseEdgeData(edgeData?: SwitchEdgeData): EdgeFormState {
     edgeData.when?.and || edgeData.when?.or ? "multiple" : "single";
 
   // 단일 조건 타입 판별
-  const singleConditionType: SingleConditionType =
-    detectConditionType(edgeData);
+  const singleConditionType: SingleConditionType = detectConditionType(edgeData);
 
   // 복합 조건 타입
   const multipleConditionType: MultipleConditionType = edgeData.when?.and

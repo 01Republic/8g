@@ -35,14 +35,8 @@ export function WorkflowParametersDialog({
   setEmails,
 }: WorkflowParametersDialogProps) {
   // 파라미터가 필요한 타입인지 확인
-  const needsParameters = [
-    "WORKSPACE_DETAIL",
-    "MEMBERS",
-    "ADD_MEMBERS",
-    "BILLING",
-    "BILLING_HISTORIES",
-  ].includes(type);
-
+  const needsParameters = ['WORKSPACE_DETAIL', 'MEMBERS', 'ADD_MEMBERS', 'BILLING', 'BILLING_HISTORIES'].includes(type);
+  
   if (!needsParameters) {
     return null;
   }
@@ -50,18 +44,18 @@ export function WorkflowParametersDialog({
   const handleApply = () => {
     // 필수 값 검증
     if (!workspaceKey.trim()) {
-      alert("Workspace Key를 입력해주세요");
+      alert('Workspace Key를 입력해주세요');
       return;
     }
     if (!slug.trim()) {
-      alert("Slug를 입력해주세요");
+      alert('Slug를 입력해주세요');
       return;
     }
-    if (type === "ADD_MEMBERS" && !emails.trim()) {
-      alert("이메일을 입력해주세요");
+    if (type === 'ADD_MEMBERS' && !emails.trim()) {
+      alert('이메일을 입력해주세요');
       return;
     }
-
+    
     onOpenChange(false);
   };
 
@@ -71,9 +65,9 @@ export function WorkflowParametersDialog({
         <DialogHeader>
           <DialogTitle>워크플로우 파라미터 설정</DialogTitle>
           <DialogDescription>
-            {type === "ADD_MEMBERS"
-              ? "멤버 추가에 필요한 정보를 입력하세요"
-              : "워크플로우 실행에 필요한 정보를 입력하세요"}
+            {type === 'ADD_MEMBERS' 
+              ? '멤버 추가에 필요한 정보를 입력하세요'
+              : '워크플로우 실행에 필요한 정보를 입력하세요'}
           </DialogDescription>
         </DialogHeader>
 
@@ -98,7 +92,7 @@ export function WorkflowParametersDialog({
             />
           </div>
 
-          {type === "ADD_MEMBERS" && (
+          {type === 'ADD_MEMBERS' && (
             <div className="grid gap-2">
               <Label htmlFor="emails">Emails *</Label>
               <Input
@@ -124,3 +118,4 @@ export function WorkflowParametersDialog({
     </Dialog>
   );
 }
+

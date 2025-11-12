@@ -5,12 +5,7 @@ import { FieldBlockContentBox } from "./FieldBlockContentBox";
 import { useState, useEffect } from "react";
 import jsonata from "jsonata";
 import { Button } from "~/components/ui/button";
-import {
-  PlayIcon,
-  RefreshCwIcon,
-  AlertCircleIcon,
-  SparklesIcon,
-} from "lucide-react";
+import { PlayIcon, RefreshCwIcon, AlertCircleIcon, SparklesIcon } from "lucide-react";
 import { EightGClient } from "scordi-extension";
 import { buildJSONataQuery } from "~/client/admin/workflowBuilder/agent/JSONata-qaury-builder";
 
@@ -23,29 +18,19 @@ interface ExpressionFieldBlockProps {
 }
 
 export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
-  const { field, formData, updateFormField, currentNodeId, executionResults } =
-    props;
+  const { field, formData, updateFormField, currentNodeId, executionResults } = props;
   const { name, defaultValue } = field;
 
   // sourceData 필드 값 가져오기 (이전 스텝 데이터 참조)
   const sourceDataValue = formData.sourceData || "";
 
   const [testInput, setTestInput] = useState(
-    JSON.stringify(
-      {
-        items: [
-          { name: "Product A", price: 100 },
-          { name: "Product B", price: 200 },
-        ],
-      },
-      null,
-      2,
-    ),
+    JSON.stringify({ items: [{ name: "Product A", price: 100 }, { name: "Product B", price: 200 }] }, null, 2)
   );
   const [testOutput, setTestOutput] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [hasRealData, setHasRealData] = useState(false);
-
+  
   // Auto generation states
   const [targetSchema, setTargetSchema] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -59,9 +44,7 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
 
       // sourceData가 ${steps.xxx.result.data} 형식인 경우 파싱
       if (sourceDataValue) {
-        const match = sourceDataValue.match(
-          /\$\{steps\.([^.}]+)\.result\.data\}/,
-        );
+        const match = sourceDataValue.match(/\$\{steps\.([^.}]+)\.result\.data\}/);
 
         if (match && match[1]) {
           const stepId = match[1];
@@ -69,17 +52,11 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
           try {
             // 1. context.steps 구조 시도 (EightGClient 헬퍼 사용)
             if (executionResults.context) {
-              const stepData = EightGClient.getStepData(
-                executionResults.context,
-                stepId,
-              );
+              const stepData = EightGClient.getStepData(executionResults.context, stepId);
               if (stepData !== undefined) {
                 dataToLoad = stepData;
               } else {
-                const stepResult = EightGClient.getStepResult(
-                  executionResults.context,
-                  stepId,
-                );
+                const stepResult = EightGClient.getStepResult(executionResults.context, stepId);
                 if (stepResult !== undefined) {
                   dataToLoad = stepResult;
                 }
@@ -87,9 +64,7 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
             }
             // 2. result.steps 배열 구조 시도
             else if (executionResults.result?.steps) {
-              const stepResult = executionResults.result.steps.find(
-                (s: any) => s.stepId === stepId,
-              );
+              const stepResult = executionResults.result.steps.find((s: any) => s.stepId === stepId);
               if (stepResult?.result?.data) {
                 dataToLoad = stepResult.result.data;
               }
@@ -112,26 +87,18 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
       let dataToLoad = executionResults;
 
       if (sourceDataValue) {
-        const match = sourceDataValue.match(
-          /\$\{steps\.([^.}]+)\.result\.data\}/,
-        );
+        const match = sourceDataValue.match(/\$\{steps\.([^.}]+)\.result\.data\}/);
         if (match && match[1]) {
           const stepId = match[1];
 
           try {
             // 1. context.steps 구조 시도 (EightGClient 헬퍼 사용)
             if (executionResults.context) {
-              const stepData = EightGClient.getStepData(
-                executionResults.context,
-                stepId,
-              );
+              const stepData = EightGClient.getStepData(executionResults.context, stepId);
               if (stepData !== undefined) {
                 dataToLoad = stepData;
               } else {
-                const stepResult = EightGClient.getStepResult(
-                  executionResults.context,
-                  stepId,
-                );
+                const stepResult = EightGClient.getStepResult(executionResults.context, stepId);
                 if (stepResult !== undefined) {
                   dataToLoad = stepResult;
                 }
@@ -139,9 +106,7 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
             }
             // 2. result.steps 배열 구조 시도
             else if (executionResults.result?.steps) {
-              const stepResult = executionResults.result.steps.find(
-                (s: any) => s.stepId === stepId,
-              );
+              const stepResult = executionResults.result.steps.find((s: any) => s.stepId === stepId);
               if (stepResult?.result?.data) {
                 dataToLoad = stepResult.result.data;
               }
@@ -155,18 +120,7 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
       setTestInput(JSON.stringify(dataToLoad, null, 2));
       setHasRealData(true);
     } else {
-      setTestInput(
-        JSON.stringify(
-          {
-            items: [
-              { name: "Product A", price: 100 },
-              { name: "Product B", price: 200 },
-            ],
-          },
-          null,
-          2,
-        ),
-      );
+      setTestInput(JSON.stringify({ items: [{ name: "Product A", price: 100 }, { name: "Product B", price: 200 }] }, null, 2));
       setHasRealData(false);
     }
   };
@@ -183,9 +137,7 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
 
       // 변수 참조 문법 체크 (${...})
       if (expression.includes("${")) {
-        setError(
-          "❌ expression 필드에는 JSONata 표현식만 입력해주세요.\n\n이전 스텝 데이터는 'sourceData' 필드에서 선택하고,\nexpression 필드에는 변환 로직을 작성하세요.\n\n예: $sum(items.price)",
-        );
+        setError("❌ expression 필드에는 JSONata 표현식만 입력해주세요.\n\n이전 스텝 데이터는 'sourceData' 필드에서 선택하고,\nexpression 필드에는 변환 로직을 작성하세요.\n\n예: $sum(items.price)");
         setTestOutput("");
         return;
       }
@@ -195,10 +147,9 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
       const result = await compiledExpression.evaluate(input);
 
       // 결과를 안전하게 문자열로 변환
-      const outputStr =
-        typeof result === "undefined"
-          ? "undefined"
-          : JSON.stringify(result, null, 2);
+      const outputStr = typeof result === 'undefined'
+        ? 'undefined'
+        : JSON.stringify(result, null, 2);
 
       setTestOutput(outputStr);
       setError("");
@@ -239,17 +190,14 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
       }
 
       const sourceData = JSON.parse(testInput);
-      const generatedExpression = await buildJSONataQuery(
-        sourceData,
-        targetSchema,
-      );
-
+      const generatedExpression = await buildJSONataQuery(sourceData, targetSchema);
+      
       // Update the expression field
       updateFormField(name, generatedExpression);
-
+      
       // Test the generated expression
       await handleTest();
-
+      
       // Close the auto generate section
       setShowAutoGenerate(false);
       setTargetSchema("");
@@ -261,25 +209,17 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
   };
 
   return (
-    <FieldBlockContentBox
-      key={name}
-      label="변환 표현식 (JSONata)"
-      location="top"
-    >
+    <FieldBlockContentBox key={name} label="변환 표현식 (JSONata)" location="top">
       <div className="space-y-2">
         {/* 안내 메시지 */}
         <div className="bg-blue-50 border border-blue-200 rounded p-2 text-xs text-blue-800">
           <strong>💡 사용 방법:</strong>
-          <br />• <strong>sourceData 필드</strong>: 변환할 데이터의 출처 선택
-          (이전 스텝)
-          <br />• <strong>expression 필드</strong>: JSONata 표현식 작성 (변수
-          참조 문법 ❌)
           <br />
-          예: <code className="bg-white px-1 rounded">
-            $sum(items.price)
-          </code>{" "}
-          또는{" "}
-          <code className="bg-white px-1 rounded">items[price &gt; 100]</code>
+          • <strong>sourceData 필드</strong>: 변환할 데이터의 출처 선택 (이전 스텝)
+          <br />
+          • <strong>expression 필드</strong>: JSONata 표현식 작성 (변수 참조 문법 ❌)
+          <br />
+          예: <code className="bg-white px-1 rounded">$sum(items.price)</code> 또는 <code className="bg-white px-1 rounded">items[price &gt; 100]</code>
         </div>
 
         <div className="relative">
@@ -287,7 +227,9 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
             id={name}
             value={formData[name] ?? ""}
             onChange={(e) => updateFormField(name, e.target.value || undefined)}
-            placeholder={defaultValue || "$sum(items.price)"}
+            placeholder={
+              defaultValue || "$sum(items.price)"
+            }
             className="font-mono text-sm min-h-24"
             spellCheck={false}
           />
@@ -401,8 +343,7 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
               </div>
               {sourceDataValue && (
                 <div className="mb-2 text-xs text-gray-600 bg-blue-50 border border-blue-200 rounded px-2 py-1">
-                  <span className="font-medium">소스 데이터 경로:</span>{" "}
-                  {sourceDataValue}
+                  <span className="font-medium">소스 데이터 경로:</span> {sourceDataValue}
                 </div>
               )}
               <Textarea
@@ -454,19 +395,10 @@ export const ExpressionFieldBlock = (props: ExpressionFieldBlockProps) => {
                   💡 사용 예시
                 </Label>
                 <div className="text-xs text-blue-800 space-y-1 font-mono">
-                  <div>
-                    • <code>$sum(items.price)</code> - 가격 합계
-                  </div>
-                  <div>
-                    • <code>items[price &gt; 100]</code> - 필터링
-                  </div>
-                  <div>
-                    • <code>{"items.{name: name, total: price * 2}"}</code> -
-                    변환
-                  </div>
-                  <div>
-                    • <code>$count(items)</code> - 개수 세기
-                  </div>
+                  <div>• <code>$sum(items.price)</code> - 가격 합계</div>
+                  <div>• <code>items[price &gt; 100]</code> - 필터링</div>
+                  <div>• <code>{'items.{name: name, total: price * 2}'}</code> - 변환</div>
+                  <div>• <code>$count(items)</code> - 개수 세기</div>
                 </div>
               </div>
             )}

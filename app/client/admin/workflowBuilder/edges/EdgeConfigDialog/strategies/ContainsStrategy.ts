@@ -12,7 +12,10 @@ import {
  * Contains 조건 전략
  */
 export class ContainsStrategy extends BaseConditionStrategy {
-  parseFromWhen(when: WhenCondition, formState: Partial<EdgeFormState>): void {
+  parseFromWhen(
+    when: WhenCondition,
+    formState: Partial<EdgeFormState>,
+  ): void {
     if (!when.contains) return;
 
     formState.containsData = {
@@ -54,3 +57,4 @@ export class ContainsStrategy extends BaseConditionStrategy {
     };
   }
 }
+

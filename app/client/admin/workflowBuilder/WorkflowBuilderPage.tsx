@@ -93,7 +93,7 @@ export default function WorkflowBuilderPage({
     initialWorkflow?.description || "",
   );
   const [type, setApiType] = React.useState<WorkflowType>(
-    initialApiType || "WORKFLOW",
+    initialApiType || 'WORKFLOW',
   );
   const [productId, setProductId] = React.useState<number>(
     initialWorkflow?.productId || 1, // 기본값 1 (나중에 UI에서 선택 가능하도록)
@@ -106,11 +106,11 @@ export default function WorkflowBuilderPage({
   const [variablesDialogOpen, setVariablesDialogOpen] = React.useState(false);
 
   // Workspace Key 관리 (MEMBERS, ADD_MEMBERS, BILLING, BILLING_HISTORIES, WORKSPACE_DETAIL 타입에서 사용)
-  const [workspaceKey, setWorkspaceKey] = React.useState<string>("");
+  const [workspaceKey, setWorkspaceKey] = React.useState<string>('');
   // Slug 관리 (WORKSPACE_DETAIL, MEMBERS, ADD_MEMBERS, BILLING, BILLING_HISTORIES 타입에서 사용)
-  const [slug, setSlug] = React.useState<string>("");
+  const [slug, setSlug] = React.useState<string>('');
   // Emails 관리 (ADD_MEMBERS 타입에서 사용)
-  const [emails, setEmails] = React.useState<string>("");
+  const [emails, setEmails] = React.useState<string>('');
 
   const onConnect = React.useCallback(
     (connection: Connection) => {
@@ -182,25 +182,17 @@ export default function WorkflowBuilderPage({
       };
 
       // MEMBERS, PLAN, BILLING 타입일 때 workspaceKey 추가
-      if (
-        type === "MEMBERS" ||
-        type === "BILLING" ||
-        type === "BILLING_HISTORIES" ||
-        type === "WORKSPACE_DETAIL"
-      ) {
+      if (type === 'MEMBERS' || type === 'BILLING' || type === 'BILLING_HISTORIES' || type === 'WORKSPACE_DETAIL') {
         runParams.workspaceKey = workspaceKey;
         runParams.slug = slug;
       }
-
+      
       // ADD_MEMBERS 타입일 때 workspaceKey, slug, emails 추가
-      if (type === "ADD_MEMBERS") {
+      if (type === 'ADD_MEMBERS') {
         runParams.workspaceKey = workspaceKey;
         runParams.slug = slug;
         // 쉼표로 구분된 이메일을 배열로 변환
-        runParams.emails = emails
-          .split(",")
-          .map((e) => e.trim())
-          .filter((e) => e.length > 0);
+        runParams.emails = emails.split(',').map(e => e.trim()).filter(e => e.length > 0);
       }
 
       const res = await runWorkflow(runParams);

@@ -17,27 +17,17 @@ interface SingleContainsProps {
   onChange: Dispatch<SetStateAction<ContainsData>>;
 }
 
-export const SingleContains = ({
-  targetNodeId,
-  data,
-  onChange,
-}: SingleContainsProps) => {
+export const SingleContains = ({ targetNodeId, data, onChange }: SingleContainsProps) => {
   const { previousNodes, getNodeDisplayName } = usePreviousNodes(targetNodeId);
 
-  const updateField = <K extends keyof ContainsData>(
-    field: K,
-    value: ContainsData[K],
-  ) => {
+  const updateField = <K extends keyof ContainsData>(field: K, value: ContainsData[K]) => {
     onChange((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
     <>
       <EdgFieldContentBox label="비교할 노드">
-        <Select
-          value={data.nodeId}
-          onValueChange={(v) => updateField("nodeId", v)}
-        >
+        <Select value={data.nodeId} onValueChange={(v) => updateField("nodeId", v)}>
           <SelectTrigger>
             <SelectValue placeholder="노드 선택" />
           </SelectTrigger>

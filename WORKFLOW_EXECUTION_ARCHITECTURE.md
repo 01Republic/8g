@@ -25,7 +25,7 @@ yarn add 8g-extension
 ### 기본 사용법
 
 ```typescript
-import { EightGClient } from "8g-extension";
+import { EightGClient } from '8g-extension';
 
 const client = new EightGClient();
 
@@ -34,23 +34,23 @@ await client.checkExtension();
 
 // 2. 워크플로우 실행
 const result = await client.collectWorkflow({
-  targetUrl: "https://example.com",
+  targetUrl: 'https://example.com',
   workflow: {
-    version: "1.0",
-    start: "step1",
+    version: '1.0',
+    start: 'step1',
     steps: [
       {
-        id: "step1",
+        id: 'step1',
         block: {
-          name: "get-text",
-          selector: "#title",
-          findBy: "cssSelector",
+          name: 'get-text',
+          selector: '#title',
+          findBy: 'cssSelector',
           option: {},
-          useTextContent: true,
-        },
-      },
-    ],
-  },
+          useTextContent: true
+        }
+      }
+    ]
+  }
 });
 ```
 
@@ -140,7 +140,6 @@ const result = await client.collectWorkflow({
 ```
 
 **템플릿 문법:**
-
 - `${steps.stepId.result.data}` - 스텝 결과 참조
 - `${forEach.item.id}` - forEach 반복의 현재 항목
 - `${forEach.index}` - forEach 반복의 현재 인덱스
@@ -197,48 +196,47 @@ const result = await client.collectWorkflow({
 
 ```typescript
 const workflow = {
-  version: "1.0",
-  start: "fetchUser",
+  version: '1.0',
+  start: 'fetchUser',
   vars: {
-    userId: "12345",
-    apiKey: "sk-...",
-    baseUrl: "https://api.example.com",
+    userId: '12345',
+    apiKey: 'sk-...',
+    baseUrl: 'https://api.example.com'
   },
   steps: [
     {
-      id: "fetchUser",
+      id: 'fetchUser',
       block: {
-        name: "fetch-api",
-        url: { template: "${vars.baseUrl}/users/${vars.userId}" },
-        method: "GET",
+        name: 'fetch-api',
+        url: { template: '${vars.baseUrl}/users/${vars.userId}' },
+        method: 'GET',
         headers: {
-          Authorization: { template: "Bearer ${vars.apiKey}" },
+          'Authorization': { template: 'Bearer ${vars.apiKey}' }
         },
-        parseJson: true,
+        parseJson: true
       },
-      next: "displayName",
+      next: 'displayName'
     },
     {
-      id: "displayName",
+      id: 'displayName',
       block: {
-        name: "get-text",
-        selector: ".user-name",
-        findBy: "cssSelector",
+        name: 'get-text',
+        selector: '.user-name',
+        findBy: 'cssSelector',
         option: {},
-        useTextContent: true,
-      },
-    },
-  ],
+        useTextContent: true
+      }
+    }
+  ]
 };
 
 const result = await client.collectWorkflow({
-  targetUrl: "https://example.com",
-  workflow,
+  targetUrl: 'https://example.com',
+  workflow
 });
 ```
 
 **장점:**
-
 - 워크플로우를 재사용 가능하게 만듦
 - 환경별로 다른 설정 값 사용 가능 (개발/운영)
 - API 키, URL 등 설정값을 워크플로우 외부에서 주입
@@ -249,23 +247,23 @@ const result = await client.collectWorkflow({
 const userId = getUserIdFromSomewhere(); // 동적으로 가져온 값
 
 const workflow = {
-  version: "1.0",
-  start: "fetchUserData",
+  version: '1.0',
+  start: 'fetchUserData',
   vars: {
     userId: userId,
-    apiEndpoint: process.env.API_ENDPOINT,
+    apiEndpoint: process.env.API_ENDPOINT
   },
   steps: [
     {
-      id: "fetchUserData",
+      id: 'fetchUserData',
       block: {
-        name: "fetch-api",
-        url: { template: "${vars.apiEndpoint}/users/${vars.userId}" },
-        method: "GET",
-        parseJson: true,
-      },
-    },
-  ],
+        name: 'fetch-api',
+        url: { template: '${vars.apiEndpoint}/users/${vars.userId}' },
+        method: 'GET',
+        parseJson: true
+      }
+    }
+  ]
 };
 ```
 
@@ -404,13 +402,11 @@ const workflow = {
 ```
 
 **forEach 컨텍스트 변수:**
-
 - `forEach.item` - 현재 배열 항목
 - `forEach.index` - 현재 인덱스 (0부터)
 - `forEach.total` - 전체 배열 길이
 
 **결과:** 결과는 배열로 수집됩니다
-
 ```typescript
 steps.fetchEachProduct.result.data = [result1, result2, result3, ...]
 ```
@@ -435,7 +431,6 @@ steps.fetchEachProduct.result.data = [result1, result2, result3, ...]
 ```
 
 **동적 count:**
-
 ```typescript
 {
   id: 'dynamicRepeat',
@@ -447,7 +442,6 @@ steps.fetchEachProduct.result.data = [result1, result2, result3, ...]
 ```
 
 **loop 컨텍스트 변수:**
-
 - `loop.index` - 현재 반복 인덱스 (0부터)
 - `loop.count` - 전체 반복 횟수
 
@@ -528,76 +522,76 @@ forEach/count 반복 중 에러가 발생해도 계속 진행:
 
 ```typescript
 const workflow = {
-  version: "1.0",
-  start: "inputEmail",
+  version: '1.0',
+  start: 'inputEmail',
   steps: [
     {
-      id: "inputEmail",
+      id: 'inputEmail',
       block: {
-        name: "set-value-form",
+        name: 'set-value-form',
         selector: 'input[name="email"]',
-        findBy: "cssSelector",
+        findBy: 'cssSelector',
         option: {},
-        value: "user@example.com",
+        value: 'user@example.com'
       },
       delayAfterMs: 200,
-      next: "inputPassword",
+      next: 'inputPassword'
     },
     {
-      id: "inputPassword",
+      id: 'inputPassword',
       block: {
-        name: "set-value-form",
+        name: 'set-value-form',
         selector: 'input[name="password"]',
-        findBy: "cssSelector",
+        findBy: 'cssSelector',
         option: {},
-        value: "password123",
+        value: 'password123'
       },
       delayAfterMs: 200,
-      next: "clickLogin",
+      next: 'clickLogin'
     },
     {
-      id: "clickLogin",
+      id: 'clickLogin',
       block: {
-        name: "event-click",
+        name: 'event-click',
         selector: 'button[type="submit"]',
-        findBy: "cssSelector",
-        option: {},
+        findBy: 'cssSelector',
+        option: {}
       },
-      delayAfterMs: 2000, // 로그인 처리 대기
-      next: "checkLoginSuccess",
+      delayAfterMs: 2000,  // 로그인 처리 대기
+      next: 'checkLoginSuccess'
     },
     {
-      id: "checkLoginSuccess",
+      id: 'checkLoginSuccess',
       block: {
-        name: "element-exists",
-        selector: ".user-profile",
-        findBy: "cssSelector",
-        option: { waitForSelector: true, waitSelectorTimeout: 3000 },
+        name: 'element-exists',
+        selector: '.user-profile',
+        findBy: 'cssSelector',
+        option: { waitForSelector: true, waitSelectorTimeout: 3000 }
       },
-      onSuccess: "collectData",
-      onFailure: "loginFailed",
+      onSuccess: 'collectData',
+      onFailure: 'loginFailed'
     },
     {
-      id: "collectData",
+      id: 'collectData',
       block: {
-        name: "get-text",
-        selector: ".user-name",
-        findBy: "cssSelector",
+        name: 'get-text',
+        selector: '.user-name',
+        findBy: 'cssSelector',
         option: {},
-        useTextContent: true,
-      },
+        useTextContent: true
+      }
     },
     {
-      id: "loginFailed",
+      id: 'loginFailed',
       block: {
-        name: "get-text",
-        selector: ".error-message",
-        findBy: "cssSelector",
+        name: 'get-text',
+        selector: '.error-message',
+        findBy: 'cssSelector',
         option: {},
-        useTextContent: true,
-      },
-    },
-  ],
+        useTextContent: true
+      }
+    }
+  ]
 };
 ```
 
@@ -605,48 +599,43 @@ const workflow = {
 
 ```typescript
 const workflow = {
-  version: "1.0",
-  start: "scrollToLoad",
+  version: '1.0',
+  start: 'scrollToLoad',
   steps: [
     {
-      id: "scrollToLoad",
+      id: 'scrollToLoad',
       block: {
-        name: "scroll",
-        scrollType: "untilLoaded",
+        name: 'scroll',
+        scrollType: 'untilLoaded',
         distance: 800,
         maxScrolls: 50,
-        waitAfterScroll: 1000,
+        waitAfterScroll: 1000
       },
-      next: "waitForContent",
+      next: 'waitForContent'
     },
     {
-      id: "waitForContent",
+      id: 'waitForContent',
       block: {
-        name: "wait",
-        duration: 2000,
+        name: 'wait',
+        duration: 2000
       },
-      next: "getItems",
+      next: 'getItems'
     },
     {
-      id: "getItems",
+      id: 'getItems',
       block: {
-        name: "get-element-data",
-        selector: ".item",
-        findBy: "cssSelector",
+        name: 'get-element-data',
+        selector: '.item',
+        findBy: 'cssSelector',
         option: { multiple: true },
         extractors: [
-          { type: "text", saveAs: "title", selector: ".title" },
-          {
-            type: "attribute",
-            attribute: "href",
-            saveAs: "link",
-            selector: "a",
-          },
-          { type: "attribute", attribute: "data-id", saveAs: "id" },
-        ],
-      },
-    },
-  ],
+          { type: 'text', saveAs: 'title', selector: '.title' },
+          { type: 'attribute', attribute: 'href', saveAs: 'link', selector: 'a' },
+          { type: 'attribute', attribute: 'data-id', saveAs: 'id' }
+        ]
+      }
+    }
+  ]
 };
 ```
 
@@ -654,53 +643,55 @@ const workflow = {
 
 ```typescript
 const workflow = {
-  version: "1.0",
-  start: "getPageCount",
+  version: '1.0',
+  start: 'getPageCount',
   steps: [
     {
-      id: "getPageCount",
+      id: 'getPageCount',
       block: {
-        name: "get-text",
-        selector: ".total-pages",
-        findBy: "cssSelector",
+        name: 'get-text',
+        selector: '.total-pages',
+        findBy: 'cssSelector',
         option: {},
-        useTextContent: true,
+        useTextContent: true
       },
-      next: "collectPages",
+      next: 'collectPages'
     },
     {
-      id: "collectPages",
+      id: 'collectPages',
       repeat: {
-        count: "steps.getPageCount.result.data",
-        delayBetween: 1000,
+        count: 'steps.getPageCount.result.data',
+        delayBetween: 1000
       },
       block: {
-        name: "get-element-data",
-        selector: ".item",
-        findBy: "cssSelector",
+        name: 'get-element-data',
+        selector: '.item',
+        findBy: 'cssSelector',
         option: { multiple: true },
-        extractors: [{ type: "text", saveAs: "title" }],
+        extractors: [
+          { type: 'text', saveAs: 'title' }
+        ]
       },
-      next: "clickNextPage",
+      next: 'clickNextPage'
     },
     {
-      id: "clickNextPage",
+      id: 'clickNextPage',
       when: {
         notEquals: {
-          left: "loop.index",
-          right: { valueFrom: "steps.getPageCount.result.data" },
-        },
+          left: 'loop.index',
+          right: { valueFrom: 'steps.getPageCount.result.data' }
+        }
       },
       block: {
-        name: "event-click",
-        selector: ".next-page",
-        findBy: "cssSelector",
-        option: {},
+        name: 'event-click',
+        selector: '.next-page',
+        findBy: 'cssSelector',
+        option: {}
       },
       delayAfterMs: 1000,
-      next: "collectPages",
-    },
-  ],
+      next: 'collectPages'
+    }
+  ]
 };
 ```
 
@@ -708,45 +699,45 @@ const workflow = {
 
 ```typescript
 const workflow = {
-  version: "1.0",
-  start: "getProductIds",
+  version: '1.0',
+  start: 'getProductIds',
   steps: [
     {
-      id: "getProductIds",
+      id: 'getProductIds',
       block: {
-        name: "get-element-data",
-        selector: ".product",
-        findBy: "cssSelector",
+        name: 'get-element-data',
+        selector: '.product',
+        findBy: 'cssSelector',
         option: { multiple: true },
-        extractors: [{ type: "attribute", attribute: "data-id", saveAs: "id" }],
+        extractors: [
+          { type: 'attribute', attribute: 'data-id', saveAs: 'id' }
+        ]
       },
-      next: "enrichWithApi",
+      next: 'enrichWithApi'
     },
     {
-      id: "enrichWithApi",
+      id: 'enrichWithApi',
       repeat: {
-        forEach: "steps.getProductIds.result.data",
+        forEach: 'steps.getProductIds.result.data',
         continueOnError: true,
-        delayBetween: 500,
+        delayBetween: 500
       },
       block: {
-        name: "fetch-api",
-        url: {
-          template: "https://api.example.com/products/${forEach.item.id}",
-        },
-        method: "GET",
+        name: 'fetch-api',
+        url: { template: 'https://api.example.com/products/${forEach.item.id}' },
+        method: 'GET',
         parseJson: true,
         headers: {
-          Authorization: "Bearer YOUR_TOKEN",
-        },
+          'Authorization': 'Bearer YOUR_TOKEN'
+        }
       },
       retry: {
         attempts: 3,
         delayMs: 1000,
-        backoffFactor: 2,
-      },
-    },
-  ],
+        backoffFactor: 2
+      }
+    }
+  ]
 };
 ```
 
@@ -754,38 +745,38 @@ const workflow = {
 
 ```typescript
 const workflow = {
-  version: "1.0",
-  start: "getRawText",
+  version: '1.0',
+  start: 'getRawText',
   steps: [
     {
-      id: "getRawText",
+      id: 'getRawText',
       block: {
-        name: "get-text",
-        selector: ".product-description",
-        findBy: "cssSelector",
+        name: 'get-text',
+        selector: '.product-description',
+        findBy: 'cssSelector',
         option: {},
-        useTextContent: true,
+        useTextContent: true
       },
-      next: "parseWithAi",
+      next: 'parseWithAi'
     },
     {
-      id: "parseWithAi",
+      id: 'parseWithAi',
       block: {
-        name: "ai-parse-data",
-        apiKey: "sk-...",
-        sourceData: { valueFrom: "steps.getRawText.result.data" },
+        name: 'ai-parse-data',
+        apiKey: 'sk-...',
+        sourceData: { valueFrom: 'steps.getRawText.result.data' },
         schemaDefinition: {
-          type: "object",
+          type: 'object',
           shape: {
-            name: { type: "string", description: "상품명" },
-            price: { type: "number", description: "가격 (숫자만)" },
-            category: { type: "string", description: "카테고리" },
-            features: { type: "array", description: "주요 특징 목록" },
-          },
-        },
-      },
-    },
-  ],
+            name: { type: 'string', description: '상품명' },
+            price: { type: 'number', description: '가격 (숫자만)' },
+            category: { type: 'string', description: '카테고리' },
+            features: { type: 'array', description: '주요 특징 목록' }
+          }
+        }
+      }
+    }
+  ]
 };
 ```
 
@@ -794,64 +785,59 @@ const workflow = {
 SDK는 다양한 통화 정보를 포함한 통합 스키마를 제공합니다. `Schema.currency()`를 사용하면 40개 통화 코드와 27개 통화 심볼, 8개 포맷 패턴을 지원하는 통화 필드를 쉽게 정의할 수 있습니다.
 
 ```typescript
-import { EightGClient, createSchema, Schema } from "8g-extension";
+import { EightGClient, createSchema, Schema } from '8g-extension';
 
 const client = new EightGClient();
 
 const workflow = {
-  version: "1.0",
-  start: "getBillingInfo",
+  version: '1.0',
+  start: 'getBillingInfo',
   vars: {
-    apiKey: "sk-...",
+    apiKey: 'sk-...'
   },
   steps: [
     {
-      id: "getBillingInfo",
+      id: 'getBillingInfo',
       block: {
-        name: "get-text",
-        selector: ".billing-section",
-        findBy: "cssSelector",
+        name: 'get-text',
+        selector: '.billing-section',
+        findBy: 'cssSelector',
         option: {},
-        useTextContent: true,
+        useTextContent: true
       },
-      next: "parseWithAi",
+      next: 'parseWithAi'
     },
     {
-      id: "parseWithAi",
+      id: 'parseWithAi',
       block: {
-        name: "ai-parse-data",
-        apiKey: { valueFrom: "vars.apiKey" },
-        sourceData: { valueFrom: "steps.getBillingInfo.result.data" },
+        name: 'ai-parse-data',
+        apiKey: { valueFrom: 'vars.apiKey' },
+        sourceData: { valueFrom: 'steps.getBillingInfo.result.data' },
         schemaDefinition: createSchema({
-          planName: Schema.string({ description: "플랜 이름" }),
+          planName: Schema.string({ description: '플랜 이름' }),
           // 통화 스키마 사용 - 모든 통화 지원
-          currentCycleBillAmount: Schema.currency({
-            description: "현재 주기 결제 금액",
+          currentCycleBillAmount: Schema.currency({ description: '현재 주기 결제 금액' }),
+          unitPrice: Schema.currency({ description: '단위 가격' }),
+          nextPaymentDue: Schema.string({ description: '다음 결제일 (YYYY-MM-DD)' }),
+          cycleTerm: Schema.string({ 
+            enum: ['MONTHLY', 'YEARLY'] as const,
+            description: '결제 주기'
           }),
-          unitPrice: Schema.currency({ description: "단위 가격" }),
-          nextPaymentDue: Schema.string({
-            description: "다음 결제일 (YYYY-MM-DD)",
-          }),
-          cycleTerm: Schema.string({
-            enum: ["MONTHLY", "YEARLY"] as const,
-            description: "결제 주기",
-          }),
-          isFreeTier: Schema.boolean({ description: "무료 티어 여부" }),
-          paidMemberCount: Schema.number({ description: "결제 멤버 수" }),
-        }),
-      },
-    },
-  ],
+          isFreeTier: Schema.boolean({ description: '무료 티어 여부' }),
+          paidMemberCount: Schema.number({ description: '결제 멤버 수' })
+        })
+      }
+    }
+  ]
 };
 
 const result = await client.collectWorkflow({
-  targetUrl: "https://example.com/billing",
-  workflow,
+  targetUrl: 'https://example.com/billing',
+  workflow
 });
 ```
 
 **지원하는 통화 코드 (40개):**
-
 - 주요 통화: `USD`, `EUR`, `KRW`, `GBP`, `CAD`, `JPY`, `CNY`
 - 아시아: `VND`, `INR`, `TWD`, `HKD`, `IDR`, `SGD`, `THB`, `PHP`, `MYR`
 - 유럽: `CHF`, `SEK`, `NOK`, `DKK`, `PLN`, `CZK`, `HUF`, `RON`, `BGN`, `TRY`, `RUB`
@@ -864,18 +850,15 @@ const result = await client.collectWorkflow({
 
 **지원하는 포맷 패턴 (8개):**
 `%s%u`, `%s%n`, `%u%s`, `%n%s`, `%s %u`, `%s %n`, `%u %s`, `%n %s`
-
 - `%s`: 통화 심볼
 - `%u` / `%n`: 금액
 
 **Schema.currency() 특징:**
-
 - 단일 통합 스키마로 모든 통화 지원
 - AI가 자동으로 적절한 통화 코드, 심볼, 포맷을 선택
 - 5개 필드 포함: `code`, `symbol`, `format`, `amount`, `text`
 
 **결과 예시:**
-
 ```json
 {
   "planName": "Pro",
@@ -901,34 +884,27 @@ const result = await client.collectWorkflow({
 ```
 
 **다국어 통화 지원 예시:**
-
 ```typescript
 // AI가 자동으로 한국어, 영어, 일본어 등 다양한 통화를 인식
 const multiCurrencyWorkflow = {
-  version: "1.0",
-  start: "parsePrice",
+  version: '1.0',
+  start: 'parsePrice',
   steps: [
     {
-      id: "parsePrice",
+      id: 'parsePrice',
       block: {
-        name: "ai-parse-data",
-        apiKey: "sk-...",
-        sourceData: { valueFrom: "steps.getPriceText.result.data" },
+        name: 'ai-parse-data',
+        apiKey: 'sk-...',
+        sourceData: { valueFrom: 'steps.getPriceText.result.data' },
         schemaDefinition: createSchema({
           // 모든 통화를 자동으로 파싱
-          originalPrice: Schema.currency({ description: "원래 가격" }),
-          discountPrice: Schema.currency({
-            description: "할인 가격",
-            optional: true,
-          }),
-          shippingCost: Schema.currency({
-            description: "배송비",
-            optional: true,
-          }),
-        }),
-      },
-    },
-  ],
+          originalPrice: Schema.currency({ description: '원래 가격' }),
+          discountPrice: Schema.currency({ description: '할인 가격', optional: true }),
+          shippingCost: Schema.currency({ description: '배송비', optional: true })
+        })
+      }
+    }
+  ]
 };
 
 // 입력: "₩50,000원, 할인가 $45.00, 배송비 €5.99"
@@ -939,64 +915,64 @@ const multiCurrencyWorkflow = {
 
 ```typescript
 const workflow = {
-  version: "1.0",
-  start: "navigateToLogin",
+  version: '1.0',
+  start: 'navigateToLogin',
   steps: [
     {
-      id: "navigateToLogin",
+      id: 'navigateToLogin',
       block: {
-        name: "navigate",
-        url: "https://example.com/login",
-        waitForLoad: true,
+        name: 'navigate',
+        url: 'https://example.com/login',
+        waitForLoad: true
       },
       delayAfterMs: 1000,
-      next: "waitForLogin",
+      next: 'waitForLogin'
     },
     {
-      id: "waitForLogin",
+      id: 'waitForLogin',
       block: {
-        name: "wait-for-condition",
+        name: 'wait-for-condition',
         conditions: {
           // 자동 조건: 로그인 성공 시 URL 변경 또는 프로필 요소 등장
-          urlPattern: "https://example\\.com/dashboard",
+          urlPattern: 'https://example\\.com/dashboard',
           elementExists: {
-            selector: ".user-profile",
-            findBy: "cssSelector",
+            selector: '.user-profile',
+            findBy: 'cssSelector'
           },
           // 수동 확인: 사용자가 로그인 완료 버튼 클릭
           userConfirmation: true,
-          message: "로그인을 완료하셨나요?",
-          buttonText: "로그인 완료",
+          message: '로그인을 완료하셨나요?',
+          buttonText: '로그인 완료'
         },
-        mode: "auto-or-manual", // 자동 조건 또는 수동 확인 중 먼저 충족되는 것
+        mode: 'auto-or-manual',  // 자동 조건 또는 수동 확인 중 먼저 충족되는 것
         pollingIntervalMs: 1000,
-        timeoutMs: 300000, // 5분
-        position: "bottom-right",
+        timeoutMs: 300000,  // 5분
+        position: 'bottom-right'
       },
-      onSuccess: "collectData",
-      onFailure: "handleLoginTimeout",
+      onSuccess: 'collectData',
+      onFailure: 'handleLoginTimeout'
     },
     {
-      id: "collectData",
+      id: 'collectData',
       block: {
-        name: "get-text",
-        selector: ".welcome-message",
-        findBy: "cssSelector",
+        name: 'get-text',
+        selector: '.welcome-message',
+        findBy: 'cssSelector',
         option: {},
-        useTextContent: true,
-      },
+        useTextContent: true
+      }
     },
     {
-      id: "handleLoginTimeout",
+      id: 'handleLoginTimeout',
       block: {
-        name: "get-text",
-        selector: "body",
-        findBy: "cssSelector",
+        name: 'get-text',
+        selector: 'body',
+        findBy: 'cssSelector',
         option: {},
-        useTextContent: true,
-      },
-    },
-  ],
+        useTextContent: true
+      }
+    }
+  ]
 };
 ```
 
@@ -1004,29 +980,29 @@ const workflow = {
 
 ```typescript
 const workflow = {
-  version: "1.0",
-  start: "getProducts",
+  version: '1.0',
+  start: 'getProducts',
   steps: [
     {
-      id: "getProducts",
+      id: 'getProducts',
       block: {
-        name: "get-element-data",
-        selector: ".product-item",
-        findBy: "cssSelector",
+        name: 'get-element-data',
+        selector: '.product-item',
+        findBy: 'cssSelector',
         option: { multiple: true },
         extractors: [
-          { type: "text", selector: ".name", saveAs: "name" },
-          { type: "text", selector: ".price", saveAs: "price" },
-          { type: "text", selector: ".quantity", saveAs: "quantity" },
-        ],
+          { type: 'text', selector: '.name', saveAs: 'name' },
+          { type: 'text', selector: '.price', saveAs: 'price' },
+          { type: 'text', selector: '.quantity', saveAs: 'quantity' }
+        ]
       },
-      next: "transformData",
+      next: 'transformData'
     },
     {
-      id: "transformData",
+      id: 'transformData',
       block: {
-        name: "data-extract",
-        inputData: { valueFrom: "steps.getProducts.result.data" },
+        name: 'data-extract',
+        inputData: { valueFrom: 'steps.getProducts.result.data' },
         code: `
           $map($, function($item) {
             {
@@ -1036,15 +1012,15 @@ const workflow = {
               "totalPrice": $number($item.price) * $number($item.quantity)
             }
           })[totalPrice > 10000]
-        `,
+        `
       },
-      next: "summarize",
+      next: 'summarize'
     },
     {
-      id: "summarize",
+      id: 'summarize',
       block: {
-        name: "data-extract",
-        inputData: { valueFrom: "steps.transformData.result.data" },
+        name: 'data-extract',
+        inputData: { valueFrom: 'steps.transformData.result.data' },
         code: `
           {
             "totalItems": $count($),
@@ -1052,10 +1028,10 @@ const workflow = {
             "averagePrice": $sum($.totalPrice) / $count($),
             "products": $
           }
-        `,
-      },
-    },
-  ],
+        `
+      }
+    }
+  ]
 };
 ```
 
@@ -1063,49 +1039,49 @@ const workflow = {
 
 ```typescript
 const workflow = {
-  version: "1.0",
-  start: "navigateToPage1",
+  version: '1.0',
+  start: 'navigateToPage1',
   vars: {
     pages: [
-      "https://example.com/page1",
-      "https://example.com/page2",
-      "https://example.com/page3",
-    ],
+      'https://example.com/page1',
+      'https://example.com/page2',
+      'https://example.com/page3'
+    ]
   },
   steps: [
     {
-      id: "navigateToPage1",
+      id: 'navigateToPage1',
       repeat: {
-        forEach: "vars.pages",
-        delayBetween: 2000,
+        forEach: 'vars.pages',
+        delayBetween: 2000
       },
       block: {
-        name: "navigate",
-        url: { valueFrom: "forEach.item" },
+        name: 'navigate',
+        url: { valueFrom: 'forEach.item' },
         waitForLoad: true,
-        timeout: 30000,
+        timeout: 30000
       },
       delayAfterMs: 1000,
-      next: "collectPageData",
+      next: 'collectPageData'
     },
     {
-      id: "collectPageData",
+      id: 'collectPageData',
       repeat: {
-        forEach: "vars.pages",
-        delayBetween: 2000,
+        forEach: 'vars.pages',
+        delayBetween: 2000
       },
       block: {
-        name: "get-element-data",
-        selector: ".content",
-        findBy: "cssSelector",
+        name: 'get-element-data',
+        selector: '.content',
+        findBy: 'cssSelector',
         option: { multiple: true },
         extractors: [
-          { type: "text", selector: ".title", saveAs: "title" },
-          { type: "text", selector: ".description", saveAs: "description" },
-        ],
-      },
-    },
-  ],
+          { type: 'text', selector: '.title', saveAs: 'title' },
+          { type: 'text', selector: '.description', saveAs: 'description' }
+        ]
+      }
+    }
+  ]
 };
 ```
 

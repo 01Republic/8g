@@ -1,16 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import { PaginationDto } from "./PaginationDto";
-import { IsOptional, IsString } from "class-validator";
-import {
-  Between,
-  FindOperator,
-  In,
-  type FindOptionsOrder,
-  type FindOptionsWhere,
-} from "typeorm";
-import { Transform } from "class-transformer";
-import helper from "./helper/findAll.query.helper";
+import { PaginationDto } from './PaginationDto';
+import { IsOptional, IsString } from 'class-validator';
+import { Between, FindOperator, In, type FindOptionsOrder, type FindOptionsWhere } from 'typeorm';
+import { Transform } from 'class-transformer';
+import helper from './helper/findAll.query.helper';
 
 export class FindAllQueryDto<T> extends PaginationDto {
   /**
@@ -133,14 +127,14 @@ export class FindAllQueryDtoWithRegexp<T> extends FindAllQueryDto<T> {
  *    => { where: { createdAt: { from: "2022-04-01", to: "2022-05-01" } } }
  */
 export const parseOperator = <T = string>(value: T): FindOperator<T> | T => {
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     value = resolveJson(value);
   }
 
   switch (true) {
     case value instanceof Array:
       return In(value as any);
-    case typeof value === "object":
+    case typeof value === 'object':
       return parseObjectValue(value as any);
     default:
       // 주어진 값이 만약 정의되지 않은 Operator 이거나,
@@ -170,14 +164,14 @@ function parseObjectValue(obj: ObjectValue): any {
   }
 }
 
-type PrimitiveTypeOf<V> = V | "NULL";
+type PrimitiveTypeOf<V> = V | 'NULL';
 
 type FindOptionsWherePlainValue<V> = V extends object
   ? FindOptionsWhere<V>
   : PrimitiveTypeOf<V>;
 
 type FindOptionsWhereOperateObj<V> = {
-  op: "not";
+  op: 'not';
   val: FindOptionsWherePlainValue<V>;
 };
 

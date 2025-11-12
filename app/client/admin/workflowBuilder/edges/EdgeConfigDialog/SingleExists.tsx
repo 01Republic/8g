@@ -17,27 +17,17 @@ interface SingleExistsProps {
   onChange: Dispatch<SetStateAction<ExistsData>>;
 }
 
-export const SingleExists = ({
-  targetNodeId,
-  data,
-  onChange,
-}: SingleExistsProps) => {
+export const SingleExists = ({ targetNodeId, data, onChange }: SingleExistsProps) => {
   const { previousNodes, getNodeDisplayName } = usePreviousNodes(targetNodeId);
 
-  const updateField = <K extends keyof ExistsData>(
-    field: K,
-    value: ExistsData[K],
-  ) => {
+  const updateField = <K extends keyof ExistsData>(field: K, value: ExistsData[K]) => {
     onChange((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
     <>
       <EdgFieldContentBox label="확인할 노드">
-        <Select
-          value={data.nodeId}
-          onValueChange={(v) => updateField("nodeId", v)}
-        >
+        <Select value={data.nodeId} onValueChange={(v) => updateField("nodeId", v)}>
           <SelectTrigger>
             <SelectValue placeholder="노드 선택" />
           </SelectTrigger>

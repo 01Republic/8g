@@ -10,21 +10,18 @@ import {
   upsertWorkflowMetadata,
   fetchProducts,
 } from "~/.server/services";
-import { requireAuthSession } from "~/middleware/auth";
 import type { WorkflowType } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
 
-export async function loader({ request, params }: Route.LoaderArgs) {
-  const { token } = await requireAuthSession(request);
-
+export async function loader({ params }: Route.LoaderArgs) {
   const workflowId = params.workflowId
     ? parseInt(params.workflowId)
     : undefined;
 
   // Fetch products from API
-  const productsResponse = await fetchProducts({ itemsPerPage: 100 }, token);
+  const productsResponse = await fetchProducts({ itemsPerPage: 100 });
 
   if (workflowId) {
-    const workflow = await findWorkflowMetadata(workflowId, token);
+    const workflow = await findWorkflowMetadata(workflowId);
     return {
       workflowId,
       workflow: workflow
@@ -48,7 +45,6 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  const { token } = await requireAuthSession(request);
   const formData = await request.formData();
   const workflowIdStr = formData.get("workflowId")?.toString();
   const workflowId = workflowIdStr ? parseInt(workflowIdStr) : undefined;
@@ -58,16 +54,13 @@ export async function action({ request }: Route.ActionArgs) {
   const meta = JSON.parse(formData.get("meta")!.toString()) as FormWorkflow;
   const typeStr = formData.get("type")?.toString() as WorkflowType | undefined;
 
-  await upsertWorkflowMetadata(
-    {
-      workflowId,
-      productId,
-      description,
-      meta,
-      type: typeStr || "WORKFLOW",
-    },
-    token,
-  );
+  await upsertWorkflowMetadata({
+    workflowId,
+    productId,
+    description,
+    meta,
+    type: typeStr || 'WORKFLOW',
+  });
 
   return redirect("/");
 }

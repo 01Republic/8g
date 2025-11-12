@@ -16,10 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import type {
-  IntegrationAppWorkflowMetadata,
-  WorkflowType,
-} from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
+import type { IntegrationAppWorkflowMetadata, WorkflowType } from "~/.server/db/entities/IntegrationAppWorkflowMetadata";
 import type { PaginationMetaData } from "~/.server/dto/pagination-meta-data.dto";
 
 interface Product {
@@ -49,24 +46,12 @@ const formatDate = (date: Date | null) => {
 
 const getWorkflowTypeBadge = (type: WorkflowType) => {
   const badges: Record<WorkflowType, { label: string; className: string }> = {
-    WORKFLOW: { label: "⚡ Data", className: "bg-blue-100 text-blue-800" },
-    WORKSPACE: {
-      label: "🏢 Workspaces",
-      className: "bg-purple-100 text-purple-800",
-    },
-    WORKSPACE_DETAIL: {
-      label: "🏢 Workspace Detail",
-      className: "bg-purple-100 text-purple-800",
-    },
-    MEMBERS: { label: "👥 Members", className: "bg-green-100 text-green-800" },
-    BILLING: {
-      label: "💳 Billing",
-      className: "bg-orange-100 text-orange-800",
-    },
-    BILLING_HISTORIES: {
-      label: "📊 Billing_Histories",
-      className: "bg-pink-100 text-pink-800",
-    },
+    WORKFLOW: { label: '⚡ Data', className: 'bg-blue-100 text-blue-800' },
+    WORKSPACE: { label: '🏢 Workspaces', className: 'bg-purple-100 text-purple-800' },
+    WORKSPACE_DETAIL: { label: '🏢 Workspace Detail', className: 'bg-purple-100 text-purple-800' },
+    MEMBERS: { label: '👥 Members', className: 'bg-green-100 text-green-800' },
+    BILLING: { label: '💳 Billing', className: 'bg-orange-100 text-orange-800' },
+    BILLING_HISTORIES: { label: '📊 Billing_Histories', className: 'bg-pink-100 text-pink-800' },
   };
   return badges[type] || badges.WORKFLOW;
 };
@@ -87,7 +72,7 @@ export const WorkflowsTable = (props: WorkflowsTableProps) => {
   // Product ID로 매핑
   const productMap = useMemo(() => {
     const map: Record<number, Product> = {};
-    products.forEach((p) => (map[p.id] = p));
+    products.forEach(p => map[p.id] = p);
     return map;
   }, [products]);
 
@@ -132,10 +117,7 @@ export const WorkflowsTable = (props: WorkflowsTableProps) => {
       <div className="flex gap-4 items-center bg-white p-4 rounded-lg border">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-gray-700">Product:</span>
-          <Select
-            value={selectedProductId}
-            onValueChange={handleProductFilterChange}
-          >
+          <Select value={selectedProductId} onValueChange={handleProductFilterChange}>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="전체" />
             </SelectTrigger>
@@ -178,33 +160,18 @@ export const WorkflowsTable = (props: WorkflowsTableProps) => {
           <TableHeader className="bg-gray-50">
             <TableRow>
               <TableHead className="font-semibold text-gray-900">ID</TableHead>
-              <TableHead className="font-semibold text-gray-900">
-                Product
-              </TableHead>
-              <TableHead className="font-semibold text-gray-900">
-                Type
-              </TableHead>
-              <TableHead className="font-semibold text-gray-900">
-                설명
-              </TableHead>
-              <TableHead className="font-semibold text-gray-900">
-                Steps 수
-              </TableHead>
-              <TableHead className="font-semibold text-gray-900">
-                수정일
-              </TableHead>
-              <TableHead className="font-semibold text-gray-900 text-right">
-                Actions
-              </TableHead>
+              <TableHead className="font-semibold text-gray-900">Product</TableHead>
+              <TableHead className="font-semibold text-gray-900">Type</TableHead>
+              <TableHead className="font-semibold text-gray-900">설명</TableHead>
+              <TableHead className="font-semibold text-gray-900">Steps 수</TableHead>
+              <TableHead className="font-semibold text-gray-900">수정일</TableHead>
+              <TableHead className="font-semibold text-gray-900 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {workflows.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="text-center py-8 text-gray-500"
-                >
+                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
                   워크플로우가 없습니다. 새로운 워크플로우를 만들어보세요!
                 </TableCell>
               </TableRow>
@@ -216,22 +183,14 @@ export const WorkflowsTable = (props: WorkflowsTableProps) => {
 
                 return (
                   <TableRow key={workflow.id} className="hover:bg-gray-50">
-                    <TableCell className="font-medium">
-                      #{workflow.id}
-                    </TableCell>
+                    <TableCell className="font-medium">#{workflow.id}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {product?.image && (
-                          <img
-                            src={product.image}
-                            alt=""
-                            className="w-5 h-5 rounded"
-                          />
+                          <img src={product.image} alt="" className="w-5 h-5 rounded" />
                         )}
                         <span className="text-sm font-medium">
-                          {product?.nameKo ||
-                            product?.nameEn ||
-                            `Product ${workflow.productId}`}
+                          {product?.nameKo || product?.nameEn || `Product ${workflow.productId}`}
                         </span>
                       </div>
                     </TableCell>
@@ -245,13 +204,9 @@ export const WorkflowsTable = (props: WorkflowsTableProps) => {
                     <TableCell>
                       <div className="font-medium">{workflow.description}</div>
                     </TableCell>
-                    <TableCell>
-                      {workflow.meta?.steps?.length || 0} steps
-                    </TableCell>
+                    <TableCell>{workflow.meta?.steps?.length || 0} steps</TableCell>
                     <TableCell className="text-sm text-gray-600">
-                      {formatDate(
-                        workflow.updatedAt || workflow.createdAt || null,
-                      )}
+                      {formatDate(workflow.updatedAt || workflow.createdAt || null)}
                     </TableCell>
                     <TableCell className="text-right space-x-2">
                       <Link to={`/workflow-builder/${workflow.id}`}>
@@ -280,10 +235,7 @@ export const WorkflowsTable = (props: WorkflowsTableProps) => {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-700">페이지당 항목:</span>
-            <Select
-              value={itemsPerPage.toString()}
-              onValueChange={handleItemsPerPageChange}
-            >
+            <Select value={itemsPerPage.toString()} onValueChange={handleItemsPerPageChange}>
               <SelectTrigger className="w-[80px]">
                 <SelectValue />
               </SelectTrigger>
@@ -296,10 +248,8 @@ export const WorkflowsTable = (props: WorkflowsTableProps) => {
             </Select>
           </div>
           <div className="text-sm text-gray-600">
-            전체 {pagination.totalItemCount}개 중{" "}
-            {(currentPage - 1) * itemsPerPage + 1}-
-            {Math.min(currentPage * itemsPerPage, pagination.totalItemCount)}개
-            표시
+            전체 {pagination.totalItemCount}개 중 {((currentPage - 1) * itemsPerPage) + 1}-
+            {Math.min(currentPage * itemsPerPage, pagination.totalItemCount)}개 표시
           </div>
         </div>
 

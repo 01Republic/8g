@@ -1,16 +1,12 @@
 import type { ProductsResponse } from "./types";
 
-const PRODUCT_API_BASE_URL =
-  process.env.PRODUCT_API_BASE_URL || "http://localhost:8000";
+const PRODUCT_API_BASE_URL = process.env.PRODUCT_API_BASE_URL || "http://localhost:8000";
 
-export async function fetchProducts(
-  params?: {
-    isLive?: boolean;
-    keyword?: string;
-    itemsPerPage?: number;
-  },
-  token?: string,
-): Promise<ProductsResponse> {
+export async function fetchProducts(params?: {
+  isLive?: boolean;
+  keyword?: string;
+  itemsPerPage?: number;
+}): Promise<ProductsResponse> {
   const queryParams = new URLSearchParams();
 
   if (params?.isLive !== undefined) {
@@ -25,13 +21,7 @@ export async function fetchProducts(
 
   const url = `${PRODUCT_API_BASE_URL}/products?${queryParams.toString()}`;
 
-  const response = await fetch(url, {
-    headers: token
-      ? {
-          Authorization: `Bearer ${token}`,
-        }
-      : undefined,
-  });
+  const response = await fetch(url);
 
   if (!response.ok) {
     throw new Error(`Failed to fetch products: ${response.statusText}`);

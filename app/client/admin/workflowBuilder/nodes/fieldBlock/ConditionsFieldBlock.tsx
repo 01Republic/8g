@@ -77,10 +77,7 @@ export const ConditionsFieldBlock = (props: ConditionsFieldBlockProps) => {
                     <Input
                       value={condValue || ""}
                       onChange={(e) =>
-                        updateConditionField(
-                          condKey,
-                          e.target.value || undefined,
-                        )
+                        updateConditionField(condKey, e.target.value || undefined)
                       }
                       placeholder={fieldLabels[condKey] || condKey}
                     />
@@ -101,10 +98,7 @@ export const ConditionsFieldBlock = (props: ConditionsFieldBlockProps) => {
                         const subValue =
                           (condValue as any)?.[subField.name] || "";
                         return (
-                          <div
-                            key={subField.name}
-                            className="flex flex-col gap-1"
-                          >
+                          <div key={subField.name} className="flex flex-col gap-1">
                             <Label className="text-xs">
                               {fieldLabels[subField.name] || subField.name}
                             </Label>
@@ -114,8 +108,7 @@ export const ConditionsFieldBlock = (props: ConditionsFieldBlockProps) => {
                                 onChange={(e) =>
                                   updateConditionField(condKey, {
                                     ...(condValue || {}),
-                                    [subField.name]:
-                                      e.target.value || undefined,
+                                    [subField.name]: e.target.value || undefined,
                                   })
                                 }
                               />

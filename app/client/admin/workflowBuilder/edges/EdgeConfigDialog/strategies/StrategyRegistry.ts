@@ -45,3 +45,4 @@ export class StrategyRegistry {
 
 // 싱글톤 인스턴스
 export const strategyRegistry = new StrategyRegistry();
+

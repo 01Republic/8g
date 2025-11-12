@@ -225,8 +225,7 @@ function ObjectSchemaFieldBlock({
                   </div>
                   {typeValue === "currency" && (
                     <div className="pl-2 flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded">
-                      💱 통화 객체 (AI가 자동으로 파싱합니다: code, symbol,
-                      format, amount, text)
+                      💱 통화 객체 (AI가 자동으로 파싱합니다: code, symbol, format, amount, text)
                     </div>
                   )}
                   {canHaveEnum && (
@@ -521,8 +520,7 @@ function ArraySchemaFieldBlock({
         {/* currency일 경우 안내 메시지 */}
         {itemsType === "currency" && (
           <div className="flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded border-t pt-2">
-            💱 통화 객체 (AI가 자동으로 파싱합니다: code, symbol, format,
-            amount, text)
+            💱 통화 객체 (AI가 자동으로 파싱합니다: code, symbol, format, amount, text)
           </div>
         )}
 
@@ -581,8 +579,7 @@ function ArraySchemaFieldBlock({
                       </div>
                       {typeValue === "currency" && (
                         <div className="pl-2 flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded">
-                          💱 통화 객체 (AI가 자동으로 파싱합니다: code, symbol,
-                          format, amount, text)
+                          💱 통화 객체 (AI가 자동으로 파싱합니다: code, symbol, format, amount, text)
                         </div>
                       )}
                       {canHaveEnum && (
@@ -631,9 +628,7 @@ function ArraySchemaFieldBlock({
                         <div className="pl-4 border-l-2 border-gray-200 mt-2">
                           <NestedArrayItems
                             parentKey={key}
-                            items={
-                              (typeObj as any)?.items || { type: "string" }
-                            }
+                            items={(typeObj as any)?.items || { type: "string" }}
                             onUpdate={(updatedItems) => {
                               updateFormField(name, {
                                 type: "array",
@@ -796,8 +791,7 @@ function NestedObjectFields({
                 </div>
                 {typeValue === "currency" && (
                   <div className="pl-2 flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded">
-                    💱 통화 객체 (AI가 자동으로 파싱합니다: code, symbol,
-                    format, amount, text)
+                    💱 통화 객체 (AI가 자동으로 파싱합니다: code, symbol, format, amount, text)
                   </div>
                 )}
                 {canHaveEnum && (
@@ -944,8 +938,7 @@ function NestedArrayItems({
 
       {itemsType === "currency" && (
         <div className="flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded">
-          💱 통화 객체 (AI가 자동으로 파싱합니다: code, symbol, format, amount,
-          text)
+          💱 통화 객체 (AI가 자동으로 파싱합니다: code, symbol, format, amount, text)
         </div>
       )}
 

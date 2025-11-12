@@ -12,11 +12,7 @@ import {
 import { IntegrationAppWorkflowMetadata } from "./IntegrationAppWorkflowMetadata";
 import type { FormWorkflow } from "~/models/integration/types";
 
-export type WorkflowExecutionStatus =
-  | "running"
-  | "success"
-  | "failed"
-  | "timeout";
+export type WorkflowExecutionStatus = 'running' | 'success' | 'failed' | 'timeout';
 
 @Entity("integration_app_workflow_execution_history")
 @Index("idx_workflow_id", ["workflowId"])

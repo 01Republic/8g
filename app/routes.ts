@@ -8,8 +8,7 @@ import {
 export default [
   layout("layouts/sidebar.tsx", [
     index("routes/workflows.tsx"),
-    route("/workflow-builder/:workflowId?", "routes/workflow-builder.tsx"),
+    route("/workflow-builder/:workflowId?", "routes/workflow-builder.tsx")
   ]),
-  route("/login", "routes/login.tsx"),
   route("/api/generate-jsonata", "routes/api.generate-jsonata.tsx"),
 ] satisfies RouteConfig;

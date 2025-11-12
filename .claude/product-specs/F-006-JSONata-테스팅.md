@@ -13,7 +13,6 @@
 JSONata 테스팅은 transform-data 블록에서 JSONata 표현식을 작성하고 실시간으로 테스트할 수 있는 기능입니다. 실행 결과를 자동으로 로드하여 표현식의 정확성을 즉시 검증할 수 있습니다.
 
 **핵심 가치**:
-
 - 데이터 변환 로직 검증
 - 실시간 표현식 테스트
 - 에러 즉시 확인
@@ -26,7 +25,6 @@ JSONata 테스팅은 transform-data 블록에서 JSONata 표현식을 작성하�
 이 문서는 200줄 제한 준수를 위해 하위 문서로 분리되어 있습니다.
 
 **상세 문서**:
-
 - [JSONata 예제](./F-006-JSONata-테스팅/JSONata-예제.md) - 실제 사용 예제, 패턴, 데이터 변환 기법
 - [JSONata 고급 활용](./F-006-JSONata-테스팅/JSONata-고급활용.md) - 고급 기능, 테스트, 디버깅, 최적화
 
@@ -39,7 +37,6 @@ JSONata 테스팅은 transform-data 블록에서 JSONata 표현식을 작성하�
 **공식 사이트**: https://jsonata.org
 
 **주요 기능**:
-
 - JSON 데이터 필터링
 - 데이터 변환 및 재구조화
 - 집계 함수 (sum, count, average 등)
@@ -103,19 +100,16 @@ JSONata 테스팅은 transform-data 블록에서 JSONata 표현식을 작성하�
 ### 표현식 예시
 
 **필터링**:
-
 ```jsonata
 [status='active']
 ```
 
 **필드 선택**:
-
 ```jsonata
 *.{ "id": id, "name": name }
 ```
 
 **집계**:
-
 ```jsonata
 { "total": $count(*), "sum": $sum(*.price) }
 ```
@@ -129,8 +123,8 @@ JSONata 테스팅은 transform-data 블록에서 JSONata 표현식을 작성하�
 ### 헬퍼 함수
 
 ```typescript
-EightGClient.getStepResult(results, stepId);
-EightGClient.getAllStepResults(results);
+EightGClient.getStepResult(results, stepId)
+EightGClient.getAllStepResults(results)
 ```
 
 ### 에러 처리
@@ -169,7 +163,7 @@ EightGClient.getAllStepResults(results);
 
 **변경 이력**
 
-| 버전 | 날짜       | 변경 내용                                    | 작성자 |
-| ---- | ---------- | -------------------------------------------- | ------ |
-| 1.1  | 2025-11-11 | 200줄 제한 준수를 위해 예제와 고급 기능 분리 | System |
-| 1.0  | 2025-11-11 | 최초 작성                                    | System |
+| 버전 | 날짜 | 변경 내용 | 작성자 |
+|-----|------|---------|-------|
+| 1.1 | 2025-11-11 | 200줄 제한 준수를 위해 예제와 고급 기능 분리 | System |
+| 1.0 | 2025-11-11 | 최초 작성 | System |

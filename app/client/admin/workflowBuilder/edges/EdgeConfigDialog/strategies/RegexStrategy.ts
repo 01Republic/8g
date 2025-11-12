@@ -12,7 +12,10 @@ import {
  * Regex 조건 전략
  */
 export class RegexStrategy extends BaseConditionStrategy {
-  parseFromWhen(when: WhenCondition, formState: Partial<EdgeFormState>): void {
+  parseFromWhen(
+    when: WhenCondition,
+    formState: Partial<EdgeFormState>,
+  ): void {
     if (!when.regex) return;
 
     formState.regexData = {
@@ -54,3 +57,4 @@ export class RegexStrategy extends BaseConditionStrategy {
     };
   }
 }
+

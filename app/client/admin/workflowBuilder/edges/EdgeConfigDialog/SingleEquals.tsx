@@ -17,27 +17,17 @@ interface SingleEqualsProps {
   onChange: Dispatch<SetStateAction<EqualsData>>;
 }
 
-export const SingleEquals = ({
-  targetNodeId,
-  data,
-  onChange,
-}: SingleEqualsProps) => {
+export const SingleEquals = ({ targetNodeId, data, onChange }: SingleEqualsProps) => {
   const { previousNodes, getNodeDisplayName } = usePreviousNodes(targetNodeId);
 
-  const updateField = <K extends keyof EqualsData>(
-    field: K,
-    value: EqualsData[K],
-  ) => {
+  const updateField = <K extends keyof EqualsData>(field: K, value: EqualsData[K]) => {
     onChange((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
     <>
       <EdgFieldContentBox label="비교할 노드">
-        <Select
-          value={data.nodeId}
-          onValueChange={(v) => updateField("nodeId", v)}
-        >
+        <Select value={data.nodeId} onValueChange={(v) => updateField("nodeId", v)}>
           <SelectTrigger>
             <SelectValue placeholder="노드 선택" />
           </SelectTrigger>

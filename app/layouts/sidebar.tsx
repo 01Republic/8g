@@ -14,13 +14,6 @@ import {
 } from "~/components/ui/sidebar";
 import { Link, Links, Meta, Outlet, Scripts } from "react-router";
 import { Button } from "../components/ui/button";
-import type { Route } from "./+types/sidebar";
-import { requireAuthSession } from "~/middleware/auth";
-
-export async function loader({ request }: Route.LoaderArgs) {
-  await requireAuthSession(request);
-  return null;
-}
 
 export default function SidebarLayout() {
   return (
@@ -54,7 +47,8 @@ function AppSidebar() {
             </Link>
           </Button>
         </SidebarGroup>
-        <SidebarGroup></SidebarGroup>
+        <SidebarGroup>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter />
     </Sidebar>

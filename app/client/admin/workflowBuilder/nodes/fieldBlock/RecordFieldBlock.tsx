@@ -22,13 +22,7 @@ interface RecordFieldBlockProps {
   currentNodeId?: string;
 }
 
-type ValueType =
-  | "string"
-  | "number"
-  | "boolean"
-  | "array"
-  | "object"
-  | "currency";
+type ValueType = "string" | "number" | "boolean" | "array" | "object" | "currency";
 
 export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
   const { field, formData, updateFormField, currentNodeId } = props;
@@ -210,8 +204,7 @@ export const RecordFieldBlock = (props: RecordFieldBlockProps) => {
       // 이 구조는 AI가 자동으로 채우므로 마커만 저장
       newRecord[key] = {
         type: "currency",
-        description:
-          typeof currentValue === "string" ? currentValue : "통화 정보",
+        description: typeof currentValue === "string" ? currentValue : "통화 정보",
         optional: false,
       };
     } else {

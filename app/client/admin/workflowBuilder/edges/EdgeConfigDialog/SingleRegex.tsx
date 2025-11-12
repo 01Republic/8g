@@ -17,27 +17,17 @@ interface SingleRegexProps {
   onChange: Dispatch<SetStateAction<RegexData>>;
 }
 
-export const SingleRegex = ({
-  targetNodeId,
-  data,
-  onChange,
-}: SingleRegexProps) => {
+export const SingleRegex = ({ targetNodeId, data, onChange }: SingleRegexProps) => {
   const { previousNodes, getNodeDisplayName } = usePreviousNodes(targetNodeId);
 
-  const updateField = <K extends keyof RegexData>(
-    field: K,
-    value: RegexData[K],
-  ) => {
+  const updateField = <K extends keyof RegexData>(field: K, value: RegexData[K]) => {
     onChange((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
     <>
       <EdgFieldContentBox label="비교할 노드">
-        <Select
-          value={data.nodeId}
-          onValueChange={(v) => updateField("nodeId", v)}
-        >
+        <Select value={data.nodeId} onValueChange={(v) => updateField("nodeId", v)}>
           <SelectTrigger>
             <SelectValue placeholder="노드 선택" />
           </SelectTrigger>

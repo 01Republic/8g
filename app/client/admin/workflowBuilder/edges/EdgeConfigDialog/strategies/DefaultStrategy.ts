@@ -6,7 +6,10 @@ import { BaseConditionStrategy } from "./types";
  * Default 조건 전략 (조건 없음)
  */
 export class DefaultStrategy extends BaseConditionStrategy {
-  parseFromWhen(when: WhenCondition, formState: Partial<EdgeFormState>): void {
+  parseFromWhen(
+    when: WhenCondition,
+    formState: Partial<EdgeFormState>,
+  ): void {
     // default는 추가 파싱 불필요
   }
 
@@ -18,3 +21,4 @@ export class DefaultStrategy extends BaseConditionStrategy {
     return "default";
   }
 }
+

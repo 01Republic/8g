@@ -13,13 +13,11 @@ For comprehensive project information, refer to the following documents:
 - **[Workflow Execution Architecture](WORKFLOW_EXECUTION_ARCHITECTURE.md)** - 워크플로우 실행 상세 (있는 경우)
 
 **문서화 원칙 (중요!)**:
-
 - ✅ 모든 문서는 한글로 작성 (CLAUDE.md 제외)
 - ✅ 모든 문서는 200줄 이하로 작성
 - ✅ 개발 완료 직후 문서 최신화 필수
 
 **빠른 참조:**
-
 - 새 기능 개발 시: PRD에서 요구사항 확인 → Feature Specs에서 상세 확인 → 이 문서에서 구현 방법 확인
 - 버그 수정 시: Feature Specs에서 기대 동작 확인 → 이 문서에서 관련 파일 찾기
 - 코드 리뷰 시: Feature Specs에서 명세 준수 확인 → PRD에서 비기능 요구사항 확인
@@ -36,7 +34,6 @@ For comprehensive project information, refer to the following documents:
 ## Development Commands
 
 ### Essential Commands
-
 ```bash
 # Development server (port 3000)
 pnpm run dev
@@ -61,7 +58,6 @@ pnpm run db:generate-entities
 ### Environment Setup
 
 Create a `.env` file with database configuration:
-
 ```env
 DB_HOST=localhost
 DB_PORT=3306
@@ -74,7 +70,6 @@ NEXT_PUBLIC_CARD_SIGN_KEY=spurstodo
 ### Database Setup
 
 Create the workflow metadata table manually (no migration tool currently):
-
 ```sql
 CREATE TABLE IF NOT EXISTS integration_app_workflow_metadata (
   id INT NOT NULL AUTO_INCREMENT,
@@ -91,7 +86,6 @@ CREATE TABLE IF NOT EXISTS integration_app_workflow_metadata (
 **상세 아키텍처 정보**: [PRD - Section 2: System Architecture](.claude/PRD.md#2-system-architecture)
 
 ### Tech Stack
-
 - **Frontend**: React 19, React Router 7 (config-based routing)
 - **Server**: Express 5, React Router server-side rendering
 - **Graph Visualization**: @xyflow/react (React Flow v12), dagre layout
@@ -105,7 +99,6 @@ CREATE TABLE IF NOT EXISTS integration_app_workflow_metadata (
 #### 1. Workflow Data Flow
 
 **Loading a workflow:**
-
 1. React Router `loader()` in `app/routes/workflow-builder.tsx` calls `findWorkflowMetadata(id)`
 2. TypeORM fetches workflow with `meta: FormWorkflow` JSON structure from database
 3. `convertWorkflowToNodesAndEdges()` in `app/client/admin/workflowBuilder/utils/workflowConverter.ts` transforms workflow JSON → React Flow nodes/edges
@@ -113,14 +106,12 @@ CREATE TABLE IF NOT EXISTS integration_app_workflow_metadata (
 5. React Flow renders the interactive graph
 
 **Saving a workflow:**
-
 1. `buildWorkflowJson()` in `app/models/workflow/WorkflowBuilder.ts` converts React Flow graph → Workflow JSON
 2. Form submission to route `action()` with FormData
 3. `upsertWorkflowMetadata()` in `app/.server/services/workflow/` creates or updates database record
 4. Redirects to workflows list page
 
 **Executing a workflow:**
-
 1. Workflow with `vars` field sent to Extension via `EightGClient.collectWorkflow()`
 2. Extension handles variable substitution using `${vars.varName}` template syntax
 3. Results displayed in `ResultPanel.tsx` component
@@ -128,7 +119,6 @@ CREATE TABLE IF NOT EXISTS integration_app_workflow_metadata (
 #### 2. Block System Architecture
 
 All workflow blocks are defined by **Zod v3 schemas** from the `scordi-extension` package (`AllBlockSchemas`). The `GenericBlockNode` component dynamically renders any block type by:
-
 1. Parsing the Zod schema via `schema-parser.ts` to extract field definitions
 2. Rendering appropriate field input components (StringFieldBlock, NumberFieldBlock, EnumFieldBlock, etc.)
 3. Validating block configuration at runtime with Zod
@@ -138,7 +128,6 @@ This allows adding new block types in the SDK without modifying the UI code.
 #### 3. Workflow JSON Structure
 
 The core workflow format (`FormWorkflow` type):
-
 ```typescript
 {
   version: "1.0",
@@ -166,7 +155,6 @@ The core workflow format (`FormWorkflow` type):
 #### 4. Conditional Edge System
 
 Edges between workflow nodes can have conditional logic stored in `edge.data.when`. The `EdgeConfigDialog` component provides a UI for building complex conditions:
-
 - **Comparison operators**: equals, regex, contains
 - **Logical operators**: AND, OR combinations
 - **Existence checks**: exists
@@ -177,7 +165,6 @@ Conditions are evaluated at runtime by the workflow engine.
 #### 5. Server-Side Architecture
 
 The Express server (`server.js`) integrates React Router's server handler:
-
 - **Development**: Vite middleware for HMR
 - **Production**: Serves pre-built static files
 - **WebSocket server** runs on the same port for real-time features
@@ -189,13 +176,11 @@ The Express server (`server.js`) integrates React Router's server handler:
 ### React Router 7 Config-Based Routing
 
 This project uses **config-based routing** (not file-based). Routes are defined in `app/routes.ts` with explicit layout nesting:
-
 ```typescript
-route("/workflow-builder/:workflowId?", "./routes/workflow-builder.tsx");
+route("/workflow-builder/:workflowId?", "./routes/workflow-builder.tsx")
 ```
 
 Route files in `app/routes/*.tsx` export:
-
 - `loader()` - Server-side data fetching
 - `action()` - Form submission handlers
 - `default` - React component
@@ -203,7 +188,6 @@ Route files in `app/routes/*.tsx` export:
 ### Workflow Execution via Extension SDK
 
 All workflow execution happens through the **8G browser extension**. The client-side code:
-
 1. Calls `EightGClient.collectWorkflow({ targetUrl, workflow })`
 2. Extension receives workflow, opens browser tab to targetUrl
 3. Extension executes each workflow step sequentially
@@ -226,7 +210,6 @@ See `WORKFLOW_EXECUTION_ARCHITECTURE.md` for complete block documentation (if ex
 ### Variable Substitution
 
 Variables use `${vars.varName}` template syntax. The Extension handles variable resolution:
-
 - Static variables from `workflow.vars` field
 - Dynamic variables from previous step results (using JSONPath expressions)
 - Context variables in loops (`$.forEach.item`, `$.loop.index`)
@@ -236,7 +219,6 @@ Variables use `${vars.varName}` template syntax. The Extension handles variable 
 ### Server-Only Code (.server directory)
 
 Code in `app/.server/` is **never bundled to the client**. This includes:
-
 - Database entities and TypeORM configuration
 - Service layer functions (workflow CRUD operations)
 - Sensitive business logic
@@ -250,7 +232,6 @@ Code in `app/.server/` is **never bundled to the client**. This includes:
 ### Type-Safe Workflow Building
 
 The workflow builder maintains type safety through:
-
 1. Zod schemas define block structure at runtime
 2. TypeScript types inferred from Zod schemas
 3. React Flow typed nodes and edges
@@ -298,7 +279,6 @@ The workflow builder maintains type safety through:
 ## Important Files
 
 ### Core Workflow Files
-
 - `app/client/admin/workflowBuilder/WorkflowBuilderPage.tsx` - Main builder component
 - `app/models/workflow/WorkflowBuilder.ts` - Converts React Flow graph → Workflow JSON
 - `app/models/workflow/WorkflowRunner.ts` - Executes workflows via SDK
@@ -306,24 +286,20 @@ The workflow builder maintains type safety through:
 - `app/client/admin/workflowBuilder/utils/autoLayout.ts` - Dagre hierarchical layout algorithm
 
 ### Database Layer
-
 - `app/.server/db/config.ts` - TypeORM DataSource configuration
 - `app/.server/db/entities/IntegrationAppWorkflowMetadata.ts` - Workflow entity
 - `app/.server/services/workflow/` - Workflow CRUD services
 
 ### Routing
-
 - `app/routes.ts` - React Router configuration
 - `app/routes/workflow-builder.tsx` - Builder route with loader/action
 - `app/routes/workflows.tsx` - Workflows list route
 
 ### Edge Conditions
-
 - `app/client/admin/workflowBuilder/edges/EdgeConfigDialog/` - Condition builder UI
 - `app/client/admin/workflowBuilder/utils/conditionUtils.ts` - Condition rendering helpers
 
 ### Field Blocks (Block Configuration UI)
-
 - `app/client/admin/workflowBuilder/nodes/fieldBlock/ExpressionFieldBlock.tsx` - JSONata expression testing UI for transform-data blocks
   - Real-time JSONata expression evaluation
   - Auto-loads execution results from previous steps
@@ -334,31 +310,26 @@ The workflow builder maintains type safety through:
 ## Common Tasks
 
 ### Run a Single Test
-
 (No test framework currently configured)
 
 ### Build for Production
-
 ```bash
 pnpm run build
 NODE_ENV=production node server.js
 ```
 
 ### Check Types
-
 ```bash
 pnpm run typecheck
 ```
 
 ### Debug Workflow Execution
-
 1. Open browser DevTools console
 2. Look for messages prefixed with `[8G Extension]`
 3. Check Network tab for extension communication
 4. Inspect `result` object returned from `collectWorkflow()`
 
 ### Access Database
-
 Connection is established via TypeORM using `.env` credentials. Use TypeORM query builder or raw SQL via DataSource.
 
 ## Notes

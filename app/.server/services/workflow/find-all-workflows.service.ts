@@ -4,8 +4,7 @@ import { FindAllQueryDto } from "~/.server/dto/FindAllQueryDto";
 import { PaginationMetaData } from "~/.server/dto/pagination-meta-data.dto";
 import type { Paginated } from "~/.server/dto/paginated.dto";
 
-const WORKFLOW_API_BASE_URL =
-  process.env.WORKFLOW_API_BASE_URL || "http://localhost:8000";
+const WORKFLOW_API_BASE_URL = process.env.WORKFLOW_API_BASE_URL || "http://localhost:8000";
 
 export class FindAllIntegrationAppWorkflowQueryDto extends FindAllQueryDto<IntegrationAppWorkflowMetadata> {
   //
@@ -18,7 +17,6 @@ interface WorkflowMetadataResponse {
 
 export async function findAllWorkflows(
   query: FindAllIntegrationAppWorkflowQueryDto,
-  token?: string,
 ): Promise<WorkflowMetadataResponse> {
   const { page = 1, itemsPerPage = 10, where, order, relations = [] } = query;
 
@@ -40,19 +38,12 @@ export async function findAllWorkflows(
 
   // Only add relations if it has items
   if (relations.length > 0) {
-    params.relations = relations.join(",");
+    params.relations = relations.join(',');
   }
 
   const { data } = await axios.get<Paginated<IntegrationAppWorkflowMetadata>>(
     `${WORKFLOW_API_BASE_URL}/8g/workflows`,
-    {
-      params,
-      headers: token
-        ? {
-            Authorization: `Bearer ${token}`,
-          }
-        : undefined,
-    },
+    { params }
   );
 
   const { items, pagination } = data;

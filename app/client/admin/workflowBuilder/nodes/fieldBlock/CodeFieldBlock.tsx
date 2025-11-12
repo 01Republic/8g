@@ -16,13 +16,12 @@ interface CodeFieldBlockProps {
 }
 
 export const CodeFieldBlock = (props: CodeFieldBlockProps) => {
-  const { field, formData, updateFormField, currentNodeId, executionResults } =
-    props;
+  const { field, formData, updateFormField, currentNodeId, executionResults } = props;
   const { name, defaultValue } = field;
-  console.log(executionResults);
+  console.log(executionResults)
 
   const [testInput, setTestInput] = useState(
-    JSON.stringify({ example: "data", items: [1, 2, 3] }, null, 2),
+    JSON.stringify({ example: "data", items: [1, 2, 3] }, null, 2)
   );
   const [testOutput, setTestOutput] = useState<string>("");
   const [error, setError] = useState<string>("");
@@ -52,9 +51,7 @@ export const CodeFieldBlock = (props: CodeFieldBlockProps) => {
       setTestInput(JSON.stringify(executionResults, null, 2));
       setHasRealData(true);
     } else {
-      setTestInput(
-        JSON.stringify({ example: "data", items: [1, 2, 3] }, null, 2),
-      );
+      setTestInput(JSON.stringify({ example: "data", items: [1, 2, 3] }, null, 2));
       setHasRealData(false);
     }
   };
@@ -140,7 +137,9 @@ export const CodeFieldBlock = (props: CodeFieldBlockProps) => {
 
             {error && (
               <div className="bg-red-50 border border-red-200 rounded p-2">
-                <Label className="text-xs text-red-600 font-medium">에러</Label>
+                <Label className="text-xs text-red-600 font-medium">
+                  에러
+                </Label>
                 <pre className="text-xs text-red-700 mt-1 whitespace-pre-wrap">
                   {error}
                 </pre>

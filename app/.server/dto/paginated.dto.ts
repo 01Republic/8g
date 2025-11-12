@@ -1,5 +1,5 @@
-import { Exclude, Expose, plainToClass } from "class-transformer";
-import { PaginationMetaData } from "./pagination-meta-data.dto";
+import { Exclude, Expose, plainToClass } from 'class-transformer';
+import { PaginationMetaData } from './pagination-meta-data.dto';
 
 @Exclude()
 export class Paginated<PaginatedEntity> {
