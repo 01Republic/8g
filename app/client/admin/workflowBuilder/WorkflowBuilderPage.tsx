@@ -105,11 +105,11 @@ export default function WorkflowBuilderPage({
   );
   const [variablesDialogOpen, setVariablesDialogOpen] = React.useState(false);
 
-  // Workspace Key 관리 (MEMBERS, ADD_MEMBERS, BILLING, BILLING_HISTORIES, WORKSPACE_DETAIL 타입에서 사용)
+  // Workspace Key 관리 (MEMBERS, ADD_MEMBERS, DELETE_MEMBERS, BILLING, BILLING_HISTORIES, WORKSPACE_DETAIL 타입에서 사용)
   const [workspaceKey, setWorkspaceKey] = React.useState<string>('');
-  // Slug 관리 (WORKSPACE_DETAIL, MEMBERS, ADD_MEMBERS, BILLING, BILLING_HISTORIES 타입에서 사용)
+  // Slug 관리 (WORKSPACE_DETAIL, MEMBERS, ADD_MEMBERS, DELETE_MEMBERS, BILLING, BILLING_HISTORIES 타입에서 사용)
   const [slug, setSlug] = React.useState<string>('');
-  // Emails 관리 (ADD_MEMBERS 타입에서 사용)
+  // Emails 관리 (ADD_MEMBERS, DELETE_MEMBERS 타입에서 사용)
   const [emails, setEmails] = React.useState<string>('');
 
   const onConnect = React.useCallback(
@@ -189,6 +189,14 @@ export default function WorkflowBuilderPage({
       
       // ADD_MEMBERS 타입일 때 workspaceKey, slug, emails 추가
       if (type === 'ADD_MEMBERS') {
+        runParams.workspaceKey = workspaceKey;
+        runParams.slug = slug;
+        // 쉼표로 구분된 이메일을 배열로 변환
+        runParams.emails = emails.split(',').map(e => e.trim()).filter(e => e.length > 0);
+      }
+      
+      // DELETE_MEMBERS 타입일 때 workspaceKey, slug, emails 추가
+      if (type === 'DELETE_MEMBERS') {
         runParams.workspaceKey = workspaceKey;
         runParams.slug = slug;
         // 쉼표로 구분된 이메일을 배열로 변환

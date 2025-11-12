@@ -38,6 +38,17 @@ export type RunWorkflowParams =
       workspaceKey: string; // 필수!
       slug: string;
       emails: string[]; // 필수!
+    }
+  | {
+      evaluatedUrl: string;
+      workflow: FormWorkflow;
+      closeTabAfterCollection?: boolean;
+      activateTab?: boolean;
+      variables?: Record<string, any>;
+      type: 'DELETE_MEMBERS';
+      workspaceKey: string; // 필수!
+      slug: string;
+      emails: string[]; // 필수!
     };
 
 export interface RunWorkflowResult {
@@ -99,6 +110,12 @@ export async function runWorkflow(
       if (!slug) throw new Error('slug is required for ADD_MEMBERS type');
       if (!emails || emails.length === 0) throw new Error('emails is required for ADD_MEMBERS type');
       result = await client.addMembers(workspaceKey, slug, emails, requestParams);
+      break;
+    case 'DELETE_MEMBERS':
+      if (!workspaceKey) throw new Error('workspaceKey is required for DELETE_MEMBERS type');
+      if (!slug) throw new Error('slug is required for DELETE_MEMBERS type');
+      if (!emails || emails.length === 0) throw new Error('emails is required for DELETE_MEMBERS type');
+      result = await client.deleteMembers(workspaceKey, slug, emails, requestParams);
       break;
     case 'BILLING':
       if (!workspaceKey) throw new Error('workspaceKey is required for BILLING type');

@@ -50,6 +50,8 @@ const getWorkflowTypeBadge = (type: WorkflowType) => {
     WORKSPACE: { label: '🏢 Workspaces', className: 'bg-purple-100 text-purple-800' },
     WORKSPACE_DETAIL: { label: '🏢 Workspace Detail', className: 'bg-purple-100 text-purple-800' },
     MEMBERS: { label: '👥 Members', className: 'bg-green-100 text-green-800' },
+    ADD_MEMBERS: { label: '➕ Add Members', className: 'bg-green-100 text-green-800' },
+    DELETE_MEMBERS: { label: '➖ Delete Members', className: 'bg-red-100 text-red-800' },
     BILLING: { label: '💳 Billing', className: 'bg-orange-100 text-orange-800' },
     BILLING_HISTORIES: { label: '📊 Billing_Histories', className: 'bg-pink-100 text-pink-800' },
   };

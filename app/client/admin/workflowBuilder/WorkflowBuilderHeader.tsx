@@ -52,12 +52,13 @@ export const WorkflowBuilderHeader = ({
     WORKSPACE_DETAIL: '🏢 Get Workspace Detail',
     MEMBERS: '👥 Get Members',
     ADD_MEMBERS: '➕ Add Members',
+    DELETE_MEMBERS: '➖ Delete Members',
     BILLING: '💳 Billing',
     BILLING_HISTORIES: '📊 Billing Histories',
   };
 
   // 파라미터가 필요한 타입인지 확인
-  const needsParameters = ['WORKSPACE_DETAIL', 'MEMBERS', 'ADD_MEMBERS', 'BILLING', 'BILLING_HISTORIES'].includes(type);
+  const needsParameters = ['WORKSPACE_DETAIL', 'MEMBERS', 'ADD_MEMBERS', 'DELETE_MEMBERS', 'BILLING', 'BILLING_HISTORIES'].includes(type);
 
   return (
     <>
@@ -98,6 +99,9 @@ export const WorkflowBuilderHeader = ({
           </SelectItem>
           <SelectItem value="ADD_MEMBERS">
             {typeLabels.ADD_MEMBERS}
+          </SelectItem>
+          <SelectItem value="DELETE_MEMBERS">
+            {typeLabels.DELETE_MEMBERS}
           </SelectItem>
           <SelectItem value="BILLING">
             {typeLabels.BILLING}

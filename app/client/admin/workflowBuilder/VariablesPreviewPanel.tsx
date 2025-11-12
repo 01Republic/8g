@@ -36,6 +36,7 @@ export function VariablesPreviewPanel({
     "WORKSPACE_DETAIL",
     "MEMBERS",
     "ADD_MEMBERS",
+    "DELETE_MEMBERS",
     "BILLING",
     "BILLING_HISTORIES",
   ].includes(type);
@@ -52,7 +53,7 @@ export function VariablesPreviewPanel({
     {
       label: "Emails",
       value: emails,
-      hidden: type !== "ADD_MEMBERS",
+      hidden: type !== "ADD_MEMBERS" && type !== "DELETE_MEMBERS",
     },
   ].filter((row) => !row.hidden);
 
