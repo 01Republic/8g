@@ -32,7 +32,8 @@ export function SaveDialog({
     }
   }, [open, initialDescription]);
 
-  const handleSave = () => {
+  const handleSave = (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!description.trim()) {
       alert("설명을 입력해주세요");
       return;
@@ -41,6 +42,37 @@ export function SaveDialog({
     onOpenChange(false);
   };
 
+  // 엔터 키 감지
+  useEffect(() => {
+    if (!open) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+        // Ctrl+Enter 또는 Cmd+Enter는 기본 동작 유지
+        return;
+      }
+      if (e.key === "Enter" && !e.shiftKey) {
+        // Shift+Enter가 아닌 일반 Enter만 처리
+        const target = e.target as HTMLElement;
+        // Input 필드에 포커스가 있을 때만 처리
+        if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
+          e.preventDefault();
+          if (!description.trim()) {
+            alert("설명을 입력해주세요");
+            return;
+          }
+          onSave(description);
+          onOpenChange(false);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open, description, onSave, onOpenChange]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
@@ -48,24 +80,31 @@ export function SaveDialog({
           <DialogTitle>워크플로우 저장</DialogTitle>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="description">설명</Label>
-            <Input
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="워크플로우 설명을 입력하세요"
-            />
+        <form onSubmit={handleSave}>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="description">설명</Label>
+              <Input
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="워크플로우 설명을 입력하세요"
+                autoFocus
+              />
+            </div>
           </div>
-        </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            취소
-          </Button>
-          <Button onClick={handleSave}>저장</Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
+              취소
+            </Button>
+            <Button type="submit">저장</Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

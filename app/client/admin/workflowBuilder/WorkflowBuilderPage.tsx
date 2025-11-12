@@ -360,6 +360,22 @@ export default function WorkflowBuilderPage({
     input.click();
   }, [setNodes, setEdges, setTargetUrl, setVariables]);
 
+  // 키보드 단축키: Ctrl+S (Windows/Linux) 또는 Cmd+S (Mac)
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+S (Windows/Linux) 또는 Cmd+S (Mac)
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        e.preventDefault(); // 브라우저 기본 저장 동작 방지
+        setSaveDialogOpen(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   return (
     <div
       style={{

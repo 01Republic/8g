@@ -1,11 +1,17 @@
 import "reflect-metadata";
 import { isRouteErrorResponse, Outlet } from "react-router";
+import { Toaster } from "sonner";
 
 import type { Route } from "./+types/root";
 import "./app.css";
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <>
+      <Outlet />
+      <Toaster position="bottom-right" />
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

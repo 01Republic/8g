@@ -3,8 +3,9 @@ import WorkflowBuilderPage from "~/client/admin/workflowBuilder/WorkflowBuilderP
 import type { Route } from "./+types/workflow-builder";
 import type { FormWorkflow } from "~/models/workflow/types";
 import { useFetcher } from "react-router";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { redirect } from "react-router";
+import { toast } from "sonner";
 import {
   findWorkflowMetadata,
   upsertWorkflowMetadata,
@@ -54,20 +55,19 @@ export async function action({ request }: Route.ActionArgs) {
   const meta = JSON.parse(formData.get("meta")!.toString()) as FormWorkflow;
   const typeStr = formData.get("type")?.toString() as WorkflowType | undefined;
 
-  await upsertWorkflowMetadata({
+  return await upsertWorkflowMetadata({
     workflowId,
     productId,
     description,
     meta,
     type: typeStr || 'WORKFLOW',
   });
-
-  return redirect("/");
 }
 
 export default function WorkflowBuilder({ loaderData }: Route.ComponentProps) {
   const fetcher = useFetcher();
   const isSaving = fetcher.state !== "idle";
+  const prevFetcherState = React.useRef(fetcher.state);
 
   const onSave = (payload: {
     workflowId?: number;
@@ -92,10 +92,22 @@ export default function WorkflowBuilder({ loaderData }: Route.ComponentProps) {
   };
 
   useEffect(() => {
-    if (fetcher.state !== "idle") return;
-    if (!fetcher.data) return;
-    const data = fetcher.data as any;
-    const hasError = data && typeof data === "object" && "error" in data;
+    // 이전 상태가 submitting/loading이었고 현재가 idle이면 저장 완료
+    const wasSubmitting = prevFetcherState.current === "submitting" || prevFetcherState.current === "loading";
+    const isNowIdle = fetcher.state === "idle";
+    
+    if (wasSubmitting && isNowIdle) {
+      const data = fetcher.data as any;
+      const hasError = data && typeof data === "object" && "error" in data;
+      
+      if (hasError) {
+        toast.error("저장 중 오류가 발생했습니다.");
+      } else {
+        toast.success("워크플로우가 저장되었습니다.");
+      }
+    }
+    
+    prevFetcherState.current = fetcher.state;
   }, [fetcher.state, fetcher.data]);
 
   return (
