@@ -98,6 +98,10 @@ export const blockLabels: Record<
     title: "ContentEditable 설정",
     description: "ContentEditable 설정",
   },
+  "mark-border": {
+    title: "강조 표시",
+    description: "강조 표시",
+  },
 };
 
 /**
