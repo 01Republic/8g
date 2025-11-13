@@ -46,12 +46,13 @@ export class ExistsStrategy extends BaseConditionStrategy {
   parseToSubCondition(when: WhenCondition, id: string): SubCondition | null {
     if (!when.exists) return null;
 
-    const match = when.exists?.match(/\$\.steps\.([^.]+)\.(.+)/);
+    const nodeId = extractNodeIdFromPath(when.exists);
+    const path = extractPathFromJsonPath(when.exists) || "result";
     return {
       id,
       type: "exists",
-      nodeId: match?.[1] || "",
-      path: match?.[2] || "result",
+      nodeId,
+      path,
     };
   }
 }

@@ -47,12 +47,13 @@ export class ContainsStrategy extends BaseConditionStrategy {
   parseToSubCondition(when: WhenCondition, id: string): SubCondition | null {
     if (!when.contains) return null;
 
-    const match = when.contains.value?.match(/\$\.steps\.([^.]+)\.(.+)/);
+    const nodeId = extractNodeIdFromPath(when.contains.value || "");
+    const path = extractPathFromJsonPath(when.contains.value || "") || "result.data";
     return {
       id,
       type: "contains",
-      nodeId: match?.[1] || "",
-      path: match?.[2] || "result.data",
+      nodeId,
+      path,
       value: when.contains.search || "",
     };
   }

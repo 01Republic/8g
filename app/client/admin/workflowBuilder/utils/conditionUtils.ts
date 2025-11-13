@@ -3,27 +3,33 @@ import type { WhenCondition } from "~/models/workflow/types";
 /**
  * JSONPath에서 노드 ID 추출
  * 예: "$.steps.nodeId.result.data" → "nodeId"
+ * 예: "steps.nodeId.result.data" → "nodeId"
  */
 export function extractNodeIdFromPath(path: string): string {
-  const match = path.match(/\$\.steps\.([^.]+)/);
+  // 기존 형식: $.steps.nodeId.path
+  // 새로운 형식: steps.nodeId.path
+  const match = path.match(/(?:\$\.)?steps\.([^.]+)/);
   return match ? match[1] : "";
 }
 
 /**
  * JSONPath에서 경로 부분 추출
  * 예: "$.steps.nodeId.result.data" → "result.data"
+ * 예: "steps.nodeId.result.data" → "result.data"
  */
 export function extractPathFromJsonPath(jsonPath: string): string {
-  const match = jsonPath.match(/\$\.steps\.[^.]+\.(.+)/);
+  // 기존 형식: $.steps.nodeId.path
+  // 새로운 형식: steps.nodeId.path
+  const match = jsonPath.match(/(?:\$\.)?steps\.[^.]+\.(.+)/);
   return match ? match[1] : "";
 }
 
 /**
  * 노드 ID와 경로를 JSONPath로 결합
- * 예: ("nodeId", "result.data") → "$.steps.nodeId.result.data"
+ * 예: ("nodeId", "result.data") → "steps.nodeId.result.data"
  */
 export function buildJsonPath(nodeId: string, path: string): string {
-  return `$.steps.${nodeId}.${path}`;
+  return `steps.${nodeId}.${path}`;
 }
 
 /**

@@ -47,12 +47,13 @@ export class EqualsStrategy extends BaseConditionStrategy {
   parseToSubCondition(when: WhenCondition, id: string): SubCondition | null {
     if (!when.equals) return null;
 
-    const match = when.equals.left?.match(/\$\.steps\.([^.]+)\.(.+)/);
+    const nodeId = extractNodeIdFromPath(when.equals.left || "");
+    const path = extractPathFromJsonPath(when.equals.left || "") || "result.data";
     return {
       id,
       type: "equals",
-      nodeId: match?.[1] || "",
-      path: match?.[2] || "result.data",
+      nodeId,
+      path,
       value: when.equals.right || "",
     };
   }

@@ -47,12 +47,13 @@ export class RegexStrategy extends BaseConditionStrategy {
   parseToSubCondition(when: WhenCondition, id: string): SubCondition | null {
     if (!when.regex) return null;
 
-    const match = when.regex.value?.match(/\$\.steps\.([^.]+)\.(.+)/);
+    const nodeId = extractNodeIdFromPath(when.regex.value || "");
+    const path = extractPathFromJsonPath(when.regex.value || "") || "result.data";
     return {
       id,
       type: "regex",
-      nodeId: match?.[1] || "",
-      path: match?.[2] || "result.data",
+      nodeId,
+      path,
       value: when.regex.pattern || "",
     };
   }
