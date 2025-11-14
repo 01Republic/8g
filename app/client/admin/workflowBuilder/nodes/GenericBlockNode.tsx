@@ -6,6 +6,7 @@ import { cn } from "~/lib/utils";
 import { parseZodSchema } from "~/lib/schema-parser";
 import { blockLabels, fieldLabels } from "./index";
 import { BlockActionHandlerModal } from "./BlockActionHandlerModal";
+import { useSubtreePreview } from "../context/SubtreePreviewContext";
 
 type GenericBlockNodeData = {
   block: Block;
@@ -23,6 +24,8 @@ export default function GenericBlockNode({
   selected,
 }: NodeProps<GenericBlockNodeType>) {
   const { block, schema, repeat, executionResults } = data;
+  const { preview } = useSubtreePreview();
+  const previewRole = preview.roles[id];
   const blockName = block.name;
   const { title } = blockLabels[blockName];
 
@@ -31,29 +34,47 @@ export default function GenericBlockNode({
   // Repeat 뱃지 텍스트 생성
   const repeatBadgeText = useMemo(() => {
     if (!repeat) return null;
+    const scopeSuffix = repeat.scope === "subtree" ? " · subtree" : "";
     if ("forEach" in repeat) {
-      return `forEach`;
+      return `forEach${scopeSuffix}`;
     }
     if ("count" in repeat) {
       const count = typeof repeat.count === "string" ? "변수" : repeat.count;
-      return `×${count}`;
+      return `×${count}${scopeSuffix}`;
     }
     return null;
   }, [repeat]);
 
+  const previewClass = previewRole
+    ? previewRole === "start"
+      ? "border-blue-500 bg-blue-50 shadow-md"
+      : previewRole === "end-neighbor"
+        ? "border-amber-500 bg-amber-50"
+        : "border-blue-300 bg-blue-50/60"
+    : "";
+
   return (
     <div
       className={cn(
-        "border rounded-md bg-white shadow overflow-hidden",
-        selected ? " border-primary-700" : "border-gray-200",
+        "border rounded-md bg-white shadow overflow-hidden transition-colors",
+        selected ? "border-primary-700" : "border-gray-200",
+        previewClass,
       )}
     >
       <div className="px-3 py-2 flex items-center justify-between gap-2 border-b border-gray-200 bg-gray-100">
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium">{title}</span>
-          {repeatBadgeText && (
+          {(repeatBadgeText || previewRole) && (
             <span className="px-2 py-0.5 text-xxs bg-gray-100 text-gray-700 rounded border border-gray-300 font-medium">
               {repeatBadgeText}
+              {repeatBadgeText && previewRole ? " · " : ""}
+              {previewRole
+                ? previewRole === "start"
+                  ? "subtree-start"
+                  : previewRole === "end-neighbor"
+                    ? "subtree-end"
+                    : "subtree"
+                : null}
             </span>
           )}
         </div>

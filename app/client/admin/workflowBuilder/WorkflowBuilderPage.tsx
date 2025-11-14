@@ -36,6 +36,7 @@ import {
   exportWorkflowWithMetadata,
   importWorkflowWithMetadata,
 } from "./utils/exportImport";
+import { SubtreePreviewProvider } from "./context/SubtreePreviewContext";
 
 interface Product {
   id: number;
@@ -388,24 +389,25 @@ export default function WorkflowBuilderPage({
   }, []);
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        width: "100%",
-        display: "grid",
-        gridTemplateRows: "auto 1fr",
-        gap: 8,
-      }}
-    >
+    <SubtreePreviewProvider>
       <div
         style={{
-          display: "flex",
-          alignItems: "center",
+          height: "100vh",
+          width: "100%",
+          display: "grid",
+          gridTemplateRows: "auto 1fr",
           gap: 8,
-          padding: "8px 12px",
-          borderBottom: "1px solid #eee",
         }}
       >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "8px 12px",
+            borderBottom: "1px solid #eee",
+          }}
+        >
         <WorkflowBuilderHeader
           targetUrl={targetUrl}
           setTargetUrl={setTargetUrl}
@@ -470,16 +472,16 @@ export default function WorkflowBuilderPage({
             };
           })}
         />
-      </div>
+        </div>
 
-      <div
-        style={{
-          position: "relative",
-          display: "flex",
-          gap: "8px",
-          height: "100%",
-        }}
-      >
+        <div
+          style={{
+            position: "relative",
+            display: "flex",
+            gap: "8px",
+            height: "100%",
+          }}
+        >
         {/* 왼쪽: ReactFlow */}
         <div style={{ flex: 1, position: "relative" }}>
           <ReactFlow
@@ -566,6 +568,7 @@ export default function WorkflowBuilderPage({
           />
         </div>
       </div>
-    </div>
+      </div>
+    </SubtreePreviewProvider>
   );
 }

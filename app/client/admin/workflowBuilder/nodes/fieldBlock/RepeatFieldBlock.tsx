@@ -1,9 +1,17 @@
-import { useState, useEffect, useRef } from "react";
-import type { RepeatConfig } from "scordi-extension";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useReactFlow, type Edge } from "@xyflow/react";
+import type { RepeatConfig, RepeatScope } from "scordi-extension";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Button } from "~/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import {
   Accordion,
   AccordionContent,
@@ -11,6 +19,9 @@ import {
   AccordionTrigger,
 } from "~/components/ui/accordion";
 import { usePreviousNodes } from "../../../../../hooks/use-previous-nodes";
+import { useNextNodes } from "~/hooks/use-next-nodes";
+import { collectSubtreeNodes } from "../../utils/subtreePreview";
+import { useSubtreePreview } from "../../context/SubtreePreviewContext";
 
 interface RepeatFieldBlockProps {
   repeat?: RepeatConfig;
@@ -25,8 +36,11 @@ export function RepeatFieldBlock({
   onRepeatChange,
   currentNodeId,
 }: RepeatFieldBlockProps) {
+  const reactFlowInstance = useReactFlow();
+  const { setPreview, clearPreview } = useSubtreePreview();
   const { previousNodes, getNodeDisplayName, createPathReference } =
     usePreviousNodes(currentNodeId || "");
+  const { nextNodes } = useNextNodes(currentNodeId || "");
 
   const [repeatType, setRepeatType] = useState<RepeatType>(() => {
     if (!repeat) return "none";
@@ -47,6 +61,12 @@ export function RepeatFieldBlock({
   const [delayBetween, setDelayBetween] = useState<string>(
     repeat?.delayBetween ? String(repeat.delayBetween) : "",
   );
+  const [scope, setScope] = useState<RepeatScope>(repeat?.scope ?? "block");
+  const [subtreeEnd, setSubtreeEnd] = useState<string>(
+    repeat?.subtreeEnd ?? "",
+  );
+  const previewIdRef = useRef<string | null>(null);
+  const previewRolesRef = useRef<string | null>(null);
 
   // 드롭다운 관련 상태
   const [showDropdown, setShowDropdown] = useState(false);
@@ -113,11 +133,47 @@ export function RepeatFieldBlock({
     }
   }, [showDropdown]);
 
+  const lastEmittedRef = useRef<string | null>(null);
+
+  const clearSubtreePreview = useCallback(() => {
+    const previewId = previewIdRef.current;
+    if (!previewId) return;
+    clearPreview(previewId);
+    previewIdRef.current = null;
+    previewRolesRef.current = null;
+  }, [clearPreview]);
+
   useEffect(() => {
     if (repeatType === "none") {
-      onRepeatChange(undefined);
+      if (lastEmittedRef.current !== "null") {
+        lastEmittedRef.current = "null";
+        onRepeatChange(undefined);
+      }
       return;
     }
+
+    if (scope === "subtree") {
+      if (!subtreeEnd.trim()) {
+        if (lastEmittedRef.current !== "null") {
+          lastEmittedRef.current = "null";
+          onRepeatChange(undefined);
+        }
+        return;
+      }
+      if (subtreeEnd && !nextNodes.find((node) => node.id === subtreeEnd)) {
+        if (lastEmittedRef.current !== "null") {
+          lastEmittedRef.current = "null";
+          onRepeatChange(undefined);
+        }
+        return;
+      }
+    }
+
+    const repeatCommon: Partial<RepeatConfig> = {
+      ...(continueOnError && { continueOnError }),
+      ...(delayBetween && { delayBetween: parseInt(delayBetween) }),
+      ...(scope === "subtree" && { scope, subtreeEnd: subtreeEnd.trim() }),
+    };
 
     if (repeatType === "forEach") {
       if (!forEachPath.trim()) {
@@ -126,9 +182,11 @@ export function RepeatFieldBlock({
       }
       const config: RepeatConfig = {
         forEach: forEachPath.trim(),
-        ...(continueOnError && { continueOnError }),
-        ...(delayBetween && { delayBetween: parseInt(delayBetween) }),
+        ...repeatCommon,
       };
+      const serialized = JSON.stringify(config);
+      if (serialized === lastEmittedRef.current) return;
+      lastEmittedRef.current = serialized;
       onRepeatChange(config);
       return;
     }
@@ -140,9 +198,11 @@ export function RepeatFieldBlock({
 
       const config: RepeatConfig = {
         count: parsedCount,
-        ...(continueOnError && { continueOnError }),
-        ...(delayBetween && { delayBetween: parseInt(delayBetween) }),
+        ...repeatCommon,
       };
+      const serialized = JSON.stringify(config);
+      if (serialized === lastEmittedRef.current) return;
+      lastEmittedRef.current = serialized;
       onRepeatChange(config);
       return;
     }
@@ -152,8 +212,73 @@ export function RepeatFieldBlock({
     countValue,
     continueOnError,
     delayBetween,
+    scope,
+    subtreeEnd,
+    nextNodes,
     onRepeatChange,
   ]);
+
+  useEffect(() => {
+    if (scope !== "subtree") {
+      clearSubtreePreview();
+      return;
+    }
+    if (!subtreeEnd && nextNodes.length > 0) {
+      setSubtreeEnd(nextNodes[0].id);
+    } else if (
+      subtreeEnd &&
+      nextNodes.length > 0 &&
+      !nextNodes.find((node) => node.id === subtreeEnd)
+    ) {
+      setSubtreeEnd(nextNodes[0].id);
+    }
+  }, [scope, nextNodes, subtreeEnd, clearSubtreePreview]);
+
+  useEffect(() => {
+    if (!currentNodeId) return;
+    if (scope !== "subtree" || !subtreeEnd.trim()) {
+      clearSubtreePreview();
+      return;
+    }
+    const nodesSnapshot = reactFlowInstance.getNodes();
+    const edgesSnapshot = reactFlowInstance.getEdges() as Edge[];
+    const previewInfo = collectSubtreeNodes(
+      nodesSnapshot,
+      edgesSnapshot,
+      currentNodeId,
+      subtreeEnd,
+    );
+    const previewId = `${currentNodeId}-${subtreeEnd}`;
+    const rolesSignature = JSON.stringify(
+      Object.entries(previewInfo.roles).sort(([a], [b]) =>
+        a.localeCompare(b),
+      ),
+    );
+
+    if (
+      previewIdRef.current === previewId &&
+      previewRolesRef.current === rolesSignature
+    ) {
+      return;
+    }
+
+    previewIdRef.current = previewId;
+    previewRolesRef.current = rolesSignature;
+    setPreview({
+      previewId,
+      roles: previewInfo.roles,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scope, subtreeEnd, currentNodeId]);
+
+  useEffect(() => {
+    return () => {
+      clearSubtreePreview();
+    };
+  }, [clearSubtreePreview]);
+
+  const scopeControlsVisible = repeatType !== "none";
+  const subtreeUnavailable = scope === "subtree" && nextNodes.length === 0;
 
   return (
     <Accordion type="single" collapsible className="border rounded-md">
@@ -310,6 +435,62 @@ export function RepeatFieldBlock({
                   각 반복 사이 대기 시간 (선택사항)
                 </p>
               </div>
+            </div>
+          )}
+
+          {scopeControlsVisible && (
+            <div className="mt-5 space-y-3 border-t pt-4">
+              <Label className="text-xs font-semibold">반복 범위</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={scope === "block" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setScope("block")}
+                >
+                  블록만 (기본)
+                </Button>
+                <Button
+                  type="button"
+                  variant={scope === "subtree" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setScope("subtree")}
+                  disabled={nextNodes.length === 0}
+                >
+                  서브트리 전체
+                </Button>
+              </div>
+              <p className="text-xxs text-gray-500">
+                반복 범위를 블록 단위(기본) 또는 서브트리 단위로 지정할 수 있어요.
+              </p>
+              {scope === "subtree" && (
+                <div className="space-y-2">
+                  <Label className="text-xs mb-1">반복 종료 스텝</Label>
+                  {nextNodes.length > 0 ? (
+                    <Select value={subtreeEnd} onValueChange={setSubtreeEnd}>
+                      <SelectTrigger className="w-full text-sm">
+                        <SelectValue placeholder="반복을 끝낼 스텝을 선택하세요" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {nextNodes.map((node) => (
+                          <SelectItem key={node.id} value={node.id}>
+                            {getNodeDisplayName(node)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <div className="rounded-md border border-dashed border-amber-400 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                      현재 노드 이후에 연결된 스텝이 없어 서브트리 반복을 구성할 수
+                      없습니다.
+                    </div>
+                  )}
+                  <p className="text-xxs text-gray-500">
+                    선택한 스텝 직전까지를 하나의 반복 단위로 실행한 뒤, 해당 스텝에서
+                    워크플로우가 이어집니다.
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
