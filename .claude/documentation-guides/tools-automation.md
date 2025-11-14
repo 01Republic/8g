@@ -17,18 +17,22 @@
 ### 마크다운 에디터
 
 #### VS Code + Markdown All in One 확장
+
 **장점**:
+
 - 실시간 프리뷰
 - 자동 목차 생성
 - 링크 자동완성
 - Lint 통합
 
 **설치 방법**:
+
 ```bash
 code --install-extension yzhang.markdown-all-in-one
 ```
 
 **주요 단축키**:
+
 - `Cmd+Shift+V`: 프리뷰
 - `Cmd+K V`: 사이드바 프리뷰
 - `Ctrl+Shift+[`: 접기
@@ -37,7 +41,9 @@ code --install-extension yzhang.markdown-all-in-one
 ---
 
 #### Typora (WYSIWYG)
+
 **장점**:
+
 - 즉시 렌더링
 - 직관적 인터페이스
 - 테이블 편집 용이
@@ -49,12 +55,15 @@ code --install-extension yzhang.markdown-all-in-one
 ### 다이어그램 도구
 
 #### Mermaid (코드 기반)
+
 **장점**:
+
 - 코드로 관리 가능
 - Git diff 가능
 - 자동 레이아웃
 
 **예시**:
+
 ```mermaid
 graph LR
   A[워크플로우 빌더] --> B[데이터베이스]
@@ -67,12 +76,15 @@ graph LR
 ---
 
 #### draw.io (비주얼)
+
 **장점**:
+
 - 드래그 앤 드롭
 - 다양한 템플릿
 - PNG/SVG 내보내기
 
 **사용 방법**:
+
 1. https://app.diagrams.net/ 접속
 2. 다이어그램 작성
 3. Export as PNG
@@ -83,19 +95,23 @@ graph LR
 ### 문서 검증 도구
 
 #### markdownlint
+
 **목적**: 마크다운 문법 검증
 
 **설치**:
+
 ```bash
 pnpm add -D markdownlint-cli
 ```
 
 **실행**:
+
 ```bash
 pnpm run lint:docs
 ```
 
 **설정 파일** (`.markdownlint.json`):
+
 ```json
 {
   "default": true,
@@ -107,9 +123,11 @@ pnpm run lint:docs
 ---
 
 #### 줄 수 카운터
+
 **목적**: 문서 길이 체크 (200줄 정책)
 
 **스크립트** (`scripts/check-doc-length.sh`):
+
 ```bash
 #!/bin/bash
 
@@ -139,6 +157,7 @@ exit $VIOLATIONS
 ```
 
 **실행**:
+
 ```bash
 chmod +x scripts/check-doc-length.sh
 ./scripts/check-doc-length.sh
@@ -153,6 +172,7 @@ chmod +x scripts/check-doc-length.sh
 **목적**: CI/CD에서 200줄 정책 자동 검증
 
 **package.json 추가**:
+
 ```json
 {
   "scripts": {
@@ -162,6 +182,7 @@ chmod +x scripts/check-doc-length.sh
 ```
 
 **실행**:
+
 ```bash
 pnpm run docs:check-length
 ```
@@ -173,6 +194,7 @@ pnpm run docs:check-length
 **목적**: 깨진 링크 자동 감지
 
 **스크립트** (`scripts/check-doc-links.sh`):
+
 ```bash
 #!/bin/bash
 
@@ -197,6 +219,7 @@ echo "검사 완료"
 ```
 
 **실행**:
+
 ```bash
 chmod +x scripts/check-doc-links.sh
 ./scripts/check-doc-links.sh
@@ -209,6 +232,7 @@ chmod +x scripts/check-doc-links.sh
 **목적**: 3개월 이상 업데이트 안 된 문서 자동 탐지
 
 **스크립트** (`scripts/stale-docs-report.sh`):
+
 ```bash
 #!/bin/bash
 
@@ -221,6 +245,7 @@ echo "================================"
 ```
 
 **실행**:
+
 ```bash
 chmod +x scripts/stale-docs-report.sh
 ./scripts/stale-docs-report.sh
@@ -233,6 +258,7 @@ chmod +x scripts/stale-docs-report.sh
 **목적**: 필수 필드 누락 확인
 
 **스크립트** (`scripts/check-doc-metadata.sh`):
+
 ```bash
 #!/bin/bash
 
@@ -275,7 +301,7 @@ name: Documentation Check
 on:
   pull_request:
     paths:
-      - '.claude/**/*.md'
+      - ".claude/**/*.md"
 
 jobs:
   check-docs:

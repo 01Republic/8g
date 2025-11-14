@@ -60,7 +60,7 @@ export async function action({ request }: Route.ActionArgs) {
     productId,
     description,
     meta,
-    type: typeStr || 'WORKFLOW',
+    type: typeStr || "WORKFLOW",
   });
 }
 
@@ -93,20 +93,22 @@ export default function WorkflowBuilder({ loaderData }: Route.ComponentProps) {
 
   useEffect(() => {
     // 이전 상태가 submitting/loading이었고 현재가 idle이면 저장 완료
-    const wasSubmitting = prevFetcherState.current === "submitting" || prevFetcherState.current === "loading";
+    const wasSubmitting =
+      prevFetcherState.current === "submitting" ||
+      prevFetcherState.current === "loading";
     const isNowIdle = fetcher.state === "idle";
-    
+
     if (wasSubmitting && isNowIdle) {
       const data = fetcher.data as any;
       const hasError = data && typeof data === "object" && "error" in data;
-      
+
       if (hasError) {
         toast.error("저장 중 오류가 발생했습니다.");
       } else {
         toast.success("워크플로우가 저장되었습니다.");
       }
     }
-    
+
     prevFetcherState.current = fetcher.state;
   }, [fetcher.state, fetcher.data]);
 

@@ -28,7 +28,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     order: { id: "DESC" },
     relations: [],
     limit: itemsPerPage,
-    offset: (page - 1) * itemsPerPage
+    offset: (page - 1) * itemsPerPage,
   });
 
   const productsResponse = await fetchProducts({ itemsPerPage: 100 });
@@ -36,7 +36,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   return {
     workflows: workflowsResponse.items,
     pagination: workflowsResponse.pagination,
-    products: productsResponse.items
+    products: productsResponse.items,
   };
 }
 

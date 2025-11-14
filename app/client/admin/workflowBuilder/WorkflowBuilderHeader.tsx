@@ -40,25 +40,32 @@ export const WorkflowBuilderHeader = ({
   onParametersClick,
   onExportClick,
   onImportClick,
-  type = 'WORKFLOW',
+  type = "WORKFLOW",
   onApiTypeChange,
   productId,
   onProductIdChange,
   products,
 }: WorkflowBuilderHeaderProps) => {
   const typeLabels: Record<WorkflowType, string> = {
-    WORKFLOW: '⚡ Data Collection',
-    WORKSPACE: '🏢 Get Workspaces',
-    WORKSPACE_DETAIL: '🏢 Get Workspace Detail',
-    MEMBERS: '👥 Get Members',
-    ADD_MEMBERS: '➕ Add Members',
-    DELETE_MEMBERS: '➖ Delete Members',
-    BILLING: '💳 Billing',
-    BILLING_HISTORIES: '📊 Billing Histories',
+    WORKFLOW: "⚡ Data Collection",
+    WORKSPACE: "🏢 Get Workspaces",
+    WORKSPACE_DETAIL: "🏢 Get Workspace Detail",
+    MEMBERS: "👥 Get Members",
+    ADD_MEMBERS: "➕ Add Members",
+    DELETE_MEMBERS: "➖ Delete Members",
+    BILLING: "💳 Billing",
+    BILLING_HISTORIES: "📊 Billing Histories",
   };
 
   // 파라미터가 필요한 타입인지 확인
-  const needsParameters = ['WORKSPACE_DETAIL', 'MEMBERS', 'ADD_MEMBERS', 'DELETE_MEMBERS', 'BILLING', 'BILLING_HISTORIES'].includes(type);
+  const needsParameters = [
+    "WORKSPACE_DETAIL",
+    "MEMBERS",
+    "ADD_MEMBERS",
+    "DELETE_MEMBERS",
+    "BILLING",
+    "BILLING_HISTORIES",
+  ].includes(type);
 
   return (
     <>
@@ -85,27 +92,17 @@ export const WorkflowBuilderHeader = ({
           <SelectValue placeholder="Select Type" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="WORKFLOW">
-            {typeLabels.WORKFLOW}
+          <SelectItem value="WORKFLOW">{typeLabels.WORKFLOW}</SelectItem>
+          <SelectItem value="WORKSPACE">{typeLabels.WORKSPACE}</SelectItem>
+          <SelectItem value="WORKSPACE_DETAIL">
+            {typeLabels.WORKSPACE_DETAIL}
           </SelectItem>
-          <SelectItem value="WORKSPACE">
-            {typeLabels.WORKSPACE}
-          </SelectItem>
-            <SelectItem value="WORKSPACE_DETAIL">
-                {typeLabels.WORKSPACE_DETAIL}
-            </SelectItem>
-          <SelectItem value="MEMBERS">
-            {typeLabels.MEMBERS}
-          </SelectItem>
-          <SelectItem value="ADD_MEMBERS">
-            {typeLabels.ADD_MEMBERS}
-          </SelectItem>
+          <SelectItem value="MEMBERS">{typeLabels.MEMBERS}</SelectItem>
+          <SelectItem value="ADD_MEMBERS">{typeLabels.ADD_MEMBERS}</SelectItem>
           <SelectItem value="DELETE_MEMBERS">
             {typeLabels.DELETE_MEMBERS}
           </SelectItem>
-          <SelectItem value="BILLING">
-            {typeLabels.BILLING}
-          </SelectItem>
+          <SelectItem value="BILLING">{typeLabels.BILLING}</SelectItem>
           <SelectItem value="BILLING_HISTORIES">
             {typeLabels.BILLING_HISTORIES}
           </SelectItem>

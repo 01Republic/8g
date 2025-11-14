@@ -13,6 +13,7 @@
 Import/Export는 워크플로우 정의와 실행 결과를 파일로 내보내고 가져올 수 있는 기능입니다. JSON 형식의 워크플로우 파일과 CSV 형식의 데이터 Export를 지원합니다.
 
 **핵심 가치**:
+
 - 워크플로우 백업 및 복원
 - 워크플로우 공유
 - 데이터 외부 활용
@@ -25,6 +26,7 @@ Import/Export는 워크플로우 정의와 실행 결과를 파일로 내보내�
 이 문서는 200줄 제한 준수를 위해 하위 문서로 분리되어 있습니다.
 
 **상세 문서**:
+
 - [가져오기 프로세스](./F-009-Import-Export/가져오기-프로세스.md) - Import UI, 파일 업로드, 검증, 로드
 - [내보내기 프로세스](./F-009-Import-Export/내보내기-프로세스.md) - Export UI, JSON/CSV 포맷, 클립보드
 
@@ -57,11 +59,13 @@ loadWorkflowFromJSON(validated);
 ### 실행 결과 Export
 
 **CSV**:
+
 ```typescript
-exportResultsToCSV(results);  // UTF-8 with BOM
+exportResultsToCSV(results); // UTF-8 with BOM
 ```
 
 **JSON**:
+
 ```typescript
 exportResultsToJSON(results);
 ```
@@ -81,6 +85,7 @@ exportResultsToJSON(results);
 **Export**: React Flow → JSON 변환 → 다운로드
 
 **상세**:
+
 - [가져오기 프로세스](./F-009-Import-Export/가져오기-프로세스.md)
 - [내보내기 프로세스](./F-009-Import-Export/내보내기-프로세스.md)
 
@@ -136,12 +141,14 @@ loadWorkflowFromJSON(workflow);
 ## 향후 개선사항
 
 ### Q1 2025
+
 - 블록별 상세 검증
 - Import 미리보기
 - Export 옵션 UI
 - 워크플로우 템플릿 라이브러리
 
 ### Q2 2025
+
 - 버전 관리 시스템
 - 일괄 Import/Export
 - 압축 파일 지원 (ZIP)
@@ -153,11 +160,13 @@ loadWorkflowFromJSON(workflow);
 ## 알려진 이슈
 
 **Issue-001: 대용량 CSV Export 느림**
+
 - **증상**: 10,000개 이상 행 처리 시 지연
 - **대안**: 결과 분할 Export
 - **계획**: Q2 2025 - Web Worker 사용
 
 **Issue-002: Import 시 검증 부족**
+
 - **증상**: 블록별 세부 검증 없음
 - **대안**: 수동 확인
 - **계획**: Q1 2025 - 블록별 스키마 검증
@@ -177,11 +186,13 @@ loadWorkflowFromJSON(workflow);
 ## 파일 위치
 
 ### Import
+
 - `app/client/admin/workflowBuilder/WorkflowImportButton.tsx` - Import 버튼
 - `app/client/admin/workflowBuilder/schemas/WorkflowSchema.ts` - Zod 스키마
 - `app/client/admin/workflowBuilder/utils/workflowLoader.ts` - 로드 로직
 
 ### Export
+
 - `app/client/admin/workflowBuilder/WorkflowBuilderHeader.tsx` - Export 버튼
 - `app/client/admin/workflowBuilder/ResultPanel.tsx` - CSV/JSON Export
 - `app/models/workflow/WorkflowBuilder.ts` - JSON 변환 로직
@@ -190,8 +201,8 @@ loadWorkflowFromJSON(workflow);
 
 **변경 이력**
 
-| 버전 | 날짜 | 변경 내용 | 작성자 |
-|-----|------|---------|-------|
-| 1.2 | 2025-11-11 | 200줄 제한 준수를 위해 상세 설명 축소 | System |
-| 1.1 | 2025-11-11 | 200줄 제한 준수를 위한 하위 문서 분리 | System |
-| 1.0 | 2025-11-11 | 최초 작성 | System |
+| 버전 | 날짜       | 변경 내용                             | 작성자 |
+| ---- | ---------- | ------------------------------------- | ------ |
+| 1.2  | 2025-11-11 | 200줄 제한 준수를 위해 상세 설명 축소 | System |
+| 1.1  | 2025-11-11 | 200줄 제한 준수를 위한 하위 문서 분리 | System |
+| 1.0  | 2025-11-11 | 최초 작성                             | System |

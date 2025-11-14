@@ -1,6 +1,7 @@
 import type { ProductsResponse } from "./types";
 
-const PRODUCT_API_BASE_URL = process.env.PRODUCT_API_BASE_URL || "http://localhost:8000";
+const PRODUCT_API_BASE_URL =
+  process.env.PRODUCT_API_BASE_URL || "http://localhost:8000";
 
 export async function fetchProducts(params?: {
   isLive?: boolean;

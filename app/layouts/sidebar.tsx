@@ -47,8 +47,7 @@ function AppSidebar() {
             </Link>
           </Button>
         </SidebarGroup>
-        <SidebarGroup>
-        </SidebarGroup>
+        <SidebarGroup></SidebarGroup>
       </SidebarContent>
       <SidebarFooter />
     </Sidebar>

@@ -53,4 +53,3 @@ export abstract class BaseConditionStrategy implements ConditionStrategy {
     return null;
   }
 }
-

@@ -38,7 +38,14 @@ interface BlockActionHandlerModalProps {
 export const BlockActionHandlerModal = (
   props: BlockActionHandlerModalProps,
 ) => {
-  const { id, title, parsedSchema, block, repeat: initialRepeat, executionResults } = props;
+  const {
+    id,
+    title,
+    parsedSchema,
+    block,
+    repeat: initialRepeat,
+    executionResults,
+  } = props;
 
   const { setNodes } = useReactFlow();
   const blockName = block.name;
@@ -161,10 +168,7 @@ export const BlockActionHandlerModal = (
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          size="xxs"
-          >
+        <Button variant="outline" size="xxs">
           수정
         </Button>
       </DialogTrigger>
@@ -235,7 +239,10 @@ export const BlockActionHandlerModal = (
                 );
               }
               // expression 필드 (transform-data 블록)는 JSONata 테스트 UI로
-              if (field.name === "expression" && blockName === "transform-data") {
+              if (
+                field.name === "expression" &&
+                blockName === "transform-data"
+              ) {
                 return (
                   <ExpressionFieldBlock
                     key={field.name}
@@ -315,8 +322,9 @@ export const BlockActionHandlerModal = (
                     key={field.name}
                     field={{
                       ...field,
-                      type: "record" as const,  // Override type to use RecordFieldBlock
-                      description: "요청 본문 필터 패턴 (JSON 객체). ${vars.변수명} 형태의 변수 사용 가능합니다."
+                      type: "record" as const, // Override type to use RecordFieldBlock
+                      description:
+                        "요청 본문 필터 패턴 (JSON 객체). ${vars.변수명} 형태의 변수 사용 가능합니다.",
                     }}
                     formData={formData}
                     updateFormField={updateFormField}
@@ -333,13 +341,17 @@ export const BlockActionHandlerModal = (
                       {field.optional && " (선택)"}
                     </label>
                     {field.description && (
-                      <p className="text-xs text-gray-500">{field.description}</p>
+                      <p className="text-xs text-gray-500">
+                        {field.description}
+                      </p>
                     )}
                     <input
                       type="text"
-                      value={typeof formData[field.name] === "object" 
-                        ? JSON.stringify(formData[field.name]) 
-                        : formData[field.name] || ""}
+                      value={
+                        typeof formData[field.name] === "object"
+                          ? JSON.stringify(formData[field.name])
+                          : formData[field.name] || ""
+                      }
                       onChange={(e) => {
                         const value = e.target.value;
                         if (!value) {
@@ -353,16 +365,24 @@ export const BlockActionHandlerModal = (
                             } else {
                               // Parse as number
                               const num = parseInt(value, 10);
-                              updateFormField(field.name, isNaN(num) ? value : num);
+                              updateFormField(
+                                field.name,
+                                isNaN(num) ? value : num,
+                              );
                             }
                           } catch {
                             // If not valid JSON, try as number
                             const num = parseInt(value, 10);
-                            updateFormField(field.name, isNaN(num) ? value : num);
+                            updateFormField(
+                              field.name,
+                              isNaN(num) ? value : num,
+                            );
                           }
                         }
                       }}
-                      placeholder={"상태 코드 (예: 200) 또는 범위 (예: {\"min\": 200, \"max\": 299})"}
+                      placeholder={
+                        '상태 코드 (예: 200) 또는 범위 (예: {"min": 200, "max": 299})'
+                      }
                       className="rounded-md border border-gray-200 px-3 py-2 text-sm"
                     />
                     <p className="text-xs text-gray-500">

@@ -12,10 +12,7 @@ import {
  * Equals 조건 전략
  */
 export class EqualsStrategy extends BaseConditionStrategy {
-  parseFromWhen(
-    when: WhenCondition,
-    formState: Partial<EdgeFormState>,
-  ): void {
+  parseFromWhen(when: WhenCondition, formState: Partial<EdgeFormState>): void {
     if (!when.equals) return;
 
     formState.equalsData = {
@@ -48,7 +45,8 @@ export class EqualsStrategy extends BaseConditionStrategy {
     if (!when.equals) return null;
 
     const nodeId = extractNodeIdFromPath(when.equals.left || "");
-    const path = extractPathFromJsonPath(when.equals.left || "") || "result.data";
+    const path =
+      extractPathFromJsonPath(when.equals.left || "") || "result.data";
     return {
       id,
       type: "equals",
@@ -58,4 +56,3 @@ export class EqualsStrategy extends BaseConditionStrategy {
     };
   }
 }
-

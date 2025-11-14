@@ -19,15 +19,12 @@
 ```typescript
 // scordi-extension SDK
 export class EightGClient {
-  static getStepResult(
-    results: WorkflowExecutionResult,
-    stepId: string
-  ): any {
+  static getStepResult(results: WorkflowExecutionResult, stepId: string): any {
     return results.context?.steps?.[stepId]?.result?.data;
   }
 
   static getAllStepResults(
-    results: WorkflowExecutionResult
+    results: WorkflowExecutionResult,
   ): Record<string, any> {
     return results.context?.steps || {};
   }
@@ -38,7 +35,7 @@ export class EightGClient {
 
 ```typescript
 // 특정 스텝 결과 가져오기
-const userData = EightGClient.getStepResult(results, 'extract_user');
+const userData = EightGClient.getStepResult(results, "extract_user");
 
 // 모든 스텝 결과 가져오기
 const allSteps = EightGClient.getAllStepResults(results);
@@ -51,16 +48,17 @@ const allSteps = EightGClient.getAllStepResults(results);
 ### extractDataFromResults 함수
 
 **구현**:
+
 ```typescript
 function extractDataFromResults(
   results: WorkflowExecutionResult,
-  sourceDataPath: string
+  sourceDataPath: string,
 ): any {
   try {
     // context.steps와 result.steps 모두 지원
     const contextData = {
       steps: results.context?.steps || {},
-      result: results
+      result: results,
     };
 
     // JSONPath 실행
@@ -76,13 +74,15 @@ function extractDataFromResults(
 ### 지원하는 경로 형식
 
 **context.steps 형식**:
+
 ```javascript
-$.steps.extract_data.result.data
+$.steps.extract_data.result.data;
 ```
 
 **result.steps 형식**:
+
 ```javascript
-$.result.steps.extract_data.result.data
+$.result.steps.extract_data.result.data;
 ```
 
 ---
@@ -157,15 +157,13 @@ const emptyArray = [];
 // 기대 결과: []
 
 // 테스트 케이스 2: null 값
-const dataWithNull = [
-  { id: 1, name: null, price: 100 }
-];
+const dataWithNull = [{ id: 1, name: null, price: 100 }];
 // 표현식: *.{ "name": name ? name : "Unknown" }
 // 기대 결과: [{ "name": "Unknown" }]
 
 // 테스트 케이스 3: 중첩 null
 const nestedNull = {
-  user: { profile: null }
+  user: { profile: null },
 };
 // 표현식: user.profile.name
 // 기대 결과: null (에러 없이)
@@ -219,27 +217,35 @@ $sum([status='active' and price > 100].price)
 ### 일반적인 에러
 
 **1. Syntax Error**
+
 ```
 Error: Expected "," or "]" at column 15
 ```
+
 **해결**: 문법 오류 확인, 괄호/따옴표 짝 맞추기
 
 **2. Type Error**
+
 ```
 Error: Attempted to invoke a non-function
 ```
+
 **해결**: 함수 이름 확인, 괄호 사용 여부 확인
 
 **3. Invalid Path**
+
 ```
 Error: Path does not exist
 ```
+
 **해결**: JSONPath 표현식 확인, 데이터 구조 검증
 
 **4. Division by Zero**
+
 ```
 Error: Division by zero
 ```
+
 **해결**: 조건문으로 0 체크
 
 ### 안전한 표현식 작성
@@ -261,6 +267,7 @@ count > 0 ? value / count : 0
 **문제**: 10,000개 이상 아이템 처리 시 느림
 
 **해결책**:
+
 - 필터링을 먼저 수행하여 데이터 크기 축소
 - 불필요한 필드 제거
 - 중첩 루프 최소화
@@ -304,14 +311,14 @@ count > 0 ? value / count : 0
 
 ```typescript
 const JSONATA_TEMPLATES = {
-  "필터링": "[condition]",
+  필터링: "[condition]",
   "필드 선택": "*.{ newKey: oldKey }",
-  "집계": "$sum(*.field)",
+  집계: "$sum(*.field)",
   "중복 제거": "$distinct(*.field)",
-  "정렬": "^(field)",
-  "조인": "$join(*.field, ', ')",
-  "그룹핑": "${ key: value }",
-  "평탄화": "*.nested[].field"
+  정렬: "^(field)",
+  조인: "$join(*.field, ', ')",
+  그룹핑: "${ key: value }",
+  평탄화: "*.nested[].field",
 };
 ```
 
@@ -324,23 +331,43 @@ const JSONATA_TEMPLATES = {
 ```typescript
 const JSONATA_FUNCTIONS = [
   // 집계
-  "$count()", "$sum()", "$average()", "$min()", "$max()",
+  "$count()",
+  "$sum()",
+  "$average()",
+  "$min()",
+  "$max()",
 
   // 배열
-  "$distinct()", "$append()", "$reverse()", "$shuffle()",
+  "$distinct()",
+  "$append()",
+  "$reverse()",
+  "$shuffle()",
 
   // 문자열
-  "$join()", "$split()", "$substring()", "$length()",
-  "$uppercase()", "$lowercase()", "$trim()",
+  "$join()",
+  "$split()",
+  "$substring()",
+  "$length()",
+  "$uppercase()",
+  "$lowercase()",
+  "$trim()",
 
   // 타입
-  "$number()", "$string()", "$boolean()", "$type()",
+  "$number()",
+  "$string()",
+  "$boolean()",
+  "$type()",
 
   // 날짜
-  "$now()", "$millis()", "$fromMillis()",
+  "$now()",
+  "$millis()",
+  "$fromMillis()",
 
   // 기타
-  "$exists()", "$sort()", "$reduce()", "$map()"
+  "$exists()",
+  "$sort()",
+  "$reduce()",
+  "$map()",
 ];
 ```
 
@@ -379,6 +406,6 @@ JSONata는 동기식으로만 동작합니다.
 
 **변경 이력**
 
-| 버전 | 날짜 | 변경 내용 | 작성자 |
-|-----|------|---------|-------|
-| 1.0 | 2025-11-11 | F-006에서 고급 활용 부분 분리 | System |
+| 버전 | 날짜       | 변경 내용                     | 작성자 |
+| ---- | ---------- | ----------------------------- | ------ |
+| 1.0  | 2025-11-11 | F-006에서 고급 활용 부분 분리 | System |

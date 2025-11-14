@@ -12,10 +12,7 @@ import {
  * Regex 조건 전략
  */
 export class RegexStrategy extends BaseConditionStrategy {
-  parseFromWhen(
-    when: WhenCondition,
-    formState: Partial<EdgeFormState>,
-  ): void {
+  parseFromWhen(when: WhenCondition, formState: Partial<EdgeFormState>): void {
     if (!when.regex) return;
 
     formState.regexData = {
@@ -48,7 +45,8 @@ export class RegexStrategy extends BaseConditionStrategy {
     if (!when.regex) return null;
 
     const nodeId = extractNodeIdFromPath(when.regex.value || "");
-    const path = extractPathFromJsonPath(when.regex.value || "") || "result.data";
+    const path =
+      extractPathFromJsonPath(when.regex.value || "") || "result.data";
     return {
       id,
       type: "regex",
@@ -58,4 +56,3 @@ export class RegexStrategy extends BaseConditionStrategy {
     };
   }
 }
-

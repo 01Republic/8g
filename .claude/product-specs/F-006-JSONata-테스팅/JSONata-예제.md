@@ -17,6 +17,7 @@
 ### 기본 필터링
 
 **입력 데이터**:
+
 ```json
 [
   { "id": 1, "name": "Product A", "price": 100, "status": "active" },
@@ -26,11 +27,13 @@
 ```
 
 **표현식**:
+
 ```jsonata
 [status='active']
 ```
 
 **결과**:
+
 ```json
 [
   { "id": 1, "name": "Product A", "price": 100, "status": "active" },
@@ -41,11 +44,13 @@
 ### 숫자 범위 필터링
 
 **표현식**:
+
 ```jsonata
 [price >= 100 and price <= 150]
 ```
 
 **결과**:
+
 ```json
 [
   { "id": 1, "name": "Product A", "price": 100, "status": "active" },
@@ -60,6 +65,7 @@
 ### 필드 이름 변경
 
 **표현식**:
+
 ```jsonata
 [status='active'].{
   "productId": id,
@@ -69,6 +75,7 @@
 ```
 
 **결과**:
+
 ```json
 [
   { "productId": 1, "productName": "Product A", "priceInDollars": 100 },
@@ -79,6 +86,7 @@
 ### 계산된 필드 추가
 
 **표현식**:
+
 ```jsonata
 *.{
   "id": id,
@@ -95,6 +103,7 @@
 ### 기본 집계
 
 **표현식**:
+
 ```jsonata
 {
   "totalProducts": $count(*),
@@ -105,6 +114,7 @@
 ```
 
 **결과**:
+
 ```json
 {
   "totalProducts": 3,
@@ -117,6 +127,7 @@
 ### 최소/최대값
 
 **표현식**:
+
 ```jsonata
 {
   "minPrice": $min(*.price),
@@ -142,9 +153,7 @@
       ]
     },
     "user2": {
-      "spaces": [
-        { "id": "space3", "name": "Space C" }
-      ]
+      "spaces": [{ "id": "space3", "name": "Space C" }]
     }
   }
 }
@@ -153,11 +162,13 @@
 ### 모든 Space ID 추출
 
 **표현식**:
+
 ```jsonata
 $distinct(users.*.spaces[].id)
 ```
 
 **결과**:
+
 ```json
 ["space1", "space2", "space3"]
 ```
@@ -165,6 +176,7 @@ $distinct(users.*.spaces[].id)
 ### Space 평탄화
 
 **표현식**:
+
 ```jsonata
 users.*.spaces[].{
   "spaceId": id,
@@ -173,6 +185,7 @@ users.*.spaces[].{
 ```
 
 **결과**:
+
 ```json
 [
   { "spaceId": "space1", "spaceName": "Space A" },
@@ -188,6 +201,7 @@ users.*.spaces[].{
 ### 삼항 연산자
 
 **표현식**:
+
 ```jsonata
 *.{
   "id": id,
@@ -197,6 +211,7 @@ users.*.spaces[].{
 ```
 
 **결과**:
+
 ```json
 [
   { "id": 1, "name": "Product A", "priceCategory": "medium" },
@@ -208,6 +223,7 @@ users.*.spaces[].{
 ### 조건부 필드 포함
 
 **표현식**:
+
 ```jsonata
 *.{
   "id": id,
@@ -223,6 +239,7 @@ users.*.spaces[].{
 ### 문자열 조작
 
 **표현식**:
+
 ```jsonata
 *.{
   "upperName": $uppercase(name),
@@ -235,6 +252,7 @@ users.*.spaces[].{
 ### 문자열 결합
 
 **표현식**:
+
 ```jsonata
 {
   "allNames": $join(*.name, ", "),
@@ -249,11 +267,13 @@ users.*.spaces[].{
 ### 배열 정렬
 
 **표현식**:
+
 ```jsonata
 ^(price)  /* 오름차순 */
 ```
 
 **표현식 (내림차순)**:
+
 ```jsonata
 ^(>price)
 ```
@@ -261,6 +281,7 @@ users.*.spaces[].{
 ### 배열 슬라이싱
 
 **표현식**:
+
 ```jsonata
 [0..1]  /* 처음 2개 */
 ```
@@ -272,6 +293,7 @@ users.*.spaces[].{
 ### 그룹핑
 
 **표현식**:
+
 ```jsonata
 {
   "active": [status='active'],
@@ -282,6 +304,7 @@ users.*.spaces[].{
 ### 계층 구조 생성
 
 **표현식**:
+
 ```jsonata
 {
   "summary": {
@@ -341,6 +364,6 @@ level1.*.level2.*.level3
 
 **변경 이력**
 
-| 버전 | 날짜 | 변경 내용 | 작성자 |
-|-----|------|---------|-------|
-| 1.0 | 2025-11-11 | F-006에서 예제 부분 분리 | System |
+| 버전 | 날짜       | 변경 내용                | 작성자 |
+| ---- | ---------- | ------------------------ | ------ |
+| 1.0  | 2025-11-11 | F-006에서 예제 부분 분리 | System |

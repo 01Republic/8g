@@ -17,12 +17,14 @@
 ### 월간 리뷰 (매월 1일)
 
 #### 체크리스트
+
 - [ ] 모든 문서의 최종 수정일 확인
 - [ ] 3개월 이상 업데이트 안 된 문서 검토
 - [ ] Deprecated 문서 아카이브
 - [ ] 새로 추가된 기능 문서화 확인
 
 #### 실행 방법
+
 ```bash
 # 오래된 문서 확인
 find .claude -name "*.md" -mtime +90
@@ -35,6 +37,7 @@ find .claude -name "*.md" -mtime +90
 ### 분기별 대대적 정리 (분기 첫째 주)
 
 #### 체크리스트
+
 - [ ] 문서 구조 개선
 - [ ] 중복 내용 통합
 - [ ] 링크 유효성 검증
@@ -43,6 +46,7 @@ find .claude -name "*.md" -mtime +90
 - [ ] 문서 길이 재확인 (200줄 정책)
 
 #### 실행 방법
+
 ```markdown
 1. 각 문서 섹션별로 검토
 2. 중복되는 내용 찾기
@@ -64,9 +68,11 @@ find .claude -name "*.md" -mtime +90
 ```
 
 ### 1. 생성 (Creation)
+
 **시점**: 새 기능 개발 시작 또는 완료 시
 
 **필수 포함 사항**:
+
 - 문서 버전: 1.0
 - 최종 수정일
 - 담당자/팀
@@ -75,9 +81,11 @@ find .claude -name "*.md" -mtime +90
 ---
 
 ### 2. 활성 (Active)
+
 **상태**: 현재 사용 중인 기능의 문서
 
 **유지보수**:
+
 - 기능 변경 시 즉시 업데이트
 - 버그 수정 시 알려진 이슈 섹션 업데이트
 - 관련 문서 링크 추가
@@ -85,13 +93,16 @@ find .claude -name "*.md" -mtime +90
 ---
 
 ### 3. 업데이트 (Update)
+
 **트리거**:
+
 - 기능 개선
 - 버그 수정
 - API 변경
 - 사용자 피드백
 
 **절차**:
+
 1. 변경사항 파악
 2. 문서 수정
 3. 최종 수정일 갱신
@@ -101,9 +112,11 @@ find .claude -name "*.md" -mtime +90
 ---
 
 ### 4. Deprecated (사용 중단)
+
 **시점**: 기능이 더 이상 사용되지 않음
 
 **처리 방법**:
+
 ```markdown
 # ⚠️ DEPRECATED: 이 문서는 더 이상 사용되지 않습니다
 
@@ -117,6 +130,7 @@ find .claude -name "*.md" -mtime +90
 ```
 
 **체크리스트**:
+
 - [ ] 문서 최상단에 경고 표시
 - [ ] 대체 문서 링크 제공
 - [ ] Deprecated 일자 명시
@@ -126,9 +140,11 @@ find .claude -name "*.md" -mtime +90
 ---
 
 ### 5. 아카이브 (Archive)
+
 **시점**: Deprecated 후 6개월 경과
 
 **실행 방법**:
+
 ```bash
 # 아카이브 폴더로 이동
 mkdir -p .claude/archived
@@ -143,16 +159,17 @@ mv .claude/product-specs/F-XXX-deprecated.md .claude/archived/
 
 ### 자동 트리거
 
-| 개발 작업 | 문서화 대상 | 타이밍 |
-|---------|-----------|-------|
-| 새 기능 추가 | Feature Spec 생성 | PR 제출 전 |
-| 기존 기능 수정 | Feature Spec 업데이트 | PR 제출 전 |
-| API 변경 | API 문서 업데이트 | 배포 전 |
-| 아키텍처 변경 | Architecture 문서 업데이트 | 설계 완료 후 즉시 |
-| 버그 수정 | Known Issues 업데이트 | 수정 완료 후 |
-| 데이터베이스 스키마 변경 | DB 스키마 문서 업데이트 | 마이그레이션 적용 전 |
+| 개발 작업                | 문서화 대상                | 타이밍               |
+| ------------------------ | -------------------------- | -------------------- |
+| 새 기능 추가             | Feature Spec 생성          | PR 제출 전           |
+| 기존 기능 수정           | Feature Spec 업데이트      | PR 제출 전           |
+| API 변경                 | API 문서 업데이트          | 배포 전              |
+| 아키텍처 변경            | Architecture 문서 업데이트 | 설계 완료 후 즉시    |
+| 버그 수정                | Known Issues 업데이트      | 수정 완료 후         |
+| 데이터베이스 스키마 변경 | DB 스키마 문서 업데이트    | 마이그레이션 적용 전 |
 
 ### 수동 트리거
+
 - 사용자 피드백 접수
 - 팀 회의에서 결정된 변경사항
 - 리팩토링 완료
@@ -165,15 +182,19 @@ mv .claude/product-specs/F-XXX-deprecated.md .claude/archived/
 ### 품질 지표
 
 #### 1. 최신성 (Freshness)
+
 ```
 점수 = 100 - (현재 날짜 - 최종 수정일) / 30
 ```
+
 - 90점 이상: 우수
 - 70-89점: 양호
 - 70점 미만: 개선 필요
 
 #### 2. 완결성 (Completeness)
+
 필수 섹션 포함 여부:
+
 - [ ] 개요
 - [ ] 사용자 스토리 / 사용 방법
 - [ ] 기술 명세
@@ -181,6 +202,7 @@ mv .claude/product-specs/F-XXX-deprecated.md .claude/archived/
 - [ ] 관련 문서 링크
 
 #### 3. 가독성 (Readability)
+
 - [ ] 200줄 이하
 - [ ] 명확한 제목
 - [ ] 적절한 섹션 분리
@@ -191,9 +213,11 @@ mv .claude/product-specs/F-XXX-deprecated.md .claude/archived/
 ## 문서 통합 및 분리 규칙
 
 ### 통합 (Merge)
+
 **시점**: 2개 이상의 문서가 중복 내용 포함
 
 **절차**:
+
 1. 중복 내용 확인
 2. 더 포괄적인 문서로 통합
 3. 통합된 문서에 모든 정보 포함 확인
@@ -203,9 +227,11 @@ mv .claude/product-specs/F-XXX-deprecated.md .claude/archived/
 ---
 
 ### 분리 (Split)
+
 **시점**: 문서가 200줄 초과
 
 **절차**:
+
 1. 논리적 섹션 단위로 분리
 2. 하위 폴더 생성 (예: `F-XXX/`)
 3. 각 섹션을 독립 문서로 작성
@@ -213,6 +239,7 @@ mv .claude/product-specs/F-XXX-deprecated.md .claude/archived/
 5. 파일 경로 업데이트
 
 **예시**:
+
 ```
 Before:
 └── F-005-루프-설정.md (606줄)
@@ -230,9 +257,11 @@ After:
 ## 문서 백업 및 복구
 
 ### 자동 백업
+
 Git을 통해 자동으로 버전 관리됨
 
 ### 복구 방법
+
 ```bash
 # 특정 시점의 문서 복구
 git log --oneline -- .claude/PRD.md

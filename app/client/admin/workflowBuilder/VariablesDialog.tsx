@@ -25,7 +25,9 @@ export function VariablesDialog({
 }: VariablesDialogProps) {
   const [jsonText, setJsonText] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [parsedVars, setParsedVars] = useState<Record<string, any> | null>(null);
+  const [parsedVars, setParsedVars] = useState<Record<string, any> | null>(
+    null,
+  );
 
   // 다이얼로그가 열릴 때 variables를 JSON 텍스트로 변환
   useEffect(() => {
@@ -125,7 +127,9 @@ export function VariablesDialog({
             <code className="block text-blue-600">
               {'{ "userId": "12345", "apiKey": "sk-..." }'}
             </code>
-            <div className="mt-2 text-gray-600">// 블록에서 사용 (template)</div>
+            <div className="mt-2 text-gray-600">
+              // 블록에서 사용 (template)
+            </div>
             <code className="block">
               url: {'{ template: "https://api.com/${vars.userId}" }'}
             </code>
