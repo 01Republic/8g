@@ -537,7 +537,7 @@ export default function WorkflowBuilderPage({
               setEmails={setEmails}
             />
           </ReactFlow>
-          {result && <ResultPanel result={result} position="top-right" />}
+          {result && <ResultPanel result={result} position="top-right" type={type} />}
         </div>
 
         {/* 오른쪽: Variables Preview */}

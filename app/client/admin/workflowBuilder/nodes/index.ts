@@ -102,6 +102,14 @@ export const blockLabels: Record<
     title: "강조 표시",
     description: "강조 표시",
   },
+  "apply-locale": {
+    title: "로케일 적용",
+    description: "로케일 적용",
+  },
+  "paste-value": {
+    title: "값 붙여넣기",
+    description: "값 붙여넣기",
+  },
 };
 
 /**
