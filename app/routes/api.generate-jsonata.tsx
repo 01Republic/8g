@@ -18,13 +18,13 @@ export async function action({ request }: ActionFunctionArgs) {
     const { sourceData, targetSchema } = RequestSchema.parse(body);
 
     // API 키 확인
-    if (!process.env.ANTHROPIC_API_KEY) {
+    if (!process.env.OPENAI_API_KEY) {
       console.error("ANTHROPIC_API_KEY is not set in environment variables");
       throw new Error("API key not configured");
     }
 
     const agent = createAgent({
-      model: "claude-sonnet-4-5-20250929",
+      model: "gpt-4.1",
       systemPrompt:
         "You are a JSONata expert. Generate valid JSONata expressions for data transformation.",
       responseFormat: z.object({
